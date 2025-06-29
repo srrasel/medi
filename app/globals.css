@@ -97,3 +97,6 @@ html {
   bottom: 0;
   
 }
+.object-cover.group-hover\:scale-110.transition-transform.duration-700 {
+  object-position: top;
+}
