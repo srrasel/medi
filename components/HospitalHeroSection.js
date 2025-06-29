@@ -1,45 +1,52 @@
 "use client"
+
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight, Phone, MapPin, Calendar, Heart } from "lucide-react"
+import { ChevronLeft, ChevronRight, Phone, MapPin, Calendar, Stethoscope, Ambulance, ArrowRight } from "lucide-react"
 
 const HospitalHeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const slides = [
     {
-      title: "WELL COME TO",
+      title: "WELCOME TO",
       subtitle: "PRO-ACTIVE HOSPITAL",
+      description: "Excellence in Healthcare - Your Health, Our Priority",
       image: "/images/Cover-Page-Copy.jpg",
       phone_numbers: null,
     },
     {
       title: "24/7 ICU SUPPORT",
-      subtitle: "CALL : 01902556070, 09666997997",
+      subtitle: "INTENSIVE CARE UNIT",
+      description: "Advanced critical care with state-of-the-art monitoring",
       image: "/images/ICU-2-scaled-1-scaled.jpg",
       phone_numbers: ["01902556070", "09666997997"],
     },
     {
       title: "24/7 CCU SUPPORT",
-      subtitle: "CALL : 01902556070, 09666997997",
+      subtitle: "CORONARY CARE UNIT",
+      description: "Specialized cardiac care with expert medical team",
       image: "/images/CCU.jpg",
       phone_numbers: ["01902556070", "09666997997"],
     },
     {
       title: "24/7 NICU SUPPORT",
-      subtitle: "CALL : 01902556070, 09666997997",
+      subtitle: "NEONATAL INTENSIVE CARE",
+      description: "Specialized care for our youngest patients",
       image: "/images/nicu_2.jpg",
       phone_numbers: ["01902556070", "09666997997"],
     },
     {
       title: "24/7 DIALYSIS SUPPORT",
-      subtitle: "CALL : 01902556070, 09666997997",
+      subtitle: "KIDNEY CARE CENTER",
+      description: "Advanced dialysis services with modern equipment",
       image: "/images/Dialysis.jpg",
       phone_numbers: ["01902556070", "09666997997"],
     },
     {
       title: "24/7 EMERGENCY SERVICE",
-      subtitle: "STANDS BESIDE YOU",
+      subtitle: "ALWAYS HERE FOR YOU",
+      description: "Immediate medical attention when you need it most",
       image: "/images/Emergency-1.jpg",
       phone_numbers: null,
     },
@@ -48,28 +55,31 @@ const HospitalHeroSection = () => {
   const quickActions = [
     {
       title: "Find a Doctor",
-      description: "Unparalleled care from compassionate doctors",
-      icon: <Heart className="w-5 h-5 md:w-6 md:h-6" />,
-      href: "doctors",
+      description: "Expert medical professionals at your service",
+      icon: <Stethoscope className="w-6 h-6 md:w-7 md:h-7" />,
+      href: "/doctors",
+      gradient: "from-[#017381] to-[#025a65]",
     },
     {
       title: "Locate Us",
-      description: "Easily find our hospital location and directions",
-      icon: <MapPin className="w-5 h-5 md:w-6 md:h-6" />,
-      href: "contact",
+      description: "Find our hospital location and directions",
+      icon: <MapPin className="w-6 h-6 md:w-7 md:h-7" />,
+      href: "/contact",
+      gradient: "from-[#025a65] to-[#034a52]",
     },
     {
-      title: "Book an Appointment",
-      description: "Custom health packages designed just for you",
-      icon: <Calendar className="w-5 h-5 md:w-6 md:h-6" />,
-      href: "contact",
+      title: "Book Appointment",
+      description: "Schedule your consultation today",
+      icon: <Calendar className="w-6 h-6 md:w-7 md:h-7" />,
+      href: "/contact",
+      gradient: "from-[#017381] to-[#025a65]",
     },
   ]
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 5000)
+    }, 6000)
     return () => clearInterval(timer)
   }, [slides.length])
 
@@ -82,9 +92,9 @@ const HospitalHeroSection = () => {
   }
 
   return (
-    <div className="relative bg-gradient-to-br from-slate-50 to-white overflow-hidden">
-      {/* Hero Slider - Different heights for mobile and desktop */}
-      <div className="relative h-[50vh] sm:h-[60vh] lg:h-[70vh]">
+    <div className="relative overflow-hidden">
+      {/* Hero Slider */}
+      <div className="relative h-[65vh] sm:h-[75vh] lg:h-[85vh]">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -92,27 +102,30 @@ const HospitalHeroSection = () => {
               index === currentSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
             }`}
           >
-            {/* Background Image with Overlay */}
+            {/* Background Image with Light Overlay */}
             <div className="absolute inset-0">
               <Image
                 src={slide.image || "/placeholder.svg?height=800&width=1200"}
-                alt="Hospital"
+                alt="Pro-Active Hospital"
                 fill
                 className="object-cover"
                 priority={index === 0}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-800/80 to-slate-900/60"></div>
+              {/* Light overlay for better text readability */}
+              <div className="absolute inset-0 bg-black/20"></div>
+              {/* Gradient overlay for professional look */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#017381]/30 via-transparent to-[#025a65]/20"></div>
             </div>
 
-            {/* Content - Mobile Centered, Desktop Left Aligned */}
+            {/* Content */}
             <div className="relative z-10 h-full flex items-center">
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Mobile Layout - Centered and Compact */}
+                {/* Mobile Layout */}
                 <div className="block lg:hidden text-center">
-                  <div className="max-w-sm sm:max-w-md mx-auto">
+                  <div className="max-w-sm sm:max-w-md mx-auto bg-black/30 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
                     <div className="overflow-hidden">
                       <h1
-                        className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight transform transition-all duration-1000 delay-300 ${
+                        className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 leading-tight transform transition-all duration-1000 delay-300 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
@@ -120,56 +133,99 @@ const HospitalHeroSection = () => {
                       </h1>
                     </div>
                     <div className="overflow-hidden">
-                      <p
-                        className={`text-sm sm:text-base text-slate-200 mb-4 sm:mb-6 leading-relaxed transform transition-all duration-1000 delay-500 ${
+                      <h2
+                        className={`text-lg sm:text-xl font-semibold text-[#b8e6ea] mb-3 transform transition-all duration-1000 delay-400 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
                         {slide.subtitle}
-                      </p>
+                      </h2>
                     </div>
                     <div className="overflow-hidden">
+                      <p
+                        className={`text-sm sm:text-base text-slate-200 mb-6 leading-relaxed transform transition-all duration-1000 delay-500 ${
+                          index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                        }`}
+                      >
+                        {slide.description}
+                      </p>
+                    </div>
+                    <div className="overflow-hidden flex flex-col sm:flex-row gap-3 justify-center">
                       <button
-                        className={`group bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto ${
+                        className={`group bg-white text-[#017381] px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         } transition-all duration-1000 delay-700`}
                       >
+                        <Stethoscope className="w-4 h-4" />
                         <span>Find Consultant</span>
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
+                      {slide.phone_numbers && (
+                        <a
+                          href={`tel:${slide.phone_numbers[0]}`}
+                          className={`group bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 ${
+                            index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                          } transition-all duration-1000 delay-800`}
+                        >
+                          <Phone className="w-4 h-4" />
+                          <span>Call Now</span>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Desktop Layout - Left Aligned */}
-                <div className="hidden lg:block max-w-4xl">
-                  <div className="overflow-hidden">
-                    <h1
-                      className={`text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight transform transition-all duration-1000 delay-300 ${
-                        index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-                      }`}
-                    >
-                      {slide.title}
-                    </h1>
-                  </div>
-                  <div className="overflow-hidden">
-                    <p
-                      className={`text-xl lg:text-2xl text-slate-200 mb-8 max-w-3xl leading-relaxed transform transition-all duration-1000 delay-500 ${
-                        index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-                      }`}
-                    >
-                      {slide.subtitle}
-                    </p>
-                  </div>
-                  <div className="overflow-hidden">
-                    <button
-                      className={`group bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-2 ${
-                        index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-                      } transition-all duration-1000 delay-700`}
-                    >
-                      <span>Find Consultant</span>
-                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                {/* Desktop Layout */}
+                <div className="hidden lg:block max-w-6xl">
+                  <div className="bg-black/20 backdrop-blur-sm rounded-3xl p-12 border border-white/20 max-w-4xl">
+                    <div className="overflow-hidden">
+                      <h1
+                        className={`text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 leading-tight transform transition-all duration-1000 delay-300 ${
+                          index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                        }`}
+                      >
+                        {slide.title}
+                      </h1>
+                    </div>
+                    <div className="overflow-hidden">
+                      <h2
+                        className={`text-2xl lg:text-3xl font-semibold text-[#b8e6ea] mb-4 transform transition-all duration-1000 delay-400 ${
+                          index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                        }`}
+                      >
+                        {slide.subtitle}
+                      </h2>
+                    </div>
+                    <div className="overflow-hidden">
+                      <p
+                        className={`text-xl lg:text-2xl text-slate-200 mb-8 max-w-3xl leading-relaxed transform transition-all duration-1000 delay-500 ${
+                          index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                        }`}
+                      >
+                        {slide.description}
+                      </p>
+                    </div>
+                    <div className="overflow-hidden flex gap-4">
+                      <button
+                        className={`group bg-white text-[#017381] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-3 ${
+                          index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                        } transition-all duration-1000 delay-700`}
+                      >
+                        <Stethoscope className="w-5 h-5" />
+                        <span>Find Consultant</span>
+                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                      {slide.phone_numbers && (
+                        <a
+                          href={`tel:${slide.phone_numbers[0]}`}
+                          className={`group bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-3 ${
+                            index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+                          } transition-all duration-1000 delay-800`}
+                        >
+                          <Phone className="w-5 h-5" />
+                          <span>Emergency Call</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -177,119 +233,166 @@ const HospitalHeroSection = () => {
           </div>
         ))}
 
-        {/* Navigation Arrows - Hidden on mobile */}
+        {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="hidden md:block absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 lg:p-3 rounded-full transition-all duration-300 hover:scale-110"
+          className="hidden md:block absolute left-6 lg:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 border border-white/30 shadow-lg"
         >
-          <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
+          <ChevronLeft className="w-6 h-6" />
         </button>
         <button
           onClick={nextSlide}
-          className="hidden md:block absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 lg:p-3 rounded-full transition-all duration-300 hover:scale-110"
+          className="hidden md:block absolute right-6 lg:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 border border-white/30 shadow-lg"
         >
-          <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
+          <ChevronRight className="w-6 h-6" />
         </button>
 
-        {/* Slide Indicators - Better positioned for mobile */}
-        <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+        {/* Slide Indicators */}
+        <div className="absolute bottom-8 lg:bottom-12 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide ? "bg-white scale-125" : "bg-white/50"
+              className={`w-4 h-4 rounded-full transition-all duration-300 border-2 border-white/50 backdrop-blur-sm ${
+                index === currentSlide ? "bg-white scale-125 border-white shadow-lg" : "bg-white/30 hover:bg-white/50"
               }`}
             />
           ))}
         </div>
       </div>
 
-      {/* Quick Actions Section - Now separate from hero */}
-      <div className="bg-white border-t border-gray-100 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Mobile Layout - Clean and Professional */}
-          <div className="block lg:hidden py-6">
-            <div className="grid grid-cols-2 gap-4 mb-6">
+      {/* Quick Actions Section with Beautiful Background */}
+      <div className="relative bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#017381] to-[#025a65]"></div>
+          <div className="absolute top-10 left-10 w-32 h-32 bg-[#017381]/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-[#025a65]/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#017381]/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Mobile Layout */}
+          <div className="block lg:hidden py-12">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-[#017381] mb-2">Quick Access</h2>
+              <p className="text-gray-600">Get the care you need, when you need it</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 mb-8">
               {quickActions.map((action, index) => (
                 <div
                   key={index}
-                  className="group cursor-pointer bg-gray-50 hover:bg-blue-50 p-4 rounded-2xl transition-all duration-300 hover:shadow-md border border-gray-100 hover:border-blue-200"
+                  className="group cursor-pointer bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-2xl p-6 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-[#017381]/20 transform hover:-translate-y-2"
                 >
-                  <div className="flex flex-col items-center text-center space-y-3">
-                    <div className="p-3 bg-blue-600 text-white rounded-xl group-hover:bg-blue-700 transition-colors duration-300 group-hover:scale-105 transform">
+                  <div className="flex items-center space-x-5">
+                    <div
+                      className={`p-4 bg-gradient-to-r ${action.gradient} text-white rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+                    >
                       {action.icon}
                     </div>
-                    <h3 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
-                      {action.title}
-                    </h3>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#017381] transition-colors mb-2">
+                        {action.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">{action.description}</p>
+                    </div>
+                    <ArrowRight className="w-6 h-6 text-[#017381]  group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300" />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Mobile Emergency Hotline - Professional Design */}
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-2xl shadow-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-white/20 rounded-lg">
-                    <Phone className="w-5 h-5" />
+            {/* Mobile Emergency Hotline */}
+            <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-800  hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
+                      <Ambulance className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xl mb-1">Emergency Hotline</h3>
+                      <p className="text-red-100">24/7 Medical Support</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-sm">Emergency Hotline</h3>
-                    <p className="text-xs text-red-100">24/7 Support Available</p>
+                  <div className="text-right">
+                    <a href="tel:01902556070" className="block text-2xl font-bold hover:text-red-100 transition-colors">
+                      01902556070
+                    </a>
+                    <a
+                      href="tel:09666997997"
+                      className="block text-lg font-semibold text-red-100 hover:text-white transition-colors"
+                    >
+                      09666997997
+                    </a>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold">01902556070</p>
-                  <p className="text-sm text-red-100">09666997997</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Desktop Layout - Unchanged */}
-          <div className="hidden lg:grid lg:grid-cols-4 gap-6 py-8">
-            {quickActions.map((action, index) => (
-              <div
-                key={index}
-                className="group cursor-pointer hover:bg-blue-50 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-blue-600 text-white rounded-lg group-hover:bg-blue-700 group-hover:scale-110 transition-all duration-300">
-                    {action.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors flex items-center">
-                      {action.title}
-                      <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300" />
-                    </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{action.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* Desktop Layout */}
+          <div className="hidden lg:block py-16">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-[#017381] mb-4">Quick Access to Care</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Get the medical attention you need with our comprehensive healthcare services
+              </p>
+            </div>
 
-            {/* Desktop Emergency Hotline */}
-            <div className="group cursor-pointer bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10">
-                <div className="flex items-center space-x-3 mb-2">
-                  <Phone className="w-6 h-6 animate-pulse" />
-                  <h3 className="font-semibold text-lg">Emergency Hotline</h3>
+            <div className="grid lg:grid-cols-4 gap-8">
+              {quickActions.map((action, index) => (
+                <div
+                  key={index}
+                  className="group cursor-pointer bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-2xl p-8 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-[#017381]/20 transform hover:-translate-y-4"
+                >
+                  <div className="text-center">
+                    <div
+                      className={`p-6 bg-gradient-to-r ${action.gradient} text-white rounded-3xl inline-block mb-6 group-hover:scale-110 transition-all duration-300 shadow-xl`}
+                    >
+                      {action.icon}
+                    </div>
+                    <h3 className="font-bold text-2xl text-gray-900 mb-3 group-hover:text-[#017381] transition-colors">
+                      {action.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed mb-4">{action.description}</p>
+                    <div className="flex items-center justify-center text-[#017381] font-semibold  group-hover:opacity-100 transition-all duration-300">
+                      <span>Learn More</span>
+                      <ArrowRight className="w-5 h-5 ml-2 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xl font-bold tracking-wider">01902556070</p>
-                <p className="text-lg font-semibold tracking-wider">09666997997</p>
-                <p className="text-sm text-red-100 mt-2">24/7 Emergency Support</p>
+              ))}
+
+              {/* Desktop Emergency Hotline */}
+              <div className="group cursor-pointer bg-gradient-to-br from-red-600 to-red-700 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-4 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-700 to-red-800  group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10 text-center">
+                  <div className="p-6 bg-white/20 rounded-3xl inline-block mb-6 group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
+                    <Ambulance className="w-10 h-10" />
+                  </div>
+                  <h3 className="font-bold text-2xl mb-4">Emergency Hotline</h3>
+                  <a
+                    href="tel:01902556070"
+                    className="block text-3xl font-bold mb-2 hover:text-red-100 transition-colors"
+                  >
+                    01902556070
+                  </a>
+                  <a
+                    href="tel:09666997997"
+                    className="block text-xl font-semibold mb-4 text-red-100 hover:text-white transition-colors"
+                  >
+                    09666997997
+                  </a>
+                  <p className="text-red-100">24/7 Emergency Support</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Professional Floating Elements - Adjusted for new height */}
-      <div className="absolute top-10 right-6 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-gradient-to-r from-blue-400/10 to-slate-400/10 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute top-1/3 left-6 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-r from-slate-400/10 to-blue-400/10 rounded-full blur-xl animate-pulse delay-1000"></div>
     </div>
   )
 }

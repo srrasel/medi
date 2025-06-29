@@ -9,13 +9,13 @@ import BlogSection from "@/components/BlogSection";
 export default function Home() {
   return (
     <>
-      <Header/>
+ 
      <HospitalHeroSection />
      <ServicesSection />
      <MedicalDepartments />
      <DoctorsSection />
      <BlogSection />
-     <Footer />
+  
     </>
     
   );
