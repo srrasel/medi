@@ -320,7 +320,7 @@ const DoctorsSection = () => {
                     <div className="relative h-80 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                       <Image
                         src={doctor.image || "/placeholder.svg"}
-                        alt={doctor.name}
+                        alt={doctor.name} width={300} height={300}
                         className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
