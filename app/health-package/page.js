@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { X } from "lucide-react"
+import Image from "next/image"
 
 const healthPackages = [
   {
@@ -165,7 +166,7 @@ export default function HealthPackagesPage() {
             >
               {/* Package Image */}
               <div className="relative h-64 overflow-hidden">
-                <img
+                <Image
                   src={pkg.image || "/placeholder.svg"}
                   alt={pkg.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -215,7 +216,7 @@ export default function HealthPackagesPage() {
 
           {/* Image Container - Max width 700px, positioned from start */}
           <div className="w-full max-w-[700px] px-4 pt-16">
-            <img
+            <Image
               src={selectedImage || "/placeholder.svg"}
               alt={selectedTitle}
               className="w-full h-auto object-contain rounded-lg shadow-2xl"

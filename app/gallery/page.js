@@ -146,8 +146,9 @@ export default function SuccessStoriesPage() {
               Gallery
             </h1>
             <p className="text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto">
-              Real stories of hope, healing, and triumph from our patients and their families. Witness the difference
-              quality healthcare makes in people's lives.
+             Real stories of hope, healing, and triumph from our patients and their families. Witness the difference
+quality healthcare makes in people&apos;s lives.
+
             </p>
             <div className="mt-8 flex justify-center">
               <div className="w-24 h-1 bg-gradient-to-r from-white to-slate-200 rounded-full"></div>

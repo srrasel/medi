@@ -30,7 +30,7 @@ export default function ServicePageClient({ params, services }) {
       <div className="min-h-screen bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] flex items-center justify-center">
         <div className="text-center text-white">
           <h1 className="text-4xl font-bold mb-4">Service Not Found</h1>
-          <p className="text-xl mb-8">The service you're looking for doesn't exist.</p>
+          <p className="text-xl mb-8">The service you&#39;re looking for doesn&#39;t exist.</p>
           <Link
             href="/"
             className="bg-white text-[#017381] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"

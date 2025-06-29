@@ -15,6 +15,7 @@ import {
   Phone,
   Clock,
 } from "lucide-react"
+import Image from "next/image"
 
 const DoctorsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -317,7 +318,7 @@ const DoctorsSection = () => {
                   >
                     {/* Doctor Image */}
                     <div className="relative h-80 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
-                      <img
+                      <Image
                         src={doctor.image || "/placeholder.svg"}
                         alt={doctor.name}
                         className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"

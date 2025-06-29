@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Shield, Clock, Users, Award, Stethoscope, Building2, Phone, Star } from "lucide-react"
-
+import Image from "next/image"
 export default function CEOMessagePage() {
   useEffect(() => {
     const observerOptions = {
@@ -94,7 +94,7 @@ export default function CEOMessagePage() {
               {/* CEO Photo */}
               <div className="flex-shrink-0">
                 <div className="w-80 h-80 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
-                  <img
+                  <Image
                     src="/images/Brig.-Gen.-Dr.-AKM-Nasir-Uddin-Retd.-2-1.jpg?height=300&width=300"
                     alt="Brigadier General (Dr.) AKM Nasir Uddin"
                     className="w-72 h-72 rounded-full object-cover border-4 border-white/30"
@@ -160,9 +160,10 @@ Former Director, Kurmitola General Hospital
 
 Former Director, DNCC Dedicated Covid-19 Hospital</p>
                      <p className="text-xl leading-relaxed text-slate-700 mb-6">
-                      Pro-Active Hospital (A sister concern of Pro-Active Medical College & Hospital Ltd.), a leading
-                      tertiary level multidisciplinary hospital. This hospital dedicated to providing comprehensive and
-                      life-saving healthcare services to it's clients.
+                      Pro-Active Hospital (A sister concern of Pro-Active Medical College &amp; Hospital Ltd.), a leading
+tertiary level multidisciplinary hospital. This hospital is dedicated to providing comprehensive and
+life-saving healthcare services to its clients.
+
                     </p>
 
                     <p className="text-lg leading-relaxed text-slate-700 mb-6">

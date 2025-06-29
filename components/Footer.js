@@ -114,7 +114,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="bg-white/10 p-3 rounded-lg">
                 <p className="text-white/90 text-sm italic">
-                  "ঈদ আনন্দ ছড়িয়ে পড়ুক সবার মাঝে আপনার যাত্রা হোক নিরাপদ, উদযাপন হোক স্বস্তিদায়ক"
+                  ঈদ আনন্দ ছড়িয়ে পড়ুক সবার মাঝে আপনার যাত্রা হোক নিরাপদ, উদযাপন হোক স্বস্তিদায়ক
                 </p>
               </div>
               <ul className="text-white/80 text-sm space-y-2">
@@ -124,7 +124,7 @@ const Footer = () => {
                 </li>
                 <li className="flex items-start">
                   <Users className="w-3 h-3 mt-1 mr-2 text-white/60 flex-shrink-0" />
-                  We're Hiring at Pro-Active Hospital! A Sister Concern of Pro-Active Medical College
+                 We&apos;re Hiring at Pro-Active Hospital! A Sister Concern of Pro-Active Medical College
                 </li>
               </ul>
             </div>

@@ -440,7 +440,7 @@ export default function BlogPage() {
               {searchQuery && (
                 <span>
                   {" "}
-                  "<span className="font-medium text-[#017381]">{searchQuery}</span>" এর জন্য
+                  <span className="font-medium text-[#017381]">{searchQuery}</span> এর জন্য
                 </span>
               )}
             </div>

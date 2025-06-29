@@ -250,9 +250,8 @@ const MedicalDepartments = () => {
             <span className="block text-[#017381]">Every Specialty</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Discover our hospital's specialized departments, each dedicated to delivering top-tier medical care with a
-            focus on your unique health needs and comprehensive treatment solutions.
-          </p>
+           Discover our hospital&apos;s specialized departments, each dedicated to delivering top-tier medical care
+  with a focus on your unique health needs and comprehensive treatment solutions. </p>
         </div>
 
         {/* Statistics Section */}

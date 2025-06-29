@@ -629,9 +629,9 @@ export default function DoctorPage() {
   ]
 
   useEffect(() => {
-    const foundDoctor = doctors.find(d => d.id === parseInt(id))
-    setDoctor(foundDoctor)
-  }, [id])
+  const foundDoctor = doctors.find(d => d.id === parseInt(id));
+  setDoctor(foundDoctor);
+}, [id, doctors]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target

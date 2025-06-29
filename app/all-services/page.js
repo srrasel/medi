@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard, ExternalLink } from "lucide-react"
-
+import Image from "next/image"
 export default function AllServicesPage() {
   useEffect(() => {
     const observerOptions = {
@@ -148,7 +148,7 @@ export default function AllServicesPage() {
                     style={{ transitionDelay: `${index * 150}ms` }}
                   >
                     <div className="relative h-64 overflow-hidden">
-                      <img
+                      <Image
                         src={service.image_url || "/placeholder.svg"}
                         alt={service.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

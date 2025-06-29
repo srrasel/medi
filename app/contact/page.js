@@ -80,7 +80,7 @@ export default function ContactPage() {
             </h1>
             <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#b8e6ea]">Pro-Active Hospital</h2>
             <p className="text-xl md:text-2xl leading-relaxed font-light max-w-3xl mx-auto">
-              We're here to help you 24/7. Reach out to us for any medical assistance or inquiries.
+              We&apos;re here to help you 24/7. Reach out to us for any medical assistance or inquiries.
             </p>
             <div className="mt-8 flex justify-center">
               <div className="w-24 h-1 bg-gradient-to-r from-white to-slate-200 rounded-full"></div>
