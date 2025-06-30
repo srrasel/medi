@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Clock, ArrowRight, Calendar, User, Tag, ExternalLink } from "lucide-react"
+import Link from "next/link"
+import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
 
 const BlogSection = () => {
   const [visibleCards, setVisibleCards] = useState(new Set())
@@ -135,15 +136,16 @@ const BlogSection = () => {
         <div className="text-center mb-20">
           <div className="inline-block mb-6">
             <span className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white text-sm font-bold tracking-wider uppercase px-8 py-3 rounded-full shadow-lg">
-              Medical Insite
+              Medical Insights
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Latest health
-            <span className="block text-[#017381]">News and information</span>
+            Latest Health
+            <span className="block text-[#017381]">News & Information</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Get advice from our expert doctors, health awareness and the latest medical research news. Essential information and advice for your good health.
+            Get advice from our expert doctors, health awareness and the latest medical research news. Essential
+            information and advice for your good health.
           </p>
         </div>
 
@@ -153,93 +155,93 @@ const BlogSection = () => {
             const isVisible = visibleCards.has(index)
 
             return (
-              <article
-                key={index}
-                data-index={index}
-                className={`blog-card group bg-white/90 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-6 border border-gray-100 hover:border-[#017381]/20 cursor-pointer ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                <div className="relative overflow-hidden h-64">
-                  <Image
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    src={post.image || "/placeholder.svg"}
-                    alt={post.alt}
-                    width={500}
-                    height={300}
-                    onError={(e) => {
-                      e.target.src = `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+              <Link href={post.link} key={index}>
+                <article
+                  data-index={index}
+                  className={`blog-card group bg-white/90 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-6 border border-gray-100 hover:border-[#017381]/20 cursor-pointer ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  style={{ transitionDelay: `${index * 150}ms` }}
+                >
+                  <div className="relative overflow-hidden h-64">
+                    <Image
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      src={post.image || "/placeholder.svg"}
+                      alt={post.alt}
+                      width={500}
+                      height={300}
+                      onError={(e) => {
+                        e.target.src = `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
-                  {/* Category Badge */}
-                  <div className="absolute bottom-4 left-4">
-                    <span className="bg-[#017381]/90 backdrop-blur-sm hover:bg-[#025a65] px-4 py-2 text-white text-sm font-bold rounded-full transition-all duration-300 border border-white/20">
-                      {post.category}
-                    </span>
-                  </div>
+                    {/* Category Badge */}
+                    <div className="absolute bottom-4 left-4">
+                      <span className="bg-[#017381]/90 backdrop-blur-sm hover:bg-[#025a65] px-4 py-2 text-white text-sm font-bold rounded-full transition-all duration-300 border border-white/20">
+                        {post.category}
+                      </span>
+                    </div>
 
-                  {/* Date Badge */}
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl h-16 w-16 flex flex-col items-center justify-center shadow-lg border border-white/50">
-                      <span className="font-bold text-lg text-[#017381]">{post.date}</span>
-                      <span className="text-xs font-medium text-gray-600">{post.month}</span>
+                    {/* Date Badge */}
+                    <div className="absolute top-4 right-4">
+                      <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl h-16 w-16 flex flex-col items-center justify-center shadow-lg border border-white/50">
+                        <span className="font-bold text-lg text-[#017381]">{post.date}</span>
+                        <span className="text-xs font-medium text-gray-600">{post.month}</span>
+                      </div>
+                    </div>
+
+                    {/* Read More Icon */}
+                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="w-10 h-10 bg-[#017381]/90 backdrop-blur-sm rounded-full flex items-center justify-center">
+                        <ExternalLink className="w-5 h-5 text-white" />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Read More Icon */}
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-10 h-10 bg-[#017381]/90 backdrop-blur-sm rounded-full flex items-center justify-center">
-                      <ExternalLink className="w-5 h-5 text-white" />
+                  {/* Content */}
+                  <div className="p-8">
+                    <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">{post.description}</p>
+
+                    {/* Author and Read Time */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <User className="w-4 h-4 mr-2 text-[#017381]" />
+                        <span className="font-medium text-gray-700">{post.author}</span>
+                      </div>
+                      <div className="flex items-center text-gray-500 text-sm">
+                        <Clock className="w-4 h-4 mr-1 text-[#017381]" />
+                        <span>{post.readTime}</span>
+                      </div>
+                    </div>
+
+                    {/* Read More Button */}
+                    <div className="mt-6">
+                      <div className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2 group-hover:opacity-100">
+                        Read More
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-8">
-                  <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">{post.description}</p>
-
-                  {/* Author and Read Time */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <User className="w-4 h-4 mr-2 text-[#017381]" />
-                      <span className="font-medium text-gray-700">{post.author}</span>
-                    </div>
-                    <div className="flex items-center text-gray-500 text-sm">
-                      <Clock className="w-4 h-4 mr-1 text-[#017381]" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-
-                  {/* Read More Button */}
-                  <div className="mt-6">
-                    <button className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2  group-hover:opacity-100">
-                      Read More
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </button>
-                  </div>
-                </div>
-              </article>
+                </article>
+              </Link>
             )
           })}
         </div>
 
         {/* View All Button */}
         <div className="text-center mb-20">
-          <button className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center mx-auto gap-3">
+          <Link
+            href="/blog"
+            className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center mx-auto gap-3 w-fit"
+          >
             <span>View All Articles</span>
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
-
-      
-
-       
       </div>
     </div>
   )

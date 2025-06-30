@@ -169,6 +169,8 @@ export default function HealthPackagesPage() {
                 <Image
                   src={pkg.image || "/placeholder.svg"}
                   alt={pkg.title}
+                  width={600}
+                  height={400}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -218,7 +220,7 @@ export default function HealthPackagesPage() {
           <div className="w-full max-w-[700px] px-4 pt-16">
             <Image
               src={selectedImage || "/placeholder.svg"}
-              alt={selectedTitle}
+              alt={selectedTitle} width={800} height={600}
               className="w-full h-auto object-contain rounded-lg shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             />

@@ -4,8 +4,11 @@ import { useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Shield, Clock, Users, Award, Stethoscope, Building2, Phone, Star } from "lucide-react"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 export default function CEOMessagePage() {
+   const pathname = usePathname();
   useEffect(() => {
+     
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
@@ -23,7 +26,7 @@ export default function CEOMessagePage() {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [])
+  }, [pathname])
 
   const credentials = [
     "MPhil, MPH, MBBS",
@@ -97,6 +100,8 @@ export default function CEOMessagePage() {
                   <Image
                     src="/images/Brig.-Gen.-Dr.-AKM-Nasir-Uddin-Retd.-2-1.jpg?height=300&width=300"
                     alt="Brigadier General (Dr.) AKM Nasir Uddin"
+                    width={400}
+                    height={400}
                     className="w-72 h-72 rounded-full object-cover border-4 border-white/30"
                   />
                 </div>

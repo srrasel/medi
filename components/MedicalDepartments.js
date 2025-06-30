@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react"
 import { ArrowRight, ExternalLink, Stethoscope, Heart, Users, Award } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 const MedicalDepartments = () => {
   const [hoveredDepartment, setHoveredDepartment] = useState(null)
-  const [showAll, setShowAll] = useState(false)
   const [visibleCards, setVisibleCards] = useState(new Set())
 
   useEffect(() => {
@@ -28,174 +28,41 @@ const MedicalDepartments = () => {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [showAll])
+  }, [])
 
   const departments = [
     {
       name: "Department of Gynaecology",
       image: "/images/গাইনোকোলজি.jpg",
-      link: "https://pmchl.com/department-item/gynaecology/",
+      link: "/department/gynaecology/",
       category: "Women's Health",
       icon: Heart,
     },
     {
       name: "Department of Neonatology",
       image: "/images/NICU-1-Final.jpeg",
-      link: "https://pmchl.com/department-item/neonatology/",
+      link: "/department/neonatology/",
       category: "Pediatric Care",
       icon: Users,
     },
     {
       name: "Department of Opthalmology",
       image: "/images/OPTHALMOLOGY_Final.jpg",
-      link: "https://pmchl.com/department-item/department-of-opthalmolog/",
+      link: "/department/ophthalmology/",
       category: "Eye Care",
       icon: Stethoscope,
     },
     {
       name: "Department of Intensive Care",
       image: "/images/ICU-5.jpg",
-      link: "https://pmchl.com/department-item/department-of-intensive-care/",
+      link: "/department/intensive-care/",
       category: "Critical Care",
       icon: Heart,
     },
-    {
-      name: "Department of Endocrinology",
-      image: "/images/Endocrinology.jpg",
-      link: "https://pmchl.com/department-item/department-of-endocrinology/",
-      category: "Hormone Care",
-      icon: Award,
-    },
-    {
-      name: "Department of Hematology",
-      image: "/images/Medical-Specialty-1109x675-1.jpg",
-      link: "https://pmchl.com/department-item/department-of-hematology/",
-      category: "Blood Care",
-      icon: Heart,
-    },
-    {
-      name: "Department of Neuromedicine",
-      image: "/images/spinal-disorder-2.jpg",
-      link: "https://pmchl.com/department-item/department-of-nuromedicine/",
-      category: "Neurological Care",
-      icon: Stethoscope,
-    },
-    {
-      name: "Department of Internal Medicine",
-      image: "/images/internal-medicine.jpg",
-      link: "https://pmchl.com/department-item/department-of-internal-medicine/",
-      category: "General Medicine",
-      icon: Users,
-    },
-    {
-      name: "Department of Physical Medicine",
-      image: "/images/physical_Medicine.jpg",
-      link: "https://pmchl.com/department-item/department-of-physical-medicine/",
-      category: "Rehabilitation",
-      icon: Award,
-    },
-    {
-      name: "Department of Hepatobiliary",
-      image: "/images/liverdiagram.png",
-      link: "https://pmchl.com/department-item/department-of-hepatobiliary/",
-      category: "Liver Care",
-      icon: Heart,
-    },
-    {
-      name: "Department of Gastroenterology",
-      image: "/images/Gastroenterology-1.jpg",
-      link: "https://pmchl.com/department-item/department-of-gastroenterology/",
-      category: "Digestive Care",
-      icon: Stethoscope,
-    },
-    {
-      name: "Department of Radioncology",
-      image: "/images/1585218080116.png",
-      link: "https://pmchl.com/department-item/department-of-radioncology/",
-      category: "Cancer Care",
-      icon: Users,
-    },
-    {
-      name: "Department of Radiology and Imaging",
-      image: "/images/lab2.jpg",
-      link: "https://pmchl.com/department-item/department-of-radi-oncology/",
-      category: "Diagnostic Imaging",
-      icon: Award,
-    },
-    {
-      name: "Department of Paediatric Surgery",
-      image: "/images/padeatric.jpg",
-      link: "https://pmchl.com/department-item/department-of-paediatric-surgery/",
-      category: "Pediatric Surgery",
-      icon: Heart,
-    },
-    {
-      name: "Department of Paediatric Medicine",
-      image: "/images/padeatric.jpg",
-      link: "https://pmchl.com/department-item/paediatrics/",
-      category: "Child Care",
-      icon: Users,
-    },
-    {
-      name: "Department of Pathology and BioChemistry",
-      image: "/images/Department-of-Phatology-and-Biochemistry.jpg",
-      link: "https://pmchl.com/department-item/gastroenterology/",
-      category: "Laboratory",
-      icon: Stethoscope,
-    },
-    {
-      name: "Department of Critical Care",
-      image: "/images/patient-intensive-care.jpg",
-      link: "https://pmchl.com/department-item/department-of-critical-care/",
-      category: "Emergency Care",
-      icon: Heart,
-    },
-    {
-      name: "Department of General Surgery",
-      image: "/images/Critical-Care-Final.png",
-      link: "https://pmchl.com/department-item/department-of-general-surgery/",
-      category: "Surgical Care",
-      icon: Award,
-    },
-    {
-      name: "Department of Nephrology",
-      image: "/images/Nephrology.jpg",
-      link: "https://pmchl.com/department-item/nephrology/",
-      category: "Kidney Care",
-      icon: Users,
-    },
-    {
-      name: "Department of Urology",
-      image: "/images/urology.jpg",
-      link: "https://pmchl.com/department-item/urology/",
-      category: "Urological Care",
-      icon: Stethoscope,
-    },
-    {
-      name: "Department of Cardiology",
-      image: "/images/CCU-2-Final.jpeg",
-      link: "https://pmchl.com/department-item/cardiology/",
-      category: "Heart Care",
-      icon: Heart,
-    },
-    {
-      name: "Department of ENT, Head and Neck Surgery",
-      image: "/images/neck-hear.jpg",
-      link: "https://pmchl.com/department-item/ent-ear-nose-throat/",
-      category: "ENT Surgery",
-      icon: Award,
-    },
-    {
-      name: "Department of Dental Surgery",
-      image: "/images/Dental-1.jpg",
-      link: "https://pmchl.com/department-item/dental-surgery/",
-      category: "Dental Care",
-      icon: Users,
-    },
   ]
 
-  const displayedDepartments = showAll ? departments : departments.slice(0, 8)
-  const featuredImages = departments.slice(0, 6).map((dept) => dept.image)
+  const displayedDepartments = departments.slice(0, 6)
+  const featuredImages = departments.map((dept) => dept.image)
 
   const getDepartmentDescription = (name) => {
     const descriptions = {
@@ -210,10 +77,8 @@ const MedicalDepartments = () => {
         "Treatment of hormone-related disorders including diabetes, thyroid, and metabolic conditions.",
       "Department of Hematology":
         "Specialized care for blood disorders, cancers of the blood, and bone marrow diseases.",
-      "Department of Neuromedicine": "Comprehensive neurological care for brain, spine, and nervous system disorders.",
-      "Department of Internal Medicine":
-        "Primary care and treatment of adult diseases affecting internal organs and systems.",
     }
+
     return descriptions[name] || "Expert medical care and treatment in this specialized field of medicine."
   }
 
@@ -250,8 +115,9 @@ const MedicalDepartments = () => {
             <span className="block text-[#017381]">Every Specialty</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-           Discover our hospital&apos;s specialized departments, each dedicated to delivering top-tier medical care
-  with a focus on your unique health needs and comprehensive treatment solutions. </p>
+            Discover our hospital&apos;s specialized departments, each dedicated to delivering top-tier medical care
+            with a focus on your unique health needs and comprehensive treatment solutions.
+          </p>
         </div>
 
         {/* Statistics Section */}
@@ -290,11 +156,7 @@ const MedicalDepartments = () => {
               </p>
             </div>
 
-            <div
-              className={`space-y-4 transition-all duration-500 ${
-                showAll ? "max-h-none" : "max-h-[800px] overflow-hidden"
-              }`}
-            >
+            <div className="space-y-4">
               {displayedDepartments.map((dept, index) => {
                 const IconComponent = dept.icon
                 const isVisible = visibleCards.has(index)
@@ -325,6 +187,7 @@ const MedicalDepartments = () => {
                             className="object-cover group-hover:scale-110 transition-transform duration-300"
                           />
                         </div>
+
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <div
@@ -348,6 +211,7 @@ const MedicalDepartments = () => {
                               {dept.category}
                             </span>
                           </div>
+
                           <h4
                             className={`text-lg font-bold mb-3 transition-colors ${
                               hoveredDepartment === index ? "text-white" : "text-gray-800 group-hover:text-white"
@@ -355,6 +219,7 @@ const MedicalDepartments = () => {
                           >
                             {dept.name}
                           </h4>
+
                           <p
                             className={`text-sm leading-relaxed transition-colors ${
                               hoveredDepartment === index
@@ -386,85 +251,108 @@ const MedicalDepartments = () => {
               })}
             </div>
 
-            {/* Show More/Less Button */}
-            <div className="pt-8 flex gap-4">
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-8 py-4 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center space-x-3"
+            {/* View All Departments Button */}
+            <div className="pt-8">
+              <Link
+                href="/departments"
+                className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-8 py-4 rounded-full font-bold transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center space-x-3 w-fit"
               >
-                <span>{showAll ? "Show Less Departments" : `View All ${departments.length} Departments`}</span>
-                <ArrowRight
-                  className={`w-5 h-5 transition-transform ${showAll ? "rotate-180" : "group-hover:translate-x-1"}`}
-                />
-              </button>
+                <span>View All Departments</span>
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
 
           {/* Enhanced Images Gallery */}
           <div className="relative">
-            <div className="grid grid-cols-2 gap-6 h-[700px]">
-              {/* First Column */}
-              <div className="space-y-6">
-                <div className="h-52 rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl border-4 border-white">
-                  <Image
-                    src={featuredImages[0] || "/placeholder.svg"}
-                    alt="Medical department"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="h-64 rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl border-4 border-white">
-                  <Image
-                    src={featuredImages[1] || "/placeholder.svg"}
-                    alt="Medical equipment"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+            {/* Main Gallery Grid */}
+            <div className="relative h-[800px]">
+              {/* Large Featured Image */}
+              <div className="absolute top-0 left-0 w-3/5 h-2/5 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group">
+                <Image
+                  src={featuredImages[0] || "/placeholder.svg"}
+                  alt="Medical department"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
-              {/* Second Column */}
-              <div className="space-y-6 pt-12">
-                <div className="h-80 rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl border-4 border-white">
-                  <Image
-                    src={featuredImages[2] || "/placeholder.svg"}
-                    alt="Patient care"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="h-48 rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl border-4 border-white">
-                  <Image
-                    src={featuredImages[3] || "/placeholder.svg"}
-                    alt="Medical consultation"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+              {/* Top Right Image */}
+              <div className="absolute top-0 right-0 w-2/5 h-1/3 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group ml-4">
+                <Image
+                  src={featuredImages[1] || "/placeholder.svg"}
+                  alt="Medical equipment"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Middle Left Image */}
+              <div className="absolute top-1/2 left-0 w-2/5 h-1/3 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group -translate-y-1/2 mt-4">
+                <Image
+                  src={featuredImages[2] || "/placeholder.svg"}
+                  alt="Patient care"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Middle Right Large Image */}
+              <div className="absolute top-1/3 right-0 w-3/5 h-2/5 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group ml-4 mt-4">
+                <Image
+                  src={featuredImages[3] || "/placeholder.svg"}
+                  alt="Medical consultation"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Bottom Left Image */}
+              <div className="absolute bottom-0 left-0 w-1/2 h-1/4 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group">
+                <Image
+                  src={ "/images/Endocrinology.jpg"|| "/placeholder.svg"}
+                  alt="Medical professional"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Bottom Right Image */}
+              <div className="absolute bottom-0 right-0 w-1/2 h-1/4 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-700 hover:shadow-3xl border-4 border-white group ml-4">
+                <Image
+                  src={"/images/Medical-Specialty-1109x675-1.jpg" || "/placeholder.svg"}
+                  alt="Medical facility"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
             </div>
 
-            {/* Enhanced Floating Images */}
-            <div className="absolute -top-6 -right-6 w-36 h-36 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-110 transition-all duration-500 border-4 border-white rotate-12 hover:rotate-0">
-              <Image
-                src={featuredImages[4] || "/placeholder.svg"}
-                alt="Medical professional"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="absolute -bottom-8 -left-8 w-28 h-28 rounded-3xl overflow-hidden shadow-2xl transform hover:scale-110 transition-all duration-500 border-4 border-white -rotate-12 hover:rotate-0">
-              <Image
-                src={featuredImages[5] || "/placeholder.svg"}
-                alt="Medical facility"
-                fill
-                className="object-cover"
-              />
+            {/* Floating Decorative Elements */}
+            <div className="absolute -top-8 -right-8 w-20 h-20 rounded-full bg-gradient-to-r from-[#017381] to-[#025a65] shadow-2xl animate-pulse flex items-center justify-center">
+              <Heart className="w-8 h-8 text-white" />
             </div>
 
-            {/* Decorative Elements */}
-            <div className="absolute top-1/4 -left-4 w-8 h-8 bg-gradient-to-r from-[#017381] to-[#025a65] rounded-full shadow-lg animate-pulse"></div>
-            <div className="absolute bottom-1/3 -right-2 w-6 h-6 bg-gradient-to-r from-[#025a65] to-[#034a52] rounded-full shadow-lg animate-pulse delay-500"></div>
+            <div className="absolute -bottom-6 -left-6 w-16 h-16 rounded-full bg-gradient-to-r from-[#025a65] to-[#034a52] shadow-2xl animate-pulse delay-500 flex items-center justify-center">
+              <Stethoscope className="w-6 h-6 text-white" />
+            </div>
+
+            <div className="absolute top-1/3 -left-4 w-12 h-12 rounded-full bg-gradient-to-r from-[#017381]/80 to-[#025a65]/80 shadow-xl animate-pulse delay-1000 flex items-center justify-center">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+
+            <div className="absolute bottom-1/4 -right-4 w-14 h-14 rounded-full bg-gradient-to-r from-[#025a65]/80 to-[#034a52]/80 shadow-xl animate-pulse delay-700 flex items-center justify-center">
+              <Award className="w-6 h-6 text-white" />
+            </div>
+
+            {/* Gradient Overlay for Depth */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#017381]/5 rounded-3xl pointer-events-none"></div>
           </div>
         </div>
       </div>

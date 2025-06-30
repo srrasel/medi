@@ -58,21 +58,24 @@ const HospitalHeroSection = () => {
       description: "Expert medical professionals at your service",
       icon: <Stethoscope className="w-6 h-6 md:w-7 md:h-7" />,
       href: "/doctors",
-      gradient: "from-[#017381] to-[#025a65]",
+      gradient: "from-blue-500 to-blue-600",
+      bgColor: "bg-gradient-to-br from-blue-50 to-blue-100",
     },
     {
       title: "Locate Us",
       description: "Find our hospital location and directions",
       icon: <MapPin className="w-6 h-6 md:w-7 md:h-7" />,
       href: "/contact",
-      gradient: "from-[#025a65] to-[#034a52]",
+      gradient: "from-green-500 to-green-600",
+      bgColor: "bg-gradient-to-br from-green-50 to-green-100",
     },
     {
       title: "Book Appointment",
       description: "Schedule your consultation today",
       icon: <Calendar className="w-6 h-6 md:w-7 md:h-7" />,
       href: "/contact",
-      gradient: "from-[#017381] to-[#025a65]",
+      gradient: "from-purple-500 to-purple-600",
+      bgColor: "bg-gradient-to-br from-purple-50 to-purple-100",
     },
   ]
 
@@ -80,6 +83,7 @@ const HospitalHeroSection = () => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 6000)
+
     return () => clearInterval(timer)
   }, [slides.length])
 
@@ -102,7 +106,7 @@ const HospitalHeroSection = () => {
               index === currentSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
             }`}
           >
-            {/* Background Image with Light Overlay */}
+            {/* Background Image - Clean without overlays */}
             <div className="absolute inset-0">
               <Image
                 src={slide.image || "/placeholder.svg?height=800&width=1200"}
@@ -111,10 +115,6 @@ const HospitalHeroSection = () => {
                 className="object-cover"
                 priority={index === 0}
               />
-              {/* Light overlay for better text readability */}
-              <div className="absolute inset-0 bg-black/20"></div>
-              {/* Gradient overlay for professional look */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#017381]/30 via-transparent to-[#025a65]/20"></div>
             </div>
 
             {/* Content */}
@@ -122,7 +122,7 @@ const HospitalHeroSection = () => {
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Mobile Layout */}
                 <div className="block lg:hidden text-center">
-                  <div className="max-w-sm sm:max-w-md mx-auto bg-black/30 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+                  <div className="max-w-sm sm:max-w-md mx-auto bg-gradient-to-br from-indigo-600/95 to-purple-700/95 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
                     <div className="overflow-hidden">
                       <h1
                         className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 leading-tight transform transition-all duration-1000 delay-300 ${
@@ -134,7 +134,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden">
                       <h2
-                        className={`text-lg sm:text-xl font-semibold text-[#b8e6ea] mb-3 transform transition-all duration-1000 delay-400 ${
+                        className={`text-lg sm:text-xl font-semibold text-yellow-300 mb-3 transform transition-all duration-1000 delay-400 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
@@ -143,7 +143,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden">
                       <p
-                        className={`text-sm sm:text-base text-slate-200 mb-6 leading-relaxed transform transition-all duration-1000 delay-500 ${
+                        className={`text-sm sm:text-base text-indigo-100 mb-6 leading-relaxed transform transition-all duration-1000 delay-500 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
@@ -152,7 +152,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden flex flex-col sm:flex-row gap-3 justify-center">
                       <button
-                        className={`group bg-white text-[#017381] px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 ${
+                        className={`group bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         } transition-all duration-1000 delay-700`}
                       >
@@ -176,7 +176,7 @@ const HospitalHeroSection = () => {
 
                 {/* Desktop Layout */}
                 <div className="hidden lg:block max-w-6xl">
-                  <div className="bg-black/20 backdrop-blur-sm rounded-3xl p-12 border border-white/20 max-w-4xl">
+                  <div className="bg-gradient-to-br from-slate-800/95 to-gray-900/95 backdrop-blur-sm rounded-3xl p-12 border border-white/20 max-w-4xl shadow-2xl">
                     <div className="overflow-hidden">
                       <h1
                         className={`text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 leading-tight transform transition-all duration-1000 delay-300 ${
@@ -188,7 +188,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden">
                       <h2
-                        className={`text-2xl lg:text-3xl font-semibold text-[#b8e6ea] mb-4 transform transition-all duration-1000 delay-400 ${
+                        className={`text-2xl lg:text-3xl font-semibold text-emerald-400 mb-4 transform transition-all duration-1000 delay-400 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
@@ -197,7 +197,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden">
                       <p
-                        className={`text-xl lg:text-2xl text-slate-200 mb-8 max-w-3xl leading-relaxed transform transition-all duration-1000 delay-500 ${
+                        className={`text-xl lg:text-2xl text-gray-200 mb-8 max-w-3xl leading-relaxed transform transition-all duration-1000 delay-500 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         }`}
                       >
@@ -206,7 +206,7 @@ const HospitalHeroSection = () => {
                     </div>
                     <div className="overflow-hidden flex gap-4">
                       <button
-                        className={`group bg-white text-[#017381] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-3 ${
+                        className={`group bg-white text-slate-800 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center space-x-3 ${
                           index === currentSlide ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
                         } transition-all duration-1000 delay-700`}
                       >
@@ -283,7 +283,7 @@ const HospitalHeroSection = () => {
               {quickActions.map((action, index) => (
                 <div
                   key={index}
-                  className="group cursor-pointer bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-2xl p-6 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-[#017381]/20 transform hover:-translate-y-2"
+                  className={`group cursor-pointer ${action.bgColor} hover:shadow-2xl p-6 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-opacity-50 transform hover:-translate-y-2`}
                 >
                   <div className="flex items-center space-x-5">
                     <div
@@ -292,20 +292,20 @@ const HospitalHeroSection = () => {
                       {action.icon}
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#017381] transition-colors mb-2">
+                      <h3 className="font-bold text-xl text-gray-900 group-hover:text-gray-800 transition-colors mb-2">
                         {action.title}
                       </h3>
                       <p className="text-gray-600 leading-relaxed">{action.description}</p>
                     </div>
-                    <ArrowRight className="w-6 h-6 text-[#017381]  group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300" />
+                    <ArrowRight className="w-6 h-6 text-gray-700 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300" />
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Mobile Emergency Hotline */}
-            <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-red-700 to-red-800  hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-700 hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -314,16 +314,19 @@ const HospitalHeroSection = () => {
                     </div>
                     <div>
                       <h3 className="font-bold text-xl mb-1">Emergency Hotline</h3>
-                      <p className="text-red-100">24/7 Medical Support</p>
+                      <p className="text-orange-100">24/7 Medical Support</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <a href="tel:01902556070" className="block text-2xl font-bold hover:text-red-100 transition-colors">
+                    <a
+                      href="tel:01902556070"
+                      className="block text-2xl font-bold hover:text-orange-100 transition-colors"
+                    >
                       01902556070
                     </a>
                     <a
                       href="tel:09666997997"
-                      className="block text-lg font-semibold text-red-100 hover:text-white transition-colors"
+                      className="block text-lg font-semibold text-orange-100 hover:text-white transition-colors"
                     >
                       09666997997
                     </a>
@@ -346,7 +349,7 @@ const HospitalHeroSection = () => {
               {quickActions.map((action, index) => (
                 <div
                   key={index}
-                  className="group cursor-pointer bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-2xl p-8 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-[#017381]/20 transform hover:-translate-y-4"
+                  className={`group cursor-pointer ${action.bgColor} hover:shadow-2xl p-8 rounded-3xl transition-all duration-500 border border-gray-100 hover:border-opacity-50 transform hover:-translate-y-4`}
                 >
                   <div className="text-center">
                     <div
@@ -354,11 +357,11 @@ const HospitalHeroSection = () => {
                     >
                       {action.icon}
                     </div>
-                    <h3 className="font-bold text-2xl text-gray-900 mb-3 group-hover:text-[#017381] transition-colors">
+                    <h3 className="font-bold text-2xl text-gray-900 mb-3 group-hover:text-gray-800 transition-colors">
                       {action.title}
                     </h3>
                     <p className="text-gray-600 leading-relaxed mb-4">{action.description}</p>
-                    <div className="flex items-center justify-center text-[#017381] font-semibold  group-hover:opacity-100 transition-all duration-300">
+                    <div className="flex items-center justify-center text-gray-700 font-semibold group-hover:opacity-100 transition-all duration-300">
                       <span>Learn More</span>
                       <ArrowRight className="w-5 h-5 ml-2 transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
@@ -367,8 +370,8 @@ const HospitalHeroSection = () => {
               ))}
 
               {/* Desktop Emergency Hotline */}
-              <div className="group cursor-pointer bg-gradient-to-br from-red-600 to-red-700 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-4 transition-all duration-500 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-700 to-red-800  group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="group cursor-pointer bg-gradient-to-br from-orange-500 to-red-600 text-white p-8 rounded-3xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-4 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-600 to-red-700 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative z-10 text-center">
                   <div className="p-6 bg-white/20 rounded-3xl inline-block mb-6 group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
                     <Ambulance className="w-10 h-10" />
@@ -376,17 +379,17 @@ const HospitalHeroSection = () => {
                   <h3 className="font-bold text-2xl mb-4">Emergency Hotline</h3>
                   <a
                     href="tel:01902556070"
-                    className="block text-3xl font-bold mb-2 hover:text-red-100 transition-colors"
+                    className="block text-3xl font-bold mb-2 hover:text-orange-100 transition-colors"
                   >
                     01902556070
                   </a>
                   <a
                     href="tel:09666997997"
-                    className="block text-xl font-semibold mb-4 text-red-100 hover:text-white transition-colors"
+                    className="block text-xl font-semibold mb-4 text-orange-100 hover:text-white transition-colors"
                   >
                     09666997997
                   </a>
-                  <p className="text-red-100">24/7 Emergency Support</p>
+                  <p className="text-orange-100">24/7 Emergency Support</p>
                 </div>
               </div>
             </div>

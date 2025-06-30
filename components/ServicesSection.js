@@ -1,7 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowRight, Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard } from 'lucide-react'
+import {
+  ArrowRight,
+  Heart,
+  Activity,
+  Baby,
+  Users,
+  Droplets,
+  Dumbbell,
+  Search,
+  Scan,
+  CreditCard,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -129,10 +140,7 @@ const ServicesSection = () => {
             Comprehensive
             <span className="block text-[#b8e6ea]">Healthcare Solutions</span>
           </h2>
-          <p className="text-xl text-slate-200 leading-relaxed max-w-4xl mx-auto">
-            Our state-of-the-art facility is equipped with the latest medical technology, and our team of experienced
-            professionals is committed to delivering personalized, compassionate care that exceeds expectations.
-          </p>
+         
         </div>
 
         {/* Services Grid */}
@@ -185,15 +193,24 @@ const ServicesSection = () => {
                 <div className="p-8">
                   <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{service.description}</p>
 
-                  
+                  <Link
+                    href={service.read_more_link}
+                   
+                    className="inline-flex items-center gap-3 bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:gap-4 group-hover:scale-105"
+                  >
+                    Learn More
+                    
+                  </Link>
                 </div>
               </div>
             )
           })}
         </div>
 
+       
 
-        
+      
+
       </div>
     </div>
   )

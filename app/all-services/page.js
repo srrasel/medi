@@ -1,227 +1,252 @@
-"use client"
-
-import { useEffect } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard, ExternalLink } from "lucide-react"
 import Image from "next/image"
-export default function AllServicesPage() {
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    }
+import { notFound } from "next/navigation"
+import { Heart, Users, Stethoscope, Award } from "lucide-react"
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-fade-in-up")
-        }
-      })
-    }, observerOptions)
+const departments = [
+  {
+    name: "Department of Gynaecology",
+    image: "/images/গাইনোকোলজি.jpg",
+    link: "/gynaecology/",
+    category: "Women's Health",
+    icon: Heart,
+    slug: "gynaecology",
+  },
+  {
+    name: "Department of Neonatology",
+    image: "/images/NICU-1-Final.jpeg",
+    link: "/neonatology/",
+    category: "Pediatric Care",
+    icon: Users,
+    slug: "neonatology",
+  },
+  {
+    name: "Department of Opthalmology",
+    image: "/images/OPTHALMOLOGY_Final.jpg",
+    link: "/department-of-opthalmolog/",
+    category: "Eye Care",
+    icon: Stethoscope,
+    slug: "opthalmology",
+  },
+  {
+    name: "Department of Intensive Care",
+    image: "/images/ICU-5.jpg",
+    link: "/department-of-intensive-care/",
+    category: "Critical Care",
+    icon: Heart,
+    slug: "intensive-care",
+  },
+  {
+    name: "Department of Endocrinology",
+    image: "/images/Endocrinology.jpg",
+    link: "/department-of-endocrinology/",
+    category: "Hormone Care",
+    icon: Award,
+    slug: "endocrinology",
+  },
+  {
+    name: "Department of Hematology",
+    image: "/images/Medical-Specialty-1109x675-1.jpg",
+    link: "/department-of-hematology/",
+    category: "Blood Care",
+    icon: Heart,
+    slug: "hematology",
+  },
+  {
+    name: "Department of Neuromedicine",
+    image: "/images/spinal-disorder-2.jpg",
+    link: "/department-of-nuromedicine/",
+    category: "Neurological Care",
+    icon: Stethoscope,
+    slug: "neuromedicine",
+  },
+  {
+    name: "Department of Internal Medicine",
+    image: "/images/internal-medicine.jpg",
+    link: "/department-of-internal-medicine/",
+    category: "General Medicine",
+    icon: Users,
+    slug: "internal-medicine",
+  },
+  {
+    name: "Department of Physical Medicine",
+    image: "/images/physical_Medicine.jpg",
+    link: "/department-of-physical-medicine/",
+    category: "Rehabilitation",
+    icon: Award,
+    slug: "physical-medicine",
+  },
+  {
+    name: "Department of Hepatobiliary",
+    image: "/images/liverdiagram.png",
+    link: "/department-of-hepatobiliary/",
+    category: "Liver Care",
+    icon: Heart,
+    slug: "hepatobiliary",
+  },
+  {
+    name: "Department of Gastroenterology",
+    image: "/images/Gastroenterology-1.jpg",
+    link: "/department-of-gastroenterology/",
+    category: "Digestive Care",
+    icon: Stethoscope,
+    slug: "gastroenterology",
+  },
+  {
+    name: "Department of Radioncology",
+    image: "/images/1585218080116.png",
+    link: "/department-of-radioncology/",
+    category: "Cancer Care",
+    icon: Users,
+    slug: "radioncology",
+  },
+  {
+    name: "Department of Radiology and Imaging",
+    image: "/images/lab2.jpg",
+    link: "/department-of-radi-oncology/",
+    category: "Diagnostic Imaging",
+    icon: Award,
+    slug: "radiology-imaging",
+  },
+  {
+    name: "Department of Paediatric Surgery",
+    image: "/images/padeatric.jpg",
+    link: "/department-of-paediatric-surgery/",
+    category: "Pediatric Surgery",
+    icon: Heart,
+    slug: "paediatric-surgery",
+  },
+  {
+    name: "Department of Paediatric Medicine",
+    image: "/images/padeatric.jpg",
+    link: "/paediatrics/",
+    category: "Child Care",
+    icon: Users,
+    slug: "paediatric-medicine",
+  },
+  {
+    name: "Department of Pathology and BioChemistry",
+    image: "/images/Department-of-Phatology-and-Biochemistry.jpg",
+    link: "/gastroenterology/",
+    category: "Laboratory",
+    icon: Stethoscope,
+    slug: "pathology-biochemistry",
+  },
+  {
+    name: "Department of Critical Care",
+    image: "/images/patient-intensive-care.jpg",
+    link: "/department-of-critical-care/",
+    category: "Emergency Care",
+    icon: Heart,
+    slug: "critical-care",
+  },
+  {
+    name: "Department of General Surgery",
+    image: "/images/Critical-Care-Final.png",
+    link: "/department-of-general-surgery/",
+    category: "Surgical Care",
+    icon: Award,
+    slug: "general-surgery",
+  },
+  {
+    name: "Department of Nephrology",
+    image: "/images/Nephrology.jpg",
+    link: "/nephrology/",
+    category: "Kidney Care",
+    icon: Users,
+    slug: "nephrology",
+  },
+  {
+    name: "Department of Urology",
+    image: "/images/urology.jpg",
+    link: "/urology/",
+    category: "Urological Care",
+    icon: Stethoscope,
+    slug: "urology",
+  },
+  {
+    name: "Department of Cardiology",
+    image: "/images/CCU-2-Final.jpeg",
+    link: "/cardiology/",
+    category: "Heart Care",
+    icon: Heart,
+    slug: "cardiology",
+  },
+  {
+    name: "Department of ENT, Head and Neck Surgery",
+    image: "/images/neck-hear.jpg",
+    link: "/ent-ear-nose-throat/",
+    category: "ENT Surgery",
+    icon: Award,
+    slug: "ent-head-neck-surgery",
+  },
+  {
+    name: "Department of Dental Surgery",
+    image: "/images/Dental-1.jpg",
+    link: "/dental-surgery/",
+    category: "Dental Care",
+    icon: Users,
+    slug: "dental-surgery",
+  },
+]
 
-    const elements = document.querySelectorAll(".animate-on-scroll")
-    elements.forEach((el) => observer.observe(el))
+export default async function SingleDepartmentPage({ params }) {
+  const { slug } = await params
 
-    return () => observer.disconnect()
-  }, [])
+  // Find the department by slug
+  const department = departments.find((dept) => dept.slug === slug)
 
-  const services = [
-    {
-      title: "ICU",
-      image_url: "/images/ICU-Final.jpeg",
-      icon: Heart,
-      description:
-        "Intensive Care Unit providing critical care for life-threatening conditions with advanced monitoring and life support systems.",
-    },
-    {
-      title: "CCU",
-      image_url: "/images/CCU-Final.jpeg",
-      icon: Activity,
-      description:
-        "Coronary Care Unit specialized in treating heart conditions with state-of-the-art cardiac monitoring equipment.",
-    },
-    {
-      title: "NICU",
-      image_url: "/images/NICU-Final.jpeg",
-      icon: Baby,
-      description: "Neonatal Intensive Care Unit providing specialized care for premature and critically ill newborns.",
-    },
-    {
-      title: "PICU",
-      image_url: "/images/464683711_1058648339603436_1958753658212568146_n-1.jpg",
-      icon: Users,
-      description:
-        "Pediatric Intensive Care Unit offering comprehensive critical care services for children and infants.",
-    },
-    {
-      title: "Dialysis",
-      image_url: "/images/Dialysis-1-scaled.jpg",
-      icon: Droplets,
-      description:
-        "Advanced dialysis services for patients with kidney failure, providing life-sustaining treatment with modern equipment.",
-    },
-    {
-      title: "Physiotherapy",
-      image_url: "/images/Physioteraphy-scaled.jpg",
-      icon: Dumbbell,
-      description:
-        "Comprehensive physiotherapy services for rehabilitation, pain management, and mobility improvement.",
-    },
-    {
-      title: "Endoscopy",
-      image_url: "/images/Endoscopy-scaled.jpg",
-      icon: Search,
-      description:
-        "Advanced endoscopic procedures for diagnosis and treatment of gastrointestinal and respiratory conditions.",
-    },
-    {
-      title: "CT-Scan",
-      image_url: "/images/CT-Scan-scaled.jpg",
-      icon: Scan,
-      description:
-        "High-resolution CT scanning services for accurate diagnosis and detailed imaging of internal structures.",
-    },
-    {
-      title: "Cash & Billing",
-      image_url: "/images/Cash-Billing-scaled.jpg",
-      icon: CreditCard,
-      description: "Streamlined billing and payment services with transparent pricing and multiple payment options.",
-    },
-  ]
+  // If department not found, return 404
+  if (!department) {
+    notFound()
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52]"></div>
-        <div className="absolute inset-0 bg-black/20"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      {/* Department Content */}
+      <div className="container mx-auto px-4 py-20">
+        <div className="max-w-4xl mx-auto">
+          {/* Department Title */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4 leading-tight">{department.name}</h1>
+          </div>
 
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl animate-pulse delay-500"></div>
-        </div>
-
-        <div className="relative z-10 container mx-auto px-4 text-center text-white">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-              All Services
-            </h1>
-            <p className="text-xl md:text-2xl leading-relaxed font-light max-w-3xl mx-auto">
-              Comprehensive healthcare services with state-of-the-art medical facilities and expert care
-            </p>
-            <div className="mt-8 flex justify-center">
-              <div className="w-24 h-1 bg-gradient-to-r from-white to-slate-200 rounded-full"></div>
-            </div>
+          {/* Department Image */}
+          <div className="relative w-full h-96 md:h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+            <Image
+              src={department.image || "/placeholder.svg"}
+              alt={department.name}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
         </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Grid Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#017381] mb-6">Our Medical Services</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-[#017381] to-[#025a65] mx-auto rounded-full"></div>
-              <p className="text-xl text-slate-600 mt-6 max-w-3xl mx-auto">
-                Pro-Active Hospital offers a comprehensive range of medical services with cutting-edge technology and
-                expert healthcare professionals
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {services.map((service, index) => {
-                const IconComponent = service.icon
-                return (
-                  <Card
-                    key={index}
-                    className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000 hover:scale-105 hover:shadow-2xl group cursor-pointer border-0 shadow-lg overflow-hidden"
-                    style={{ transitionDelay: `${index * 150}ms` }}
-                  >
-                    <div className="relative h-64 overflow-hidden">
-                      <Image
-                        src={service.image_url || "/placeholder.svg"}
-                        alt={service.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        onError={(e) => {
-                          e.target.src = `/placeholder.svg?height=256&width=400&text=${service.title}`
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      <div className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <IconComponent className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="absolute bottom-4 left-4">
-                        <h3 className="text-2xl font-bold text-white">{service.title}</h3>
-                      </div>
-                    </div>
-
-                    <CardContent className="p-6">
-                      <p className="text-slate-600 leading-relaxed mb-6 line-clamp-3">{service.description}</p>
-
-                   
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-100 to-slate-200">
-        <div className="container mx-auto px-4">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-[#017381] mb-2">24/7</h3>
-                <p className="text-slate-600">Emergency Services</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-[#017381] mb-2">50+</h3>
-                <p className="text-slate-600">Expert Doctors</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Activity className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-[#017381] mb-2">9+</h3>
-                <p className="text-slate-600">Specialized Services</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Scan className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-[#017381] mb-2">100%</h3>
-                <p className="text-slate-600">Modern Equipment</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-   
-
-     
+      </div>
     </div>
   )
+}
+
+// Generate static params for all departments
+export async function generateStaticParams() {
+  return departments.map((department) => ({
+    slug: department.slug,
+  }))
+}
+
+// Generate metadata for each department page
+export async function generateMetadata({ params }) {
+  const { slug } = await params
+  const department = departments.find((dept) => dept.slug === slug)
+
+  if (!department) {
+    return {
+      title: "Department Not Found",
+    }
+  }
+
+  return {
+    title: `${department.name} - Pro-Active Hospital`,
+    description: `${department.name} at Pro-Active Hospital - ${department.category}`,
+  }
 }
