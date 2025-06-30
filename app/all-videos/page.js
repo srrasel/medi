@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Play, Clock, Calendar, ArrowLeft, Search, Filter, ChevronDown } from 'lucide-react'
-
+import Image from "next/image"
 export default function VideosPage() {
   const [visibleCards, setVisibleCards] = useState(new Set())
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -361,10 +361,12 @@ export default function VideosPage() {
                     style={{ transitionDelay: `${index * 150}ms` }}
                   >
                     <div className="relative overflow-hidden h-64">
-                      <img
+                      <Image
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         src={video.thumbnail || "/placeholder.svg"}
-                        alt={video.title}
+                        alt={video.title} 
+                        width={600}
+                        height={400}
                         onError={(e) => {
                           e.target.src = "/placeholder.svg?height=300&width=500"
                         }}

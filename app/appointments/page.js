@@ -386,7 +386,7 @@ export default function AppointmentsPage() {
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Medical Emergency?</h2>
             <p className="text-xl mb-8 text-red-100">
-              For immediate medical attention, don't wait for an appointment. Call our emergency services now.
+              For immediate medical attention, don&apos;t wait for an appointment. Call our emergency services now.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

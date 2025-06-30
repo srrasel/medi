@@ -325,7 +325,7 @@ export default function DepartmentPage() {
             <Stethoscope className="w-12 h-12 text-red-500" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Department Not Found</h1>
-          <p className="text-gray-600 mb-8">The department you're looking for doesn't exist or may have been moved.</p>
+          <p className="text-gray-600 mb-8">The department you&apos;re looking for doesn&apos;t exist or may have been moved.</p>
           <Link
             href="/departments"
             className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
