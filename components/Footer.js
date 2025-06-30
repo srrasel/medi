@@ -133,7 +133,7 @@ const Footer = () => {
         <div className="mt-12 border-t border-white/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-white/80 text-center md:text-left">
-              &copy; {new Date().getFullYear()} Pro-Active Medical College Hospital Ltd. All rights reserved.
+              &copy; {new Date().getFullYear()} Pro-Active Medical College Hospital Ltd By Fara IT Limited. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center md:justify-end space-x-4 text-sm">
               <a href="#" className="hover:underline text-white/70 transition-colors flex items-center">
