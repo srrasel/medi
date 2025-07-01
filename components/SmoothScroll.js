@@ -5,33 +5,30 @@ import Lenis from "@studio-freight/lenis";
 
 export default function SmoothScrollWrapper({ children }) {
   useEffect(() => {
-    // Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.2, // Animation duration
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing function
-      smooth: true, // Enable smooth scrolling
-      direction: "vertical", // Scroll direction
-      gestureDirection: "vertical", // Gesture direction for touch
-      smoothTouch: false, // Disable smooth scrolling on touch devices (optional)
+      duration: 0.5, // Faster scroll duration (reduced from 1.2)
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -15 * t)), // More responsive easing
+      smooth: true,
+      direction: "vertical",
+      gestureDirection: "vertical",
+      smoothTouch: false,
+      touchMultiplier: 1.5, // Better touch response
+      infinite: false,
     });
 
-    // Log initialization for debugging
-    console.log("SmoothScrollWrapper initialized");
-
-    // Animation frame loop for Lenis
-    function raf(time) {
+    // Optimized animation frame loop
+    let animationFrameId;
+    const raf = (time) => {
       lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+      animationFrameId = requestAnimationFrame(raf);
+    };
+    animationFrameId = requestAnimationFrame(raf);
 
-    requestAnimationFrame(raf);
-
-    // Clean up on unmount
     return () => {
-      console.log("SmoothScrollWrapper destroyed");
+      cancelAnimationFrame(animationFrameId);
       lenis.destroy();
     };
-  }, []); // Empty dependency array to run only once per page load
+  }, []);
 
   return <div>{children}</div>;
 }
