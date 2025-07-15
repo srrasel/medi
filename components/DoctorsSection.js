@@ -1,21 +1,125 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Star, Stethoscope, Award, Users, Heart, Eye, Brain, Activity } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Stethoscope,
+  Users,
+  Heart,
+  Eye,
+  Brain,
+  Activity,
+  Syringe,
+  HandHeart,
+  Monitor,
+  SmileIcon as Tooth,
+  UserCheck,
+  Apple,
+  AlertTriangle,
+  Pill,
+  ScanLine,
+  Ear,
+  User,
+  Droplets,
+  Shield,
+  Baby,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
+// Helper function to map specialty to icon
+const getSpecialtyIcon = (specialty) => {
+  switch (specialty) {
+    case "Child Specialist":
+      return Users
+    case "Psychiatry":
+    case "Neuro Surgery Specialist":
+    case "Neuro Medicine Specialist":
+      return Brain
+    case "General & Laparoscopic Surgery":
+    case "Urology Specialist":
+      return Stethoscope
+    case "Blood Disease & Medicine Specialist":
+      return Heart
+    case "Opthalmology (Eye)":
+      return Eye
+    case "Anesthesia and Pain Medicine":
+      return Syringe
+    case "Cancer Care Centre":
+      return HandHeart
+    case "Cardiology Care Centre":
+      return Heart
+    case "Cardiothoracic & Vascular Surgery":
+      return Activity
+    case "Cardiothoracic Anaesthesia":
+      return Monitor
+    case "Counselling Centre":
+      return Users
+    case "Critical Care Units":
+      return Shield
+    case "Dental & Maxillofacial Surgery":
+      return Tooth
+    case "Dermatology & Venereology":
+      return UserCheck
+    case "Diabetology & Endocrinology":
+      return Pill
+    case "Diagnostic & Interventional Radiology":
+      return ScanLine
+    case "Dietetics & Nutrition":
+      return Apple
+    case "ENT & Head Neck Surgery":
+      return Ear
+    case "Department of Gynaecology":
+      return User
+    case "Department of Neonatology":
+      return Baby
+    case "Department of Intensive Care":
+      return Activity
+    case "Department of Hematology":
+      return Droplets
+    case "Accident & Emergency":
+      return AlertTriangle
+    default:
+      return Stethoscope // Default icon
+  }
+}
+
 const DoctorsSection = () => {
+  const [doctors, setDoctors] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [visibleCards, setVisibleCards] = useState(new Set())
   const [cardsPerView, setCardsPerView] = useState(4)
 
+  // Fetch doctors data from API
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch("/api/doctors") // Fetch from your new API route
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        setDoctors(data)
+       
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDoctors()
+  }, [])
+
+  // Intersection Observer for animations
   useEffect(() => {
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
     }
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -25,12 +129,15 @@ const DoctorsSection = () => {
       })
     }, observerOptions)
 
-    const elements = document.querySelectorAll(".doctor-card")
-    elements.forEach((el) => observer.observe(el))
+    if (!loading && doctors.length > 0) {
+      const elements = document.querySelectorAll(".doctor-card")
+      elements.forEach((el) => observer.observe(el))
+    }
 
     return () => observer.disconnect()
-  }, [])
+  }, [loading, doctors])
 
+  // Responsive cards per view
   useEffect(() => {
     const handleResize = () => {
       if (typeof window !== "undefined") {
@@ -43,196 +150,35 @@ const DoctorsSection = () => {
         else setCardsPerView(4) // Desktop
       }
     }
-
     handleResize()
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const doctors = [
-    {
-      id: 1,
-      name: "Prof. Dr. Abdul Hannan",
-      specialty: "Child Specialist",
-      qualifications:
-        "MBBS, FCPS(Ped), Trained in Epidem: & Biostat: (Pakistan), Fellow, Pediatric Cardiology (USA), Trained in Eco-cardiography (Madraz)",
-      image: "/images/package/Pro_Dr_Abdul_Hannad.jpg",
-      link: "/doctor/1",
-      category_id: 15,
-      icon: Users,
-      experience: "15+ Years",
-      rating: "4.9",
-      availability: "Available Today",
-      position: "Professor & Head of Department",
-      reviews: 127,
-    },
-    {
-      id: 2,
-      name: "Prof. Dr. Md. Tazul Islam",
-      specialty: "Psychiatry",
-      qualifications:
-        "MBBS, FCPS, Post Fellowship Training (Bangkok, Thailand), Post Fellowship Training JICA, Japan, World Bank Fellowship, Srilanka",
-      image: "/images/package/dr.-tazul.jpg",
-      link: "/doctor/2",
-      category_id: 11,
-      icon: Brain,
-      experience: "20+ Years",
-      rating: "4.8",
-      availability: "Available Tomorrow",
-      position: "Professor of Psychiatry",
-      reviews: 89,
-    },
-    {
-      id: 3,
-      name: "Prof. Dr. A.S.M. Qamrul Hasan",
-      specialty: "Neuro Surgery Specialist",
-      qualifications: "MBBS, MS (Neuro), WHO Fellow (Indoesia), Brain & Spine Specialist & Surgeon",
-      image: "/images/package/Prof_Dr_A_S_M_Kamrul_Hasan.jpg",
-      link: "/doctor/3",
-      category_id: 18,
-      icon: Brain,
-      experience: "18+ Years",
-      rating: "4.9",
-      availability: "Available Today",
-      position: "Professor of Neurosurgery",
-      reviews: 156,
-    },
-    {
-      id: 4,
-      name: "Prof. Dr. Md. Abdus Salam",
-      specialty: "General & Laparoscopic Surgery",
-      qualifications: "MBBS, MS (General Surgery), General & Laparoscopic Surgeon",
-      image: "/images/package/Prof_Dr_M_A_Salaam.jpg",
-      link: "/doctor/4",
-      category_id: 38,
-      icon: Stethoscope,
-      experience: "22+ Years",
-      rating: "4.8",
-      availability: "Available Today",
-      position: "Professor of Surgery",
-      reviews: 203,
-    },
-    {
-      id: 5,
-      name: "Prof. Dr. A, B, M, Younus",
-      specialty: "Blood Disease & Medicine Specialist",
-      qualifications:
-        "MBBS (India), MPhil (Hons), FCPS (Hematology), Blood Cancer and Anemia Specialist Professor and former Chairman, Department of Hematology Bangabandhu Sheikh Mujib Medical University",
-      image: "/images/package/Prof.-Dr.-A-B-M-Younus.jpg",
-      link: "/doctor/5",
-      category_id: 46,
-      icon: Heart,
-      experience: "25+ Years",
-      rating: "4.9",
-      availability: "Available Tomorrow",
-      position: "Professor of Hematology",
-      reviews: 178,
-    },
-    {
-      id: 12,
-      name: "Dr. Mahfuza Akter",
-      specialty: "Opthalmology (Eye)",
-      qualifications: "MBBS (Dhaka), BCS (Health), DO (DU), FCPS (Eye)",
-      image: "/images/package/Mahfuza-Akter.jpg",
-      link: "/doctor/12",
-      category_id: 42,
-      icon: Activity,
-      experience: "20+ Years",
-      rating: "4.9",
-      availability: "Available Today",
-      position: "Professor of Cardiology",
-      reviews: 245,
-    },
-    {
-      id: 7,
-      name: "Prof. Dr. G.M. Faruque",
-      specialty: "Opthalmology (Eye)",
-      qualifications: "MBBS, BCS, (Health), MS (Ophth), D.O. (DU)",
-      image: "/images/package/GM-Faruk.jpg",
-      link: "/doctor/7",
-      category_id: 42,
-      icon: Eye,
-      experience: "16+ Years",
-      rating: "4.8",
-      availability: "Available Today",
-      position: "Professor of Ophthalmology",
-      reviews: 134,
-    },
-    {
-      id: 8,
-      name: "Prof. Dr. Gobinda Chandra Saha",
-      specialty: "General & Laparoscopic Surgery",
-      qualifications: "MBBS, FCPS (Surgery), MS (General Surgery) FRCS (Glasgow, UK)",
-      image: "/images/package/Prof.-Dr.-Govinda-Chandra-Das-1.jpg",
-      link: "/doctor/8",
-      category_id: 38,
-      icon: Stethoscope,
-      experience: "19+ Years",
-      rating: "4.8",
-      availability: "Available Tomorrow",
-      position: "Professor of Surgery",
-      reviews: 167,
-    },
-    {
-      id: 9,
-      name: "Dr. Sk. Mahmud Hasan",
-      specialty: "Neuro Surgery Specialist",
-      qualifications: "MBBS (DMC), BCS (Health), MS (Neurosurgery), National Institute of Neuroscience Hospital, Dhaka",
-      image: "/images/package/dr.-Sheikh-mahmud.jpg",
-      link: "/doctor/9",
-      category_id: 18,
-      icon: Brain,
-      experience: "12+ Years",
-      rating: "4.7",
-      availability: "Available Today",
-      position: "Assistant Professor",
-      reviews: 98,
-    },
-    {
-      id: 10,
-      name: "Dr. Md. Mahmud Hasan",
-      specialty: "Urology Specialist",
-      qualifications: "MBBS, BCS (Health) MS (Urology) Assistant Professor",
-      image: "/images/package/Mahmud-Hasan.jpg",
-      link: "/doctor/10",
-      category_id: 28,
-      icon: Stethoscope,
-      experience: "10+ Years",
-      rating: "4.7",
-      availability: "Available Tomorrow",
-      position: "Assistant Professor",
-      reviews: 76,
-    },
-    {
-      id: 11,
-      name: "Dr. Abul Hasnat Russel",
-      specialty: "Neuro Medicine Specialist",
-      qualifications:
-        "MBBS, BCS (Health), MD (Neurology) Sir Salimullah Medical College Mitford Hospital, Dhaka Medicine & Neuromedicine Specialist Consultant",
-      image: "/images/package/Dr.Hasnat.jpg",
-      link: "/doctor/11",
-      category_id: 24,
-      icon: Brain,
-      experience: "14+ Years",
-      rating: "4.8",
-      availability: "Available Today",
-      position: "Consultant Neurologist",
-      reviews: 112,
-    },
-   
-  ]
-
   const totalSlides = Math.max(0, doctors.length - cardsPerView + 1)
-
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % totalSlides)
   }
-
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
   }
-
   const transformPercent = -(currentIndex * (100 / cardsPerView))
+
+  if (loading) {
+    return (
+      <div className="relative py-24 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden text-center text-white">
+        Loading doctors...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="relative py-24 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden text-center text-red-300">
+        Error: {error}
+      </div>
+    )
+  }
 
   return (
     <div className="relative py-24 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
@@ -241,18 +187,15 @@ const DoctorsSection = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/3 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-white/4 rounded-full blur-3xl animate-pulse delay-500"></div>
-
         {/* Medical cross patterns */}
         <div className="absolute top-20 left-20 w-16 h-2 bg-white/10 rounded-full"></div>
         <div className="absolute top-28 left-28 w-2 h-16 bg-white/10 rounded-full"></div>
         <div className="absolute bottom-32 right-32 w-12 h-1.5 bg-white/8 rounded-full"></div>
         <div className="absolute bottom-38 right-38 w-1.5 h-12 bg-white/8 rounded-full"></div>
-
         {/* Geometric shapes */}
         <div className="absolute top-1/4 right-16 w-32 h-32 bg-white/5 rounded-3xl rotate-45 animate-pulse"></div>
         <div className="absolute bottom-1/4 left-20 w-24 h-24 bg-white/3 rounded-2xl rotate-12 animate-pulse delay-700"></div>
       </div>
-
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-20">
@@ -270,7 +213,6 @@ const DoctorsSection = () => {
             listen to their concerns, and involve them in every step of their care journey.
           </p>
         </div>
-
         {/* Doctors Carousel with Side Navigation */}
         <div className="relative">
           {/* Left Arrow */}
@@ -281,7 +223,6 @@ const DoctorsSection = () => {
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-
           {/* Right Arrow */}
           <button
             onClick={nextSlide}
@@ -290,7 +231,6 @@ const DoctorsSection = () => {
           >
             <ChevronRight className="w-6 h-6" />
           </button>
-
           {/* Carousel Container */}
           <div className="overflow-hidden">
             <div
@@ -300,9 +240,8 @@ const DoctorsSection = () => {
               }}
             >
               {doctors.map((doctor, index) => {
-                const IconComponent = doctor.icon
+                const IconComponent = getSpecialtyIcon(doctor.specialty) // Get icon based on specialty
                 const isVisible = visibleCards.has(index)
-
                 return (
                   <div key={doctor.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
                     <div
@@ -316,38 +255,17 @@ const DoctorsSection = () => {
                       <div className="relative h-80 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                         <Image
                           src={doctor.image || "/placeholder.svg"}
-                          alt={doctor.name}
-                          width={300}
-                          height={300}
-                          className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
+                          alt={doctor.name|| "Doctor Image"}
+                          width={400}
+                          height={400}
+                          className="w-full h-full object-fit object-top group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-
                         {/* Specialty Icon */}
                         <div className="absolute top-4 left-4 p-3 bg-[#017381]/90 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
                           <IconComponent className="w-5 h-5 text-white" />
                         </div>
-
-                        {/* Availability Badge */}
-                        <div className="absolute top-4 right-4">
-                          <span
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm border shadow-lg ${
-                              doctor.availability.includes("Today")
-                                ? "bg-green-500/90 text-white border-green-400"
-                                : "bg-yellow-500/90 text-white border-yellow-400"
-                            }`}
-                          >
-                            {doctor.availability}
-                          </span>
-                        </div>
-
-                        {/* Rating Badge */}
-                        <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 flex items-center space-x-2 border border-white/50 shadow-lg">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-bold text-gray-800">{doctor.rating}</span>
-                        </div>
                       </div>
-
                       {/* Doctor Info */}
                       <div className="p-6">
                         {/* Specialty Badge */}
@@ -356,25 +274,11 @@ const DoctorsSection = () => {
                             {doctor.specialty}
                           </span>
                         </div>
-
                         {/* Name and Position - Made smaller */}
                         <h3 className="text-lg font-bold mb-2 text-gray-800 group-hover:text-[#017381] transition-colors leading-tight">
                           {doctor.name}
                         </h3>
                         <p className="text-sm text-gray-600 font-medium mb-4">{doctor.position}</p>
-
-                        {/* Experience and Reviews */}
-                        <div className="flex items-center justify-between text-sm text-gray-500 mb-6">
-                          <div className="flex items-center gap-2">
-                            <Award className="w-4 h-4 text-[#017381]" />
-                            <span>{doctor.experience}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-[#017381]" />
-                            <span>{doctor.reviews} reviews</span>
-                          </div>
-                        </div>
-
                         {/* Action Button */}
                         <div className="flex">
                           <Link
@@ -392,7 +296,6 @@ const DoctorsSection = () => {
             </div>
           </div>
         </div>
-
         {/* Slide Indicators */}
         <div className="flex justify-center mt-12 space-x-3">
           {Array.from({ length: totalSlides }).map((_, index) => (
@@ -405,7 +308,6 @@ const DoctorsSection = () => {
             />
           ))}
         </div>
-
         {/* Statistics Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-4xl mx-auto">
           <div className="text-center">

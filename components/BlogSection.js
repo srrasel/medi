@@ -4,9 +4,33 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
+import RichTextRenderer from "./RichTextRenderer"
 
 const BlogSection = () => {
+  const [blogPosts, setBlogPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [visibleCards, setVisibleCards] = useState(new Set())
+
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      try {
+        const response = await fetch("/api/blogs") // Fetch from your new API route
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        setBlogPosts(data)
+       
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBlogPosts()
+  }, [])
 
   useEffect(() => {
     const observerOptions = {
@@ -23,93 +47,32 @@ const BlogSection = () => {
       })
     }, observerOptions)
 
-    const elements = document.querySelectorAll(".blog-card")
-    elements.forEach((el) => observer.observe(el))
+    // Observe elements after posts are loaded
+    if (!loading && blogPosts.length > 0) {
+      const elements = document.querySelectorAll(".blog-card")
+      elements.forEach((el) => observer.observe(el))
+    }
 
     return () => observer.disconnect()
-  }, [])
+  }, [loading, blogPosts]) // Re-run effect when loading or blogPosts change
 
-  const blogPosts = [
-    {
-      image: "/images/blog/Emergency-Service.jpg",
-      alt: "Eid celebration safety",
-      category: "সামাজিক স্বাস্থ্য",
-      date: "২৮",
-      month: "মে",
-      title: "ঈদ আনন্দ ছড়িয়ে পড়ুক সবার মাঝে",
-      description:
-        "ঈদ আনন্দ ছড়িয়ে পড়ুক সবার মাঝে আপনার যাত্রা হোক নিরাপদ, উদযাপন হোক স্বস্তিদায়ক। ঈদের এই পবিত্র সময়ে সবার সুস্বাস্থ্য কামনা করি।",
-      readTime: "৩ মিনিট পড়ুন",
-      author: "প্রো-অ্যাক্টিভ হাসপাতাল",
-      link: "/blog/eid-celebration-health-guide",
-    },
-    {
-      image: "/images/blog/World-blood-cancer-Day.jpg",
-      alt: "World Blood Cancer Day",
-      category: "ক্যান্সার সচেতনতা",
-      date: "২৮",
-      month: "মে",
-      title: "World Blood Cancer Day 2025",
-      description:
-        "২৮ মে | থিম: United by Unique প্রতিটি রক্তের ক্যান্সার রোগীর জন্য আমাদের একসাথে দাঁড়ানো প্রয়োজন। সচেতনতা বৃদ্ধি করুন, জীবন বাঁচান।",
-      readTime: "৫ মিনিট পড়ুন",
-      author: "ডা. হেমাটোলজি বিভাগ",
-      link: "/blog/world-blood-cancer-day-2025",
-    },
-    {
-      image: "/images/blog/Hiring.jpg",
-      alt: "Hospital recruitment",
-      category: "চাকরির সুযোগ",
-      date: "২৫",
-      month: "মে",
-      title: "We're Hiring at Pro-Active Hospital!",
-      description:
-        "A Sister Concern of Pro-Active Medical College and Hospital Ltd. আমাদের সাথে যোগ দিন এবং স্বাস্থ্যসেবায় অবদান রাখুন। বিভিন্ন পদে আবেদনের সুযোগ।",
-      readTime: "২ মিনিট পড়ুন",
-      author: "এইচআর বিভাগ",
-      link: "/blog/hospital-career-opportunities",
-    },
-    {
-      image: "/images/blog/World-Thalassemia.jpg",
-      alt: "World Thalassemia Day",
-      category: "জেনেটিক রোগ",
-      date: "৮",
-      month: "মে",
-      title: "বিশ্ব থ্যালাসেমিয়া দিবস ২০২৫",
-      description:
-        "থ্যালাসেমিয়া প্রতিরোধ শুরু হোক সচেতনতা থেকে। প্রতি বছর বিশ্বব্যাপী ১,০০,০০০-এরও বেশি শিশু থ্যালাসেমিয়া নিয়ে জন্মগ্রহণ করে।",
-      readTime: "৪ মিনিট পড়ুন",
-      author: "ডা. পেডিয়াট্রিক বিভাগ",
-      link: "/blog/world-thalassemia-day-2025",
-    },
-    {
-      image: "/images/blog/World-Safety-Day-At-Work.jpg",
-      alt: "Workplace safety and AI",
-      category: "কর্মক্ষেত্রে নিরাপত্তা",
-      date: "২৮",
-      month: "এপ্রিল",
-      title: "কর্মক্ষেত্রে স্বাস্থ্য ও নিরাপত্তা নিশ্চিতকরণে কৃত্রিম বুদ্ধিমত্তা",
-      description:
-        "বিশ্ব কর্মক্ষেত্রে নিরাপত্তা ও স্বাস্থ্য দিবসে সবার জন্য নিরাপদ কাজের পরিবেশ নিশ্চিত করি। ডিজিটাল প্রযুক্তির যুগান্তকারী ভূমিকা।",
-      readTime: "৬ মিনিট পড়ুন",
-      author: "ডা. অকুপেশনাল হেলথ",
-      link: "/blog/workplace-safety-ai-technology",
-    },
-    {
-      image: "/images/blog/Bissho-Tikadan.jpg",
-      alt: "World Immunization Week",
-      category: "টিকাদান কর্মসূচি",
-      date: "৩০",
-      month: "এপ্রিল",
-      title: "সুস্থ ভবিষ্যতের জন্য টিকা অপরিহার্য",
-      description: "বিশ্ব টিকা সপ্তাহ উপলক্ষে ২৪ থেকে ৩০ এপ্রিল, সকাল ১০টা থেকে বিশেষ টিকাদান কর্মসূচি। সবার জন্য নিরাপদ ও কার্যকর টিকা।",
-      readTime: "৩ মিনিট পড়ুন",
-      author: "ডা. ইমিউনোলজি বিভাগ",
-      link: "/blog/world-immunization-week-2025",
-    },
-  ]
+  const displayedPosts = blogPosts.slice(0, 6) // Still displaying first 6 as per your original code
 
-  const displayedPosts = blogPosts.slice(0, 6)
+  if (loading) {
+    return (
+      <div className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden text-center text-gray-700">
+        Loading blog posts...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden text-center text-red-600">
+        Error: {error}
+      </div>
+    )
+  }
 
   return (
     <div className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden">
@@ -204,7 +167,7 @@ const BlogSection = () => {
                     <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
                       {post.title}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">{post.description}</p>
+                   <RichTextRenderer content={post.content.slice(0, 1)} />
 
                     {/* Author and Read Time */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">

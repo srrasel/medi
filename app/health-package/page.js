@@ -1,232 +1,199 @@
-"use client"
-
-import { useState } from "react"
-import { X } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react" // Import ArrowRight icon
 
 const healthPackages = [
   {
     id: 1,
     title: "Primary Executive Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_03.jpg",
-    link: "https://pmchl.com/package-item/primary-executive-health-package/",
+    slug: "primary-executive-health-package", // Added slug
   },
   {
     id: 2,
     title: "Executive Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_04-1.jpg",
-    link: "https://pmchl.com/package-item/executive-health-package/",
+    slug: "executive-health-package", // Added slug
   },
   {
     id: 3,
     title: "Senior Executive Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_05.jpg",
-    link: "https://pmchl.com/package-item/senior-executive-health-package/",
+    slug: "senior-executive-health-package", // Added slug
   },
   {
     id: 4,
     title: "Gastro Liver Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_06.jpg",
-    link: "https://pmchl.com/package-item/gastro-liver-health-package/",
+    slug: "gastro-liver-health-package", // Added slug
   },
   {
     id: 5,
     title: "Executive Renal Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_07.jpg",
-    link: "https://pmchl.com/package-item/executive-renal-health-package/",
+    slug: "executive-renal-health-package", // Added slug
   },
   {
     id: 6,
     title: "Renal Screening Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_08.jpg",
-    link: "https://pmchl.com/package-item/renal-screening-package/",
+    slug: "renal-screening-package", // Added slug
   },
   {
     id: 7,
     title: "Diabetic Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_09.jpg",
-    link: "https://pmchl.com/package-item/diabetic-health-package/",
+    slug: "diabetic-health-package", // Added slug
   },
   {
     id: 8,
     title: "Cardiac Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_10.jpg",
-    link: "https://pmchl.com/package-item/cardiac-health-package/",
+    slug: "cardiac-health-package", // Added slug
   },
   {
     id: 9,
     title: "Master Cardiac Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_11.jpg",
-    link: "https://pmchl.com/package-item/master-cardiac-health-package/",
+    slug: "master-cardiac-health-package", // Added slug
   },
   {
     id: 10,
     title: "Cancer Health Package (Female)",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_12.jpg",
-    link: "https://pmchl.com/package-item/cancer-health-package-female/",
+    slug: "cancer-health-package-female", // Added slug
   },
   {
     id: 11,
     title: "Cancer Health Package (Male)",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_13.jpg",
-    link: "https://pmchl.com/package-item/cancer-health-package-male/",
+    slug: "cancer-health-package-male", // Added slug
   },
   {
     id: 12,
     title: "Arthritis Health Package (Male)",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_14.jpg",
-    link: "https://pmchl.com/package-item/arthritis-health-package-male/",
+    slug: "arthritis-health-package-male", // Added slug
   },
   {
     id: 13,
     title: "Female Above 40 Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_15.jpg",
-    link: "https://pmchl.com/package-item/female-above-40-health-package/",
+    slug: "female-above-40-health-package", // Added slug
   },
   {
     id: 14,
     title: "Male Above 40 Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_16.jpg",
-    link: "https://pmchl.com/package-item/male-above-40-health-package/",
+    slug: "male-above-40-health-package", // Added slug
   },
   {
     id: 15,
     title: "Female Below 40 Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_17-1.jpg",
-    link: "https://pmchl.com/package-item/female-below-40-health-package/",
+    slug: "female-below-40-health-package", // Added slug
   },
   {
     id: 16,
     title: "Male Below 40 Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_18.jpg",
-    link: "https://pmchl.com/package-item/male-below-40-health-package/",
+    slug: "male-below-40-health-package", // Added slug
   },
   {
     id: 17,
     title: "Women Wellness Health Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_19.jpg",
-    link: "https://pmchl.com/package-item/women-wellness-health-package/",
+    slug: "women-wellness-health-package", // Added slug
   },
   {
     id: 18,
     title: "Pre-Marital Health (Male) Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_20.jpg",
-    link: "https://pmchl.com/package-item/pre-merital-health-male-package/",
+    slug: "pre-marital-health-male-package", // Added slug
   },
   {
     id: 19,
     title: "Pre-Marital Health (Female) Package",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_21.jpg",
-    link: "https://pmchl.com/package-item/pre-merital-health-female-package/",
+    slug: "pre-marital-health-female-package", // Added slug
   },
   {
     id: 20,
     title: "Pre-Employment/ Academic/ VISA",
     image: "/images/package/Pro-Active-Hospital-Health-Package-Magazine_Page_22.jpg",
-    link: "https://pmchl.com/package-item/pre-employment-academic-visa/",
+    slug: "pre-employment-academic-visa", // Added slug
   },
 ]
 
 export default function HealthPackagesPage() {
-  const [selectedImage, setSelectedImage] = useState(null)
-  const [selectedTitle, setSelectedTitle] = useState("")
-
-  const openFullScreen = (image, title) => {
-    setSelectedImage(image)
-    setSelectedTitle(title)
-    document.body.style.overflow = "hidden"
-  }
-
-  const closeFullScreen = () => {
-    setSelectedImage(null)
-    setSelectedTitle("")
-    document.body.style.overflow = "unset"
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in-up">Health Packages</h1>
-          <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto animate-fade-in-up">
-            Comprehensive health screening packages designed for your wellness and peace of mind
-          </p>
-        </div>
-      </div>
+   
+        <div className="min-h-[70vh] bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Hero Section - Vision */}
+      <section className="relative py-20 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+              </div>
+      
+              <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                  Our Health 
+                  <span className="block text-[#b8e6ea]">Packages</span>
+                </h1>
+                <p className="text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto mb-8">
+                Explore comprehensive health and wellness packages offered by Evercare Hospital Dhaka.
+                  </p>
+      
+               
+              </div>
+            </section>
 
-      {/* Packages Grid */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {/* Health Packages Grid */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {healthPackages.map((pkg) => (
             <div
               key={pkg.id}
-              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer medical-card-hover"
-              onClick={() => openFullScreen(pkg.image, pkg.title)}
+              className="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden flex flex-col"
             >
-              {/* Package Image */}
-              <div className="relative h-64 overflow-hidden">
-                <Image
-                  src={pkg.image || "/placeholder.svg"}
-                  alt={pkg.title}
-                  width={600}
-                  height={400}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-
-              {/* Package Title */}
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-[#017381] transition-colors duration-300 line-clamp-2">
-                  {pkg.title}
-                </h3>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Click to view details</span>
-                  <div className="w-8 h-8 bg-[#017381] rounded-full flex items-center justify-center group-hover:bg-[#025a65] transition-colors duration-300">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
+              <Link href={`/health-package/${pkg.slug}`} className="block">
+                <div className="relative w-full h-60 overflow-hidden rounded-t-2xl">
+                  <Image
+                    src={pkg.image || "/placeholder.svg"}
+                    alt={pkg.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                 </div>
+              </Link>
+              <div className="p-6 flex flex-col flex-grow">
+                <h2 className="text-xl font-bold text-gray-800 group-hover:text-[#017381] transition-colors duration-300 leading-tight mb-4 flex-grow">
+                  {pkg.title}
+                </h2>
+                <Link href={`/health-package/${pkg.slug}`} className="mt-auto">
+                  <button className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg inline-flex items-center justify-center space-x-2">
+                    <span>Learn More</span>
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Full Screen Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-95 z-50 flex justify-center items-start pt-4 overflow-y-auto"
-          onClick={closeFullScreen}
-        >
-          {/* Close Button */}
-          <button
-            onClick={closeFullScreen}
-            className="fixed top-4 right-4 z-60 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 transition-all duration-300"
-          >
-            <X className="w-5 h-5 text-white" />
-          </button>
-
-          {/* Title - Positioned over image */}
-          <div className="fixed top-4 left-4 right-16 z-60">
-            <h2 className="text-white text-lg md:text-xl font-bold bg-black bg-opacity-50 px-3 py-1 rounded">
-              {selectedTitle}
-            </h2>
-          </div>
-
-          {/* Image Container - Max width 700px, positioned from start */}
-          <div className="w-full max-w-[700px] px-4 pt-16">
-            <Image
-              src={selectedImage || "/placeholder.svg"}
-              alt={selectedTitle} width={800} height={600}
-              className="w-full h-auto object-contain rounded-lg shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
         </div>
-      )}
-    </div>
+        </section>
+      </div>
+    
   )
+}
+
+// Optional: Generate metadata for the page
+export async function generateMetadata() {
+  return {
+    title: "Health Packages - Evercare Hospital Dhaka",
+    description: "Explore comprehensive health and wellness packages offered by Evercare Hospital Dhaka.",
+  }
 }

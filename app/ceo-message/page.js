@@ -1,14 +1,39 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Shield, Clock, Users, Award, Stethoscope, Building2, Phone, Star } from "lucide-react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
+
 export default function CEOMessagePage() {
-   const pathname = usePathname();
+  const [ceoData, setCeoData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const pathname = usePathname();
+
   useEffect(() => {
-     
+    const fetchCEOData = async () => {
+      try {
+        const response = await fetch('https://methodical-kindness-fc585984ed.strapiapp.com/api/ceo-message?populate=*');
+        const data = await response.json();
+        if (data.data) {
+          setCeoData(data.data);
+        } else {
+          setError("No data found");
+        }
+      } catch (err) {
+        setError("Failed to fetch CEO data");
+        console.error("Error fetching CEO data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCEOData();
+  }, []);
+
+  useEffect(() => {
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
@@ -26,56 +51,44 @@ export default function CEOMessagePage() {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [pathname])
+  }, [pathname, loading]);
 
-  const credentials = [
-    "MPhil, MPH, MBBS",
-    "Former National Consultant, BRAC Health Program(BHP), BRAC",
-    "Former Commandant, Armed Forces Medical Institute",
-    "Former Commandant, Combined Military Hospital(CMH), Chittagong",
-    "Former Director, Dhaka Medical College Hospital",
-    "Former Director, Rajshahi Medical College Hospital",
-    "Former Director, Kurmitola General Hospital",
-    "Former Director, DNCC Dedicated Covid-19 Hospital",
-  ]
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="animate-pulse text-[#017381] text-xl">Loading CEO message...</div>
+      </div>
+    );
+  }
 
-  const services = [
-    {
-      title: "24/7 Intensive Care Unit (ICU) & Coronary Care Unit (CCU)",
-      description: "Providing advanced critical care for life-threatening conditions.",
-      icon: Heart,
-    },
-    {
-      title: "Neonatal & Pediatric Intensive Care Units (NICU & PICU)",
-      description: "Ensuring specialized care for our youngest and most vulnerable patients.",
-      icon: Users,
-    },
-    {
-      title: "Round-the-Clock Operating Theaters (OTs)",
-      description: "Ready for emergency and scheduled surgical procedures at any time.",
-      icon: Clock,
-    },
-    {
-      title: "Inpatient & Outpatient Departments (IPD & OPD)",
-      description:
-        "Offering expert consultations, diagnostics and long-term care solutions. We also provide Physiotherapy & Dialysis Services.",
-      icon: Building2,
-    },
-    {
-      title: "Emergency & Trauma Services",
-      description: "With a dedicated team available 24/7 to respond to any medical crisis.",
-      icon: Phone,
-    },
-  ]
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    );
+  }
 
-  const pillars = [
-    { name: "Excellence", icon: Award },
-    { name: "Integrity", icon: Shield },
-    { name: "Kindness", icon: Heart },
-    { name: "Inclusion", icon: Users },
-    { name: "Respect", icon: Star },
-    { name: "Safety", icon: Shield },
-  ]
+  if (!ceoData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-[#017381] text-xl">No CEO data available</div>
+      </div>
+    );
+  }
+
+  // Helper function to render rich text content
+  const renderMessageContent = () => {
+    return ceoData.MessageContent.map((paragraph, index) => {
+      if (paragraph.children[0].text.trim() === "") return null;
+      
+      return (
+        <p key={index} className="text-lg leading-relaxed text-slate-700 mb-6">
+          {paragraph.children[0].text}
+        </p>
+      );
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -98,11 +111,12 @@ export default function CEOMessagePage() {
               <div className="flex-shrink-0">
                 <div className="w-80 h-80 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
                   <Image
-                    src="/images/Brig.-Gen.-Dr.-AKM-Nasir-Uddin-Retd.-2-1.jpg?height=300&width=300"
-                    alt="Brigadier General (Dr.) AKM Nasir Uddin"
+                    src={ceoData.profileImage.url}
+                    alt={ceoData.Name}
                     width={400}
                     height={400}
                     className="w-72 h-72 rounded-full object-cover border-4 border-white/30"
+                    priority
                   />
                 </div>
               </div>
@@ -113,13 +127,13 @@ export default function CEOMessagePage() {
                   Message From CEO
                 </h1>
                 <h2 className="text-2xl md:text-3xl font-semibold mb-2 text-[#b8e6ea]">
-                  Brigadier General (Dr.) AKM Nasir Uddin (retd.)
+                  {ceoData.Name}
                 </h2>
-                <p className="text-lg md:text-xl mb-4 text-slate-200">MPhil, MPH, MBBS</p>
-                <p className="text-lg font-medium text-white/90">CEO (Chief Executive Officer)</p>
+                <p className="text-lg md:text-xl mb-4 text-slate-200">{ceoData.QualificationsSummary}</p>
+                <p className="text-lg font-medium text-white/90">{ceoData.Position}</p>
                 <p className="text-base text-slate-300 mt-2">Pro-Active Hospital</p>
                 <p className="text-sm text-slate-400 italic">
-                  (A Sister Concern Of Pro-Active Medical College And Hospital Ltd.)
+                  {ceoData.SisterConcernText}
                 </p>
               </div>
             </div>
@@ -139,103 +153,39 @@ export default function CEOMessagePage() {
         <div className="container mx-auto px-4">
           <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#017381] mb-6">Brigadier General (Dr.) AKM Nasir Uddin (retd.)</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#017381] mb-6">{ceoData.Name}</h2>
               <div className="w-24 h-1 bg-gradient-to-r from-[#017381] to-[#025a65] mx-auto rounded-full"></div>
             </div>
 
-           
             <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
-            <div className="max-w-4xl mx-auto">
-              <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-8 md:p-12">
-                  <div className="prose prose-lg max-w-none">
-                    <p className="text-xl leading-relaxed text-slate-700 mb-6">MPhil, MPH, MBBS
-
-Former National Consultant, BRAC Health Program(BHP), BRAC
-
-Former Commandant, Armed Forces Medical Institute
-
-Former Commandant, Combined Military Hospital(CMH), Chittagong
-
-Former Director, Dhaka Medical College Hospital
-
-Former Director, Rajshahi Medical College Hospital
-
-Former Director, Kurmitola General Hospital
-
-Former Director, DNCC Dedicated Covid-19 Hospital</p>
-                     <p className="text-xl leading-relaxed text-slate-700 mb-6">
-                      Pro-Active Hospital (A sister concern of Pro-Active Medical College &amp; Hospital Ltd.), a leading
-tertiary level multidisciplinary hospital. This hospital is dedicated to providing comprehensive and
-life-saving healthcare services to its clients.
-
-                    </p>
-
-                    <p className="text-lg leading-relaxed text-slate-700 mb-6">
-                      At Pro-Active Hospital, we believe that every life matters and we are committed to delivering
-                      exceptional, patient-centered care through our state-of-the-art medical facilities and highly
-                      skilled healthcare professionals.
-                    </p>
-
-                    <p className="text-lg leading-relaxed text-slate-700 mb-8">
-                      Our Hospital is built on the pillar of excellence, integrity, kindness, inclusion, respect and
-                      safety.
-                    </p>
-
-  <p className="text-lg leading-relaxed text-slate-700 mb-6">
-                      We take pride in offering a full spectrum of emergency and specialized services, ensuring that
-                      critical care is always within reach. Our hospital is equipped with:
-                    </p>
-                    <p className="text-lg leading-relaxed text-slate-700 mb-6">
-                      We are more than just a hospital – we are a trusted partner in your health journey. Whether you
-                      need urgent medical attention, specialized treatment, or preventive care, our mission is to ensure
-                      quality, safety and compassion in every service we provide.
-                    </p>
-
-                    <p className="text-lg leading-relaxed text-slate-700 mb-6">
-                      As we embrace the future of healthcare, we are committed to continuous innovation, medical
-                      research and advanced technology to provide you with the best possible treatment outcomes. We
-                      invited you to stay connected with us, provide feedback and be a part of our mission to create a
-                      healthier and stronger community.
-                    </p>
-
-                    <p className="text-lg leading-relaxed text-slate-700 mb-6">
-                      Thank you for your trust in Pro-Active Hospital. We are here for you-24/7, always ready to serve
-                      and save lives.
-                    </p>
-
-                    <p className="text-lg leading-relaxed text-slate-700 mb-4">
-                      Stay safe, blessed and healthy. Let us take care of you.
-                    </p>
-
-                    <div className="mt-8 pt-6 border-t border-slate-200">
-                      <p className="text-xl font-semibold text-[#017381]">Thank you</p>
-                      <div className="mt-4 flex items-center gap-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center">
-                          <Stethoscope className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-slate-800">
-                            Brigadier General (Dr.) AKM Nasir Uddin (retd.)
-                          </p>
-                          <p className="text-slate-600">CEO, Pro-Active Hospital</p>
+              <div className="max-w-4xl mx-auto">
+                <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+                  <CardContent className="p-8 md:p-12">
+                    <div className="prose prose-lg max-w-none">
+                      {renderMessageContent()}
+                      
+                      <div className="mt-8 pt-6 border-t border-slate-200">
+                        <p className="text-xl font-semibold text-[#017381]">Thank you</p>
+                        <div className="mt-4 flex items-center gap-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-[#017381] to-[#025a65] rounded-full flex items-center justify-center">
+                            <Stethoscope className="w-8 h-8 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-800">
+                              {ceoData.Name}
+                            </p>
+                            <p className="text-slate-600">{ceoData.Position}, Pro-Active Hospital</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </section>
-
-    
-   
-
-
-    
     </div>
   )
 }
