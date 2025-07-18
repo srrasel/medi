@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
+import SegmentedButtonGroup from "./SegmentedButtonGroup"
 
 export default function HospitalHeroSection() {
   const [data, setData] = useState(null)
@@ -43,7 +44,7 @@ export default function HospitalHeroSection() {
   const videoMobileUrl = data?.videoMobile?.url || "/images/medi.mp4"
 
   return (
-    <div className="relative w-full h-[500px] md:h-[650px] lg:h-[750px] overflow-hidden">
+    <div className="relative w-full h-[80vh] overflow-hidden">
       {/* Preload videos in the document head */}
       <link rel="preload" href={videoDesktopUrl} as="video" media="(min-width: 768px)" />
       <link rel="preload" href={videoMobileUrl} as="video" media="(max-width: 767px)" />
@@ -75,41 +76,33 @@ export default function HospitalHeroSection() {
       </video>
 
       {/* Overlay - render immediately */}
-      <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-end pb-4 md:pb-4 p-4">
         <div className="container mx-auto text-center text-white">
-          {/* Search Form - critical content renders first */}
-          <div className="search-block max-w-xl mx-auto">
-            <form onSubmit={handleSubmit} className="relative flex items-center bg-white rounded-full shadow-lg">
-              <input
-                type="text"
-                name="search_api_fulltext"
-                placeholder="Search for doctors & specialities..."
-                className="w-full py-4 pl-6 pr-16 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#017381] border border-transparent"
-                aria-label="Search for doctors and specialities"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-[#017381] to-[#025a65] text-white rounded-full hover:from-[#025a65] hover:to-[#034a52] transition-all duration-300"
-                aria-label="Submit search"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-            </form>
+          {/* Search Form - positioned at bottom */}
+          <div className="search-block w-full max-w-xl mx-auto mb-6 py-12">
+           <form 
+  onSubmit={handleSubmit} 
+  className="relative flex items-center bg-[#025863]/20 backdrop-blur-sm rounded-full shadow-lg border border-[#025863]/30 hover:border-[#025863]/50 transition-all duration-300"
+>
+  <input
+    type="text"
+    name="search_api_fulltext"
+    placeholder="Search for doctors & specialities..."
+    className="w-full py-4 pl-6 pr-16 rounded-full bg-transparent text-white placeholder:text-white/80 focus:outline-none focus:ring-2 focus:ring-[#025863]/50 border border-transparent"
+    aria-label="Search for doctors and specialities"
+  />
+  <button
+    type="submit"
+    className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-[#025863] text-white rounded-full hover:bg-[#025863]/90 transition-all duration-300 shadow-md"
+    aria-label="Submit search"
+  >
+    <Search className="w-5 h-5" />
+  </button>
+</form>
           </div>
 
-          {/* Buttons */}
-          <div className="mt-8 flex justify-center gap-4">
-            <a href="#">
-              <button className="px-6 py-3 bg-white text-[#017381] rounded-full font-semibold shadow-md hover:bg-gray-100 transition-colors">
-                Find a Doctor
-              </button>
-            </a>
-            <a href="#">
-              <button className="px-6 py-3 border border-white text-white rounded-full font-semibold shadow-md hover:bg-white/20 transition-colors">
-                Appointment
-              </button>
-            </a>
-          </div>
+          {/* Buttons - positioned below search */}
+          <SegmentedButtonGroup />
         </div>
       </div>
     </div>

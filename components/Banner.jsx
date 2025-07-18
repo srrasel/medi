@@ -24,7 +24,7 @@ export default function Banner() {
         if (!res.ok) throw new Error(`Failed to fetch banner: ${res.status}`)
 
         const json = await res.json()
-        
+        console.log('Fetched banner data:', json)
 
         const latestBanner = json.data?.[0]
         const imageUrl =

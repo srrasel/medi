@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { X } from "lucide-react"
 
 export default function DynamicPopup() {
@@ -13,9 +14,7 @@ export default function DynamicPopup() {
   useEffect(() => {
     const fetchPopupData = async () => {
       try {
-        const response = await fetch(
-          "https://methodical-kindness-fc585984ed.strapiapp.com/api/popups?populate=*"
-        )
+        const response = await fetch("https://methodical-kindness-fc585984ed.strapiapp.com/api/popups?populate=*")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -33,12 +32,10 @@ export default function DynamicPopup() {
   }, [])
 
   useEffect(() => {
-    // Show popup when data is loaded (on every homepage load as requested)
     if (!isLoading && popupData?.data?.length > 0) {
       const timer = setTimeout(() => {
         setIsOpen(true)
-      }, 1000) // 1 second delay
-
+      }, 1000)
       return () => clearTimeout(timer)
     }
   }, [isLoading, popupData])
@@ -51,22 +48,29 @@ export default function DynamicPopup() {
     return null
   }
 
-  // Get the first popup and extract image data
+  // Access nested Strapi data structure
   const popup = popupData.data[0]
-  const imageData = popup.Image
-  const imageUrl = imageData?.url
-  const altText = imageData?.alternativeText || "Popup Image"
-  const imageWidth = imageData?.width || 800
-  const imageHeight = imageData?.height || 600
+  const popupUrl = popup?.URL || "#"
+  const imageData = popup?.Image
+
+  if (!imageData) {
+    console.error("No image data found in popup")
+    return null
+  }
+
+  const imageUrl = imageData.url
+  const altText = imageData.alternativeText || "Popup Image"
+  const imageWidth = imageData.width || 800
+  const imageHeight = imageData.height || 600
 
   if (!imageUrl) {
     console.error("No valid image URL found in popup data")
     return null
   }
 
-  // Construct the full image URL
-  const fullImageUrl = imageUrl.startsWith('http') 
-    ? imageUrl 
+  // Handle both relative and absolute URLs
+  const fullImageUrl = imageUrl.startsWith("http")
+    ? imageUrl
     : `https://methodical-kindness-fc585984ed.strapiapp.com${imageUrl}`
 
   return (
@@ -81,17 +85,19 @@ export default function DynamicPopup() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Popup Image Content */}
-        <div className="relative w-full h-auto">
-          <Image
-            src={fullImageUrl}
-            alt={altText}
-            width={imageWidth}
-            height={imageHeight}
-            className="w-full h-full object-cover"
-            priority
-          />
-        </div>
+        {/* Popup Image Content with Link */}
+        <Link href={popupUrl} className="block">
+          <div className="relative w-full h-auto cursor-pointer hover:opacity-95 transition-opacity">
+            <Image
+              src={fullImageUrl || "/placeholder.svg"}
+              alt={altText}
+              width={imageWidth}
+              height={imageHeight}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </div>
+        </Link>
       </div>
     </div>
   )

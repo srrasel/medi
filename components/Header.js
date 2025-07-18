@@ -23,10 +23,11 @@ const Header = () => {
   }
 
   const aboutItems = [
-    { name: "Mission and Vision", href: "/mission-vision", description: "Our goals and aspirations" },
-    { name: "CEO Message", href: "/ceo-message", description: "Leadership perspective" },
-    { name: "Message From Board Chairman", href: "/board-chairman-message", description: "Leadership perspective" },
-    { name: "Message From EC Chairman", href: "/ec-chairmain-message", description: "Leadership perspective" },
+    { name: "Mission and Vision", href: "/mission-vision"},
+      { name: "Message From Board Chairman", href: "/board-chairman-message"},
+    { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
+    { name: "CEO Message", href: "/ceo-message"},
+  
   ]
 
   const servicesItems = [
@@ -126,7 +127,7 @@ const Header = () => {
                     <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
                   </button>
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 bg-white shadow-2xl rounded-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                    <div className="p-6">
+                    <div className="p-2">
                      
                       <div className="space-y-2">
                         {aboutItems.map((item, index) => (
@@ -138,7 +139,7 @@ const Header = () => {
                             <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
                               {item.name}
                             </div>
-                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                          
                           </Link>
                         ))}
                       </div>

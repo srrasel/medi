@@ -100,3 +100,7 @@ html {
 .object-cover.group-hover\:scale-110.transition-transform.duration-700 {
   object-position: top;
 }
+.search-block{
+  max-width:960px;
+  margin: 0 auto;
+}
