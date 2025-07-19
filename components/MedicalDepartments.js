@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Heart, Users, Stethoscope, Award, Star, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
+import WhyChooseUsSection from "./WhyChppseUs"
 
 const departments = [
   {
@@ -316,27 +317,7 @@ export default function MedicalSpecialties() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#017381]/2 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
-      {/* Why Choose Us Section */}
-      <section className="relative z-10 py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="inline-block mb-6">
-              <span className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white text-sm font-semibold tracking-wider uppercase px-6 py-3 rounded-full shadow-lg">
-                Why Choose Us
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Why Choose
-              <span className="block text-[#017381]">Evercare Hospital Dhaka</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Evercare Hospital Dhaka is a 425-bed multidisciplinary super-specialty tertiary care hospital and the
-              first in Bangladesh to receive JCI accreditation. We combine world-class patient care with advanced
-              medical technology and compassionate service.
-            </p>
-          </div>
-        </div>
-      </section>
+     <WhyChooseUsSection />
 
       {/* Our Specialities Section */}
       <section className="relative z-10 pb-16">
