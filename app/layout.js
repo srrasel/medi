@@ -1,8 +1,8 @@
+// app/layout.js or app/layout.tsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Head from 'next/head';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,16 +22,16 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <Head> <link rel="icon" href="/favicon.ico" /></Head>
-               
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pro-Active Hospital</title>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-     
-    
-             <Header />
-          {children}
-          <Footer />
-        
-
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );
