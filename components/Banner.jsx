@@ -12,8 +12,8 @@ export default function Banner() {
     const fetchBanner = async () => {
       try {
         setLoading(true)
-        const strapiBaseUrl = 'https://methodical-kindness-fc585984ed.strapiapp.com'
-        const fetchUrl = `${strapiBaseUrl}/api/banners?populate=*`
+        const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
+        const fetchUrl = `${strapiBaseUrl}/banners?populate=*`
 
         const res = await fetch(fetchUrl, {
           headers: {

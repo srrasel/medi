@@ -15,7 +15,8 @@ export default function BoardChairmanMessagePage() {
   useEffect(() => {
     const fetchChairmanData = async () => {
       try {
-        const response = await fetch('https://methodical-kindness-fc585984ed.strapiapp.com/api/board-chairman-message?populate=*');
+          const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
+        const response = await fetch(`${strapiBaseUrl}/board-chairman-message?populate=*`);
         const data = await response.json();
         if (data.data) {
           setChairmanData(data.data);

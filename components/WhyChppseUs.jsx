@@ -8,7 +8,8 @@ export default function WhyChooseUsSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://methodical-kindness-fc585984ed.strapiapp.com/api/why-choose-us');
+        const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
+        const response = await fetch(`${strapiBaseUrl}/why-choose-us?populate=*`);
         const data = await response.json();
         setContent(data.data);
       } catch (err) {

@@ -14,7 +14,8 @@ export default function DynamicPopup() {
   useEffect(() => {
     const fetchPopupData = async () => {
       try {
-        const response = await fetch("https://methodical-kindness-fc585984ed.strapiapp.com/api/popups?populate=*")
+         const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
+        const response = await fetch( `${strapiBaseUrl}/popups?populate=*`)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }

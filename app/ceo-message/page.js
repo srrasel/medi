@@ -15,7 +15,8 @@ export default function CEOMessagePage() {
   useEffect(() => {
     const fetchCEOData = async () => {
       try {
-        const response = await fetch('https://methodical-kindness-fc585984ed.strapiapp.com/api/ceo-message?populate=*');
+          const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
+        const response = await fetch(`${strapiBaseUrl}/ceo-message?populate=*`);
         const data = await response.json();
         if (data.data) {
           setCeoData(data.data);

@@ -4,7 +4,7 @@ export async function GET(request, { params }) {
   const { slug } = params
 
   try {
-    const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://promchl.onrender.com/api"
+    const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
     const fetchUrl = `${strapiBaseUrl}/doctors?filters[slug][$eq]=${slug}&populate=*`
 
     console.log(`Attempting to fetch doctor with slug "${slug}": ${fetchUrl}`)
