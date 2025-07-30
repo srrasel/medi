@@ -24,8 +24,8 @@ const Header = () => {
 
   const aboutItems = [
     { name: "Mission and Vision", href: "/mission-vision"},
-      { name: "Message From Board Chairman", href: "/board-chairman-message"},
-    { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
+    //   { name: "Message From Board Chairman", href: "/board-chairman-message"},
+    // { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
     { name: "CEO Message", href: "/ceo-message"},
   
   ]
