@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-
+import { Resend } from "resend"
 export async function POST(req) {
   try {
     const { doctorId, name, email, phone, date, time, message } = await req.json()
@@ -28,14 +28,13 @@ export async function POST(req) {
     // --- Email Sending Logic (Conceptual) ---
     // In a real application, you would use an email sending library/service here.
     // Example with a hypothetical email service:
-    // import { Resend } from 'resend';
-    // const resend = new Resend(process.env.RESEND_API_KEY);
-    // await resend.emails.send({
-    //   from: 'noreply@yourdomain.com',
-    //   to: 'info@pmcml.com', // Your target email address
-    //   subject: emailSubject,
-    //   html: `<p>${emailBody.replace(/\n/g, '<br/>')}</p>`,
-    // });
+const resend = new Resend(process.env.RESEND_API_KEY);
+     await resend.emails.send({
+       from: 'noreply@pmchl.com',
+     to: 'info@pmcml.com', // Your target email address
+    subject: emailSubject,
+     html: `<p>${emailBody.replace(/\n/g, '<br/>')}</p>`,
+     });
 
     console.log("--- Simulating Email Send ---")
     console.log("To: info@pmcml.com")

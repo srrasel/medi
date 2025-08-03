@@ -196,16 +196,21 @@ export default function ContactPage() {
                 {/* Map Placeholder */}
                 <div className="animate-on-scroll opacity-0 translate-x-8 transition-all duration-1000 delay-300">
                   <Card className="border-0 shadow-xl overflow-hidden">
-                    <div className="h-96 bg-gradient-to-br from-[#017381]/10 to-[#025a65]/10 flex items-center justify-center">
+                 
                       <div className="text-center">
-                        <MapPin className="w-16 h-16 text-[#017381] mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-[#017381] mb-2">Interactive Map</h3>
-                        <p className="text-slate-600">
-                          Signborad Mor, Siddhirgonj
-                          <br />
-                          Narayangonj, Bangladesh
-                        </p>
-                      </div>
+                       
+                        <iframe
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3653.5044192953787!2d90.4792596860083!3d23.69367443606977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b71f24245657%3A0xed3de465642f87!2z4Kaq4KeN4Kaw4KeLLeCmheCnjeCmr-CmvuCmleCmn-Cmv-CmrSDgpq7gp4fgpqHgpr_gppXgp4fgprIg4KaV4Kay4KeH4KacIOCmj-CmqOCnjeCmoSDgprngprjgpqrgpr_gpp_gpr7gprIg4Kay4Ka_4KaD!5e0!3m2!1sbn!2sbd!4v1754212299541!5m2!1sbn!2sbd"
+  width="600"
+  height="450"
+  style={{ border: 0 }} // ✅ FIXED: style is now a JS object
+  allowFullScreen
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+  className="w-full h-[450px]"
+></iframe>
+
+                      
                     </div>
                   </Card>
                 </div>

@@ -1,7 +1,10 @@
 "use client"
+
 import { useState, useEffect } from "react"
+import { useActionState } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from "lucide-react"
+import { sendCallbackRequest } from "@/actions/send-callback-request"
 
 const clientLogos = Array.from({ length: 42 }, (_, i) => ({
   src: `/images/client/logo-${i + 1}.jpg`,
@@ -13,6 +16,8 @@ export default function CorporateClients() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const itemsPerSlide = 6 // Display 6 logos per slide on larger screens
   const totalSlides = Math.ceil(clientLogos.length / itemsPerSlide)
+
+  const [state, formAction, isPending] = useActionState(sendCallbackRequest, { success: false, message: "" })
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides)
@@ -111,16 +116,34 @@ export default function CorporateClients() {
           </div>
         </div>
       </section>
+
       <section className="pt-32">
         {/* Request a Callback Form Section */}
-        <div className=" w-full -translate-y-1/2 z-20">
+        <div className="w-full -translate-y-1/2 z-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 text-center max-w-3xl mx-auto border border-gray-100">
               <h3 className="text-2xl md:text-3xl font-bold text-[#017381] mb-4">
                 Could not find what you are looking for?
               </h3>
               <p className="text-lg text-gray-600 mb-8">Request a Callback</p>
-              <form className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
+
+              {/* Success/Error Messages */}
+              {state && (state.success || state.error) && (
+                <div
+                  className={`mb-6 p-4 rounded-xl ${
+                    state.success ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+                  }`}
+                >
+                  <div
+                    className={`flex items-center justify-center space-x-2 ${state.success ? "text-green-800" : "text-red-800"}`}
+                  >
+                    {state.success ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                    <span className="font-medium">{state.success ? state.message : state.error}</span>
+                  </div>
+                </div>
+              )}
+
+              <form action={formAction} className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
                 <div>
                   <label htmlFor="name" className="sr-only">
                     Name
@@ -150,9 +173,10 @@ export default function CorporateClients() {
                 <div className="md:col-span-2">
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:from-[#025a65] hover:to-[#034a52] transition-all duration-300 transform hover:scale-105"
+                    disabled={isPending}
+                    className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:from-[#025a65] hover:to-[#034a52] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    Submit
+                    {isPending ? "Submitting..." : "Submit"}
                   </button>
                 </div>
               </form>

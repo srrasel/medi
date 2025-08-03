@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useActionState } from "react"
+import { sendAppointmentEmail } from "@/actions/send-appointment-email"
 import {
   Calendar,
   Clock,
@@ -23,6 +25,8 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState("")
   const [selectedTime, setSelectedTime] = useState("")
   const [appointmentType, setAppointmentType] = useState("consultation")
+
+  const [state, formAction, isPending] = useActionState(sendAppointmentEmail, { success: false, message: "" })
 
   const departments = [
     "Department of Gynaecology",
@@ -105,7 +109,6 @@ export default function AppointmentsPage() {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
-
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-block mb-6">
             <span className="bg-white/20 backdrop-blur-sm text-white text-sm font-bold tracking-wider uppercase px-8 py-3 rounded-full border border-white/30 shadow-lg">
@@ -131,7 +134,6 @@ export default function AppointmentsPage() {
               Get immediate assistance from our healthcare professionals through multiple contact channels
             </p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
             {contactServices.map((service, index) => {
               const IconComponent = service.icon
@@ -146,11 +148,9 @@ export default function AppointmentsPage() {
                     >
                       <IconComponent className="w-8 h-8" />
                     </div>
-
                     <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-gray-900 transition-colors">
                       {service.title}
                     </h3>
-
                     <div className="mb-4">
                       <a
                         href={`tel:${service.phone}`}
@@ -159,16 +159,13 @@ export default function AppointmentsPage() {
                         {service.phone}
                       </a>
                     </div>
-
                     <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
-
                     <div className="flex items-center justify-center mb-6">
                       <div className="flex items-center space-x-2 text-sm text-gray-500">
                         <Clock className="w-4 h-4 text-green-500" />
                         <span>{service.available}</span>
                       </div>
                     </div>
-
                     <a
                       href={`tel:${service.phone}`}
                       className={`w-full bg-gradient-to-r ${service.color} hover:shadow-xl text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2 group-hover:shadow-2xl`}
@@ -193,6 +190,18 @@ export default function AppointmentsPage() {
               <p className="text-xl text-gray-600">Fill out the form below to schedule your visit</p>
             </div>
 
+            {/* Success/Error Messages */}
+            {state && (state.success || state.error) && (
+              <div
+                className={`mb-8 p-4 rounded-xl ${state.success ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}
+              >
+                <div className={`flex items-center space-x-2 ${state.success ? "text-green-800" : "text-red-800"}`}>
+                  {state.success ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                  <span className="font-medium">{state.success ? state.message : state.error}</span>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
               {/* Form Header */}
               <div className="bg-gradient-to-r from-[#017381] to-[#025a65] p-8 text-white">
@@ -202,7 +211,10 @@ export default function AppointmentsPage() {
 
               {/* Form Content */}
               <div className="p-8">
-                <form className="space-y-6">
+                <form action={formAction} className="space-y-6">
+                  {/* Hidden input for appointment type */}
+                  <input type="hidden" name="appointmentType" value={appointmentType} />
+
                   {/* Appointment Type */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">Appointment Type</label>
@@ -238,6 +250,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                       <input
                         type="text"
+                        name="fullName"
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300"
                         placeholder="Enter your full name"
@@ -247,6 +260,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
                       <input
                         type="tel"
+                        name="phone"
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300"
                         placeholder="Enter your phone number"
@@ -259,6 +273,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                       <input
                         type="email"
+                        name="email"
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300"
                         placeholder="Enter your email"
                       />
@@ -267,6 +282,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Age</label>
                       <input
                         type="number"
+                        name="age"
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300"
                         placeholder="Enter your age"
                       />
@@ -279,6 +295,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Department *</label>
                       <div className="relative">
                         <select
+                          name="department"
                           value={selectedDepartment}
                           onChange={(e) => setSelectedDepartment(e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 appearance-none"
@@ -298,6 +315,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Doctor</label>
                       <div className="relative">
                         <select
+                          name="doctor"
                           value={selectedDoctor}
                           onChange={(e) => setSelectedDoctor(e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 appearance-none"
@@ -320,6 +338,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Date *</label>
                       <input
                         type="date"
+                        name="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300"
@@ -331,6 +350,7 @@ export default function AppointmentsPage() {
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Time *</label>
                       <div className="relative">
                         <select
+                          name="time"
                           value={selectedTime}
                           onChange={(e) => setSelectedTime(e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 appearance-none"
@@ -352,6 +372,7 @@ export default function AppointmentsPage() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Information</label>
                     <textarea
+                      name="additionalInfo"
                       rows={4}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 resize-none"
                       placeholder="Please describe your symptoms or reason for visit..."
@@ -362,10 +383,11 @@ export default function AppointmentsPage() {
                   <div className="pt-6">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center space-x-3"
+                      disabled={isPending}
+                      className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Calendar className="w-6 h-6" />
-                      <span>Book Appointment</span>
+                      <span>{isPending ? "Sending..." : "Book Appointment"}</span>
                     </button>
                   </div>
                 </form>
@@ -416,7 +438,6 @@ export default function AppointmentsPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Visit Our Hospital</h2>
               <p className="text-xl text-gray-600">Find us easily with our location and contact details</p>
             </div>
-
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="flex items-start space-x-4">
@@ -432,7 +453,6 @@ export default function AppointmentsPage() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-[#017381]/10 rounded-xl">
                     <Clock className="w-6 h-6 text-[#017381]" />
@@ -447,7 +467,6 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
                 </div>
-
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-[#017381]/10 rounded-xl">
                     <Mail className="w-6 h-6 text-[#017381]" />
@@ -458,7 +477,6 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
               </div>
-
               <div className="bg-gradient-to-br from-[#017381]/5 to-[#025a65]/5 rounded-3xl p-8">
                 <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Quick Statistics</h3>
                 <div className="grid grid-cols-2 gap-6">

@@ -3,10 +3,10 @@
 import { ArrowRight } from 'lucide-react';
 
 const buttons = [
-  { label: 'Book Appointment', href: '#' },
-  { label: 'Find Doctor', href: '#' },
-  { label: 'Health Package', href: '#' },
-  { label: 'Department', href: '#' },
+  { label: 'Book Appointment', href: '/appointments' },
+  { label: 'Find Doctor', href: '/all-consultants' },
+  { label: 'Health Package', href: '/health-package' },
+  { label: 'Department', href: '/department' },
 ];
 
 export default function SegmentedButtonGroup() {
