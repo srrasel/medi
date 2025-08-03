@@ -100,7 +100,7 @@ const Header = () => {
                     {/* Logo Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-[#017381]/20 to-[#025a65]/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     <Image
-                      src="/images/logo.png"
+                      src="/images/logoa.png"
                       alt="Pro-Active Hospital"
                       width={isScrolled ? 300 : 350}
                       height={isScrolled ? 76 : 89}
