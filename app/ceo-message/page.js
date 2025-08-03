@@ -134,7 +134,7 @@ export default function CEOMessagePage() {
                 <p className="text-lg font-medium text-white/90">{ceoData.Position}</p>
                 <p className="text-base text-slate-300 mt-2">Pro-Active Hospital</p>
                 <p className="text-sm text-slate-400 italic">
-                  BRAC Health Program (BHP), BRAC  Former Commandant, Armed Forces Medical Institute  Former Commandant, Combined Military Hospital (CMH), Chattogram  Former Director, Dhaka Medical College Hospital  Former Director, Rajshahi Medical College Hospital  Former Director, Kurmitola General Hospital  Former Director, DNCC Dedicated Covid-19 Hospital
+                Former National Consultant, BRAC Health Program (BHP), BRAC  Former Commandant, Armed Forces Medical Institute  Former Commandant, Combined Military Hospital (CMH), Chattogram  Former Director, Dhaka Medical College Hospital  Former Director, Rajshahi Medical College Hospital  Former Director, Kurmitola General Hospital  Former Director, DNCC Dedicated Covid-19 Hospital
                 </p>
               </div>
             </div>
