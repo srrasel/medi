@@ -20,8 +20,8 @@ export default function HospitalHeroSection() {
         console.error("Failed to load hero data:", err)
         // Fallback to default values if API fails
         setData({
-          videoDesktop: { url: "/images/msa.mp4" },
-          videoMobile: { url: "/images/msa.mp4" }
+          videoDesktop: { url: "/images/medi.mp4" },
+          videoMobile: { url: "/images/medi.mp4" }
         })
       }
     }
@@ -40,8 +40,8 @@ export default function HospitalHeroSection() {
   }
 
   // Use default values while loading
-  const videoDesktopUrl = data?.videoDesktop?.url || "/images/msa.mp4"
-  const videoMobileUrl = data?.videoMobile?.url || "/images/msa.mp4"
+  const videoDesktopUrl = data?.videoDesktop?.url || "/images/medi.mp4"
+  const videoMobileUrl = data?.videoMobile?.url || "/images/medi.mp4"
 
   return (
     <div className="relative w-full h-[80vh] overflow-hidden">
@@ -73,7 +73,7 @@ export default function HospitalHeroSection() {
         loading="eager"
       >
         <source src={videoMobileUrl} type="video/mp4" />
-      </video>
+      </video> 
 
       {/* Overlay - render immediately */}
       <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-end pb-4 md:pb-4 p-4">
