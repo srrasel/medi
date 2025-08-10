@@ -264,13 +264,7 @@ const DoctorsSection = () => {
           </p>
         </div>
 
-        {/* Debug info - remove this in production */}
-        <div className="text-center mb-4 text-white text-sm">
-          <p>
-            Total Doctors: {doctors.length} | Cards Per View: {cardsPerView} | Current Index: {currentIndex} | Max
-            Slides: {maxSlides}
-          </p>
-        </div>
+       
 
         {/* Doctors Carousel with Side Navigation */}
         <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
