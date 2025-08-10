@@ -104,26 +104,7 @@ export default function AppointmentsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        </div>
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <div className="inline-block mb-6">
-            <span className="bg-white/20 backdrop-blur-sm text-white text-sm font-bold tracking-wider uppercase px-8 py-3 rounded-full border border-white/30 shadow-lg">
-              Book Your Appointment
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Schedule Your Visit
-            <span className="block text-[#b8e6ea]">Expert Care Awaits</span>
-          </h1>
-          <p className="text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto mb-8">
-            Book an appointment with our experienced medical professionals and get the healthcare you deserve
-          </p>
-        </div>
-      </section>
+ 
 
       
       {/* Appointment Booking Form */}
