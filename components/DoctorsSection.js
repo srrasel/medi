@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   ChevronLeft,
   ChevronRight,
@@ -92,18 +92,23 @@ const DoctorsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [visibleCards, setVisibleCards] = useState(new Set())
   const [cardsPerView, setCardsPerView] = useState(4)
+  const [isHovered, setIsHovered] = useState(false)
+  const autoPlayRef = useRef(null)
+
+  // Auto-play configuration
+  const AUTO_PLAY_INTERVAL = 3000 // 3 seconds
+  const TRANSITION_DURATION = 700 // Should match CSS transition duration
 
   // Fetch doctors data from API
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("/api/doctors") // Fetch from your new API route
+        const response = await fetch("/api/doctors")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
         setDoctors(data)
-       
       } catch (e) {
         setError(e.message)
       } finally {
@@ -155,14 +160,49 @@ const DoctorsSection = () => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  const totalSlides = Math.max(0, doctors.length - cardsPerView + 1)
+  // Auto-play functionality with infinite loop
+  useEffect(() => {
+    if (!loading && doctors.length > 0 && !isHovered) {
+      autoPlayRef.current = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          // For infinite loop, we cycle through all doctors, not just totalSlides
+          return (prevIndex + 1) % doctors.length
+        })
+      }, AUTO_PLAY_INTERVAL)
+    }
+
+    return () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current)
+      }
+    }
+  }, [loading, doctors.length, isHovered])
+
+  // Navigation functions for infinite loop
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % totalSlides)
+    setCurrentIndex((prev) => (prev + 1) % doctors.length)
   }
+
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
+    setCurrentIndex((prev) => (prev - 1 + doctors.length) % doctors.length)
   }
-  const transformPercent = -(currentIndex * (100 / cardsPerView))
+
+  // Calculate transform for infinite loop
+  const getTransformPercent = () => {
+    return -(currentIndex * (100 / cardsPerView))
+  }
+
+  // Handle mouse enter/leave for pausing auto-play
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+  }
 
   if (loading) {
     return (
@@ -180,6 +220,10 @@ const DoctorsSection = () => {
     )
   }
 
+  // Create extended array for seamless infinite loop
+  const extendedDoctors = [...doctors, ...doctors, ...doctors]
+  const totalSlides = doctors.length
+
   return (
     <div className="relative py-24 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
       {/* Professional Background Elements */}
@@ -196,6 +240,7 @@ const DoctorsSection = () => {
         <div className="absolute top-1/4 right-16 w-32 h-32 bg-white/5 rounded-3xl rotate-45 animate-pulse"></div>
         <div className="absolute bottom-1/4 left-20 w-24 h-24 bg-white/3 rounded-2xl rotate-12 animate-pulse delay-700"></div>
       </div>
+
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-20">
@@ -213,52 +258,57 @@ const DoctorsSection = () => {
             listen to their concerns, and involve them in every step of their care journey.
           </p>
         </div>
+
         {/* Doctors Carousel with Side Navigation */}
-        <div className="relative">
+        <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           {/* Left Arrow */}
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:shadow-xl hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border border-white/30 -ml-7"
-            disabled={currentIndex === 0}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:shadow-xl hover:scale-110 border border-white/30 -ml-7"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
+
           {/* Right Arrow */}
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:shadow-xl hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border border-white/30 -mr-7"
-            disabled={currentIndex >= totalSlides - 1}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:shadow-xl hover:scale-110 border border-white/30 -mr-7"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
+
           {/* Carousel Container */}
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-700 ease-in-out pb-4"
               style={{
-                transform: `translateX(${transformPercent}%)`,
+                transform: `translateX(${getTransformPercent()}%)`,
               }}
             >
-              {doctors.map((doctor, index) => {
-                const IconComponent = getSpecialtyIcon(doctor.specialty) // Get icon based on specialty
-                const isVisible = visibleCards.has(index)
+              {extendedDoctors.map((doctor, index) => {
+                const IconComponent = getSpecialtyIcon(doctor.specialty)
+                const originalIndex = index % doctors.length
+                const isVisible = visibleCards.has(originalIndex)
+
                 return (
-                  <div key={doctor.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
+                  <div key={`${doctor.id}-${index}`} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
                     <div
-                      data-index={index}
+                      data-index={originalIndex}
                       className={`doctor-card bg-white/95 backdrop-blur-md rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-6 border border-white/20 hover:border-white/40 group h-full hover:bg-white ${
                         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                       }`}
-                      style={{ transitionDelay: `${index * 100}ms` }}
+                      style={{ transitionDelay: `${originalIndex * 100}ms` }}
                     >
                       {/* Doctor Image */}
                       <div className="relative h-80 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                         <Image
-                          src={doctor.image || "/placeholder.svg"}
-                          alt={doctor.name|| "Doctor Image"}
+                          src={
+                            doctor.image || "/placeholder.svg?height=400&width=400&query=professional doctor portrait"
+                          }
+                          alt={doctor.name || "Doctor Image"}
                           width={400}
                           height={400}
-                          className="w-full h-full object-fit object-top group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                         {/* Specialty Icon */}
@@ -266,6 +316,7 @@ const DoctorsSection = () => {
                           <IconComponent className="w-5 h-5 text-white" />
                         </div>
                       </div>
+
                       {/* Doctor Info */}
                       <div className="p-6">
                         {/* Specialty Badge */}
@@ -274,7 +325,7 @@ const DoctorsSection = () => {
                             {doctor.specialty}
                           </span>
                         </div>
-                        {/* Name and Position - Made smaller */}
+                        {/* Name and Position */}
                         <h3 className="text-lg font-bold mb-2 text-gray-800 group-hover:text-[#017381] transition-colors leading-tight">
                           {doctor.name}
                         </h3>
@@ -282,7 +333,7 @@ const DoctorsSection = () => {
                         {/* Action Button */}
                         <div className="flex">
                           <Link
-                            href={doctor.link}
+                            href={doctor.link || "#"}
                             className="w-full bg-gray-100 hover:bg-[#017381]/10 text-[#017381] px-4 py-3 rounded-xl font-bold transition-all duration-300 text-center border border-gray-200 hover:border-[#017381]/20"
                           >
                             View Profile
@@ -296,6 +347,7 @@ const DoctorsSection = () => {
             </div>
           </div>
         </div>
+
         {/* Slide Indicators */}
         <div className="flex justify-center mt-12 space-x-3">
           {Array.from({ length: totalSlides }).map((_, index) => (
@@ -303,11 +355,19 @@ const DoctorsSection = () => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-4 h-4 rounded-full transition-all duration-300 border border-white/30 ${
-                index === currentIndex ? "bg-white scale-125 shadow-lg" : "bg-white/30 hover:bg-white/50"
+                index === (currentIndex % totalSlides)
+                  ? "bg-white scale-125 shadow-lg"
+                  : "bg-white/30 hover:bg-white/50"
               }`}
             />
           ))}
         </div>
+
+        {/* Auto-play indicator */}
+        <div className="text-center mt-6">
+          <p className="text-white/60 text-sm">{isHovered ? "Auto-play paused" : "Auto-playing every 3 seconds"}</p>
+        </div>
+
         {/* Statistics Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-4xl mx-auto">
           <div className="text-center">

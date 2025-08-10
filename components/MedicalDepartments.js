@@ -347,9 +347,9 @@ export default function MedicalSpecialties() {
 
                 {/* Bottom Info Card */}
                 <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-                  <h3 className="text-lg font-bold text-[#017381] mb-2">JCI Accredited Hospital</h3>
+                  <h3 className="text-lg font-bold text-[#017381] mb-2">Pro Active Hospital</h3>
                   <p className="text-sm text-gray-600">
-                    First in Bangladesh to receive international healthcare accreditation
+                    Best Hospital in Narayanganj, Dhaka
                   </p>
                 </div>
               </div>

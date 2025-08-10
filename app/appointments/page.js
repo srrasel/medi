@@ -125,62 +125,7 @@ export default function AppointmentsPage() {
         </div>
       </section>
 
-      {/* Contact Services Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Contact Our Medical Team</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get immediate assistance from our healthcare professionals through multiple contact channels
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-            {contactServices.map((service, index) => {
-              const IconComponent = service.icon
-              return (
-                <div
-                  key={index}
-                  className={`group bg-gradient-to-br ${service.bgColor} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-opacity-50 transform hover:-translate-y-2`}
-                >
-                  <div className="text-center">
-                    <div
-                      className={`p-6 bg-gradient-to-r ${service.color} text-white rounded-3xl inline-block mb-6 group-hover:scale-110 transition-all duration-300 shadow-xl`}
-                    >
-                      <IconComponent className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-gray-900 transition-colors">
-                      {service.title}
-                    </h3>
-                    <div className="mb-4">
-                      <a
-                        href={`tel:${service.phone}`}
-                        className={`text-3xl font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block`}
-                      >
-                        {service.phone}
-                      </a>
-                    </div>
-                    <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
-                    <div className="flex items-center justify-center mb-6">
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4 text-green-500" />
-                        <span>{service.available}</span>
-                      </div>
-                    </div>
-                    <a
-                      href={`tel:${service.phone}`}
-                      className={`w-full bg-gradient-to-r ${service.color} hover:shadow-xl text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2 group-hover:shadow-2xl`}
-                    >
-                      <Phone className="w-5 h-5" />
-                      <span>Call Now</span>
-                    </a>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
+      
       {/* Appointment Booking Form */}
       <section className="py-20 bg-gradient-to-br from-slate-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -397,8 +342,65 @@ export default function AppointmentsPage() {
         </div>
       </section>
 
+      {/* Contact Services Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Contact Our Medical Team</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Get immediate assistance from our healthcare professionals through multiple contact channels
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+            {contactServices.map((service, index) => {
+              const IconComponent = service.icon
+              return (
+                <div
+                  key={index}
+                  className={`group bg-gradient-to-br ${service.bgColor} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-opacity-50 transform hover:-translate-y-2`}
+                >
+                  <div className="text-center">
+                    <div
+                      className={`p-6 bg-gradient-to-r ${service.color} text-white rounded-3xl inline-block mb-6 group-hover:scale-110 transition-all duration-300 shadow-xl`}
+                    >
+                      <IconComponent className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-gray-900 transition-colors">
+                      {service.title}
+                    </h3>
+                    <div className="mb-4">
+                      <a
+                        href={`tel:${service.phone}`}
+                        className={`text-3xl font-bold bg-gradient-to-r ${service.color} bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block`}
+                      >
+                        {service.phone}
+                      </a>
+                    </div>
+                    <p className="text-gray-600 leading-relaxed mb-6">{service.description}</p>
+                    <div className="flex items-center justify-center mb-6">
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <Clock className="w-4 h-4 text-green-500" />
+                        <span>{service.available}</span>
+                      </div>
+                    </div>
+                    <a
+                      href={`tel:${service.phone}`}
+                      className={`w-full bg-gradient-to-r ${service.color} hover:shadow-xl text-white px-6 py-4 rounded-2xl font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2 group-hover:shadow-2xl`}
+                    >
+                      <Phone className="w-5 h-5" />
+                      <span>Call Now</span>
+                    </a>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+
       {/* Emergency Contact Section */}
-      <section className="py-16 bg-gradient-to-r from-red-500 to-red-600">
+      <section className="py-16 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-6">

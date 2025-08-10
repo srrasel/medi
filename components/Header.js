@@ -36,6 +36,7 @@ const Header = () => {
   ]
 
   const newsItems = [
+    { name: "News", href: "/blog", description: "Medical news" },
     { name: "All Videos", href: "/all-videos", description: "Medical education videos" },
     { name: "Gallery", href: "/gallery", description: "Hospital photo gallery" },
     { name: "Success Stories", href: "/success-stories", description: "Patient testimonials" },
