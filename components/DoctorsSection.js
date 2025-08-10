@@ -160,13 +160,14 @@ const DoctorsSection = () => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Auto-play functionality with infinite loop
+  // Auto-play functionality with infinite loop - FIXED
   useEffect(() => {
     if (!loading && doctors.length > 0 && !isHovered) {
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          // For infinite loop, we cycle through all doctors, not just totalSlides
-          return (prevIndex + 1) % doctors.length
+          // Calculate how many "slides" we can show based on cards per view
+          const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
+          return (prevIndex + 1) % maxSlides
         })
       }, AUTO_PLAY_INTERVAL)
     }
@@ -176,18 +177,20 @@ const DoctorsSection = () => {
         clearInterval(autoPlayRef.current)
       }
     }
-  }, [loading, doctors.length, isHovered])
+  }, [loading, doctors.length, isHovered, cardsPerView])
 
-  // Navigation functions for infinite loop
+  // Navigation functions for infinite loop - FIXED
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % doctors.length)
+    const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
+    setCurrentIndex((prev) => (prev + 1) % maxSlides)
   }
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + doctors.length) % doctors.length)
+    const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
+    setCurrentIndex((prev) => (prev - 1 + maxSlides) % maxSlides)
   }
 
-  // Calculate transform for infinite loop
+  // Calculate transform for infinite loop - FIXED
   const getTransformPercent = () => {
     return -(currentIndex * (100 / cardsPerView))
   }
@@ -220,9 +223,9 @@ const DoctorsSection = () => {
     )
   }
 
-  // Create extended array for seamless infinite loop
-  const extendedDoctors = [...doctors, ...doctors, ...doctors]
-  const totalSlides = doctors.length
+  // Create extended array for seamless infinite loop - FIXED
+  const extendedDoctors = doctors.length > 0 ? [...doctors, ...doctors.slice(0, cardsPerView)] : []
+  const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
 
   return (
     <div className="relative py-24 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
@@ -259,6 +262,14 @@ const DoctorsSection = () => {
           </p>
         </div>
 
+        {/* Debug info - remove this in production */}
+        <div className="text-center mb-4 text-white text-sm">
+          <p>
+            Total Doctors: {doctors.length} | Cards Per View: {cardsPerView} | Current Index: {currentIndex} | Max
+            Slides: {maxSlides}
+          </p>
+        </div>
+
         {/* Doctors Carousel with Side Navigation */}
         <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           {/* Left Arrow */}
@@ -277,7 +288,7 @@ const DoctorsSection = () => {
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          {/* Carousel Container */}
+          {/* Carousel Container - FIXED */}
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-700 ease-in-out pb-4"
@@ -285,19 +296,18 @@ const DoctorsSection = () => {
                 transform: `translateX(${getTransformPercent()}%)`,
               }}
             >
-              {extendedDoctors.map((doctor, index) => {
+              {doctors.map((doctor, index) => {
                 const IconComponent = getSpecialtyIcon(doctor.specialty)
-                const originalIndex = index % doctors.length
-                const isVisible = visibleCards.has(originalIndex)
+                const isVisible = visibleCards.has(index)
 
                 return (
-                  <div key={`${doctor.id}-${index}`} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
+                  <div key={doctor.id || index} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
                     <div
-                      data-index={originalIndex}
+                      data-index={index}
                       className={`doctor-card bg-white/95 backdrop-blur-md rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-6 border border-white/20 hover:border-white/40 group h-full hover:bg-white ${
                         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                       }`}
-                      style={{ transitionDelay: `${originalIndex * 100}ms` }}
+                      style={{ transitionDelay: `${index * 100}ms` }}
                     >
                       {/* Doctor Image */}
                       <div className="relative h-80 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
@@ -348,16 +358,14 @@ const DoctorsSection = () => {
           </div>
         </div>
 
-        {/* Slide Indicators */}
+        {/* Slide Indicators - FIXED */}
         <div className="flex justify-center mt-12 space-x-3">
-          {Array.from({ length: totalSlides }).map((_, index) => (
+          {Array.from({ length: maxSlides }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-4 h-4 rounded-full transition-all duration-300 border border-white/30 ${
-                index === (currentIndex % totalSlides)
-                  ? "bg-white scale-125 shadow-lg"
-                  : "bg-white/30 hover:bg-white/50"
+                index === currentIndex ? "bg-white scale-125 shadow-lg" : "bg-white/30 hover:bg-white/50"
               }`}
             />
           ))}
