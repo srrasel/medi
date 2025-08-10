@@ -99,17 +99,22 @@ const DoctorsSection = () => {
   const AUTO_PLAY_INTERVAL = 3000 // 3 seconds
   const TRANSITION_DURATION = 700 // Should match CSS transition duration
 
-  // Fetch doctors data from API
+  // Fetch doctors data from API - SIMPLIFIED since API route now handles all doctors
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
+        console.log("Fetching doctors from API...")
         const response = await fetch("/api/doctors")
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
+
         const data = await response.json()
+        console.log(`Successfully fetched ${data.length} doctors from API`)
         setDoctors(data)
       } catch (e) {
+        console.error("Error fetching doctors:", e)
         setError(e.message)
       } finally {
         setLoading(false)
@@ -160,12 +165,11 @@ const DoctorsSection = () => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Auto-play functionality with infinite loop - FIXED
+  // Auto-play functionality with infinite loop
   useEffect(() => {
     if (!loading && doctors.length > 0 && !isHovered) {
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          // Calculate how many "slides" we can show based on cards per view
           const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
           return (prevIndex + 1) % maxSlides
         })
@@ -179,7 +183,7 @@ const DoctorsSection = () => {
     }
   }, [loading, doctors.length, isHovered, cardsPerView])
 
-  // Navigation functions for infinite loop - FIXED
+  // Navigation functions for infinite loop
   const nextSlide = () => {
     const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
     setCurrentIndex((prev) => (prev + 1) % maxSlides)
@@ -190,7 +194,7 @@ const DoctorsSection = () => {
     setCurrentIndex((prev) => (prev - 1 + maxSlides) % maxSlides)
   }
 
-  // Calculate transform for infinite loop - FIXED
+  // Calculate transform for infinite loop
   const getTransformPercent = () => {
     return -(currentIndex * (100 / cardsPerView))
   }
@@ -223,8 +227,6 @@ const DoctorsSection = () => {
     )
   }
 
-  // Create extended array for seamless infinite loop - FIXED
-  const extendedDoctors = doctors.length > 0 ? [...doctors, ...doctors.slice(0, cardsPerView)] : []
   const maxSlides = Math.max(1, doctors.length - cardsPerView + 1)
 
   return (
@@ -288,7 +290,7 @@ const DoctorsSection = () => {
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          {/* Carousel Container - FIXED */}
+          {/* Carousel Container */}
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-700 ease-in-out pb-4"
@@ -358,7 +360,7 @@ const DoctorsSection = () => {
           </div>
         </div>
 
-        {/* Slide Indicators - FIXED */}
+        {/* Slide Indicators */}
         <div className="flex justify-center mt-12 space-x-3">
           {Array.from({ length: maxSlides }).map((_, index) => (
             <button
