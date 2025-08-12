@@ -2,13 +2,83 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Play, Clock, Calendar, ArrowLeft, Search, Filter, ChevronDown } from 'lucide-react'
+import { Play, Clock, Calendar, ArrowLeft, Search, Filter, ChevronDown } from "lucide-react"
 import Image from "next/image"
+
 export default function VideosPage() {
+  const [videos, setVideos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [visibleCards, setVisibleCards] = useState(new Set())
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("https://admin.pmchl.com/api/videos?populate=*")
+        if (!response.ok) {
+          throw new Error("Failed to fetch videos")
+        }
+        const data = await response.json()
+
+        // Transform Strapi data to match component structure
+        const transformedVideos = data.data.map((video) => {
+          // Extract YouTube video ID from URL
+          const videoId = extractYouTubeId(video.Videourl)
+
+          // Extract description text from rich text array
+          const description =
+            video.Description?.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ") || ""
+
+          // Format date
+          const publishedDate = new Date(video.publishedAt).toLocaleDateString("bn-BD", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+
+          return {
+            id: videoId,
+            title: video.Title,
+            category: video.Category,
+            duration: "N/A", // Duration not available from API
+            publishedAt: publishedDate,
+            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+            description: description,
+            videoUrl: video.Videourl,
+          }
+        })
+
+        setVideos(transformedVideos)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchVideos()
+  }, [])
+
+  const extractYouTubeId = (url) => {
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/
+    const match = url.match(regex)
+    return match ? match[1] : ""
+  }
+
+  const categories = [
+    { name: "সব ক্যাটেগরি", slug: "all", count: videos.length },
+    ...Array.from(new Set(videos.map((video) => video.category)))
+      .filter(Boolean)
+      .map((category) => ({
+        name: category,
+        slug: category,
+        count: videos.filter((video) => video.category === category).length,
+      })),
+  ]
 
   useEffect(() => {
     const observerOptions = {
@@ -29,214 +99,10 @@ export default function VideosPage() {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [selectedCategory, searchQuery])
-
-  const allVideos = [
-    {
-      id: "mLajU0eBIV8",
-      title: "বিশ্ব হিমোফিলিয়া দিবস-২০২৫",
-      category: "স্বাস্থ্য সচেতনতা",
-      duration: "5:30",
-      publishedAt: "২০২৫-০৪-১৭",
-      thumbnail: `https://img.youtube.com/vi/mLajU0eBIV8/maxresdefault.jpg`,
-      description: "বিশ্ব হিমোফিলিয়া দিবস উপলক্ষে বিশেষ আলোচনা। হিমোফিলিয়া রোগ সম্পর্কে সচেতনতা বৃদ্ধি।"
-    },
-    {
-      id: "y2Zwq4oijMg",
-      title: "স্বাভাবিক ডেলিভারি—এখন ব্যথাহীন! সুস্থ মা, নিরাপদ সন্তান।",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "8:45",
-      publishedAt: "২০২৫-০৪-১৫",
-      thumbnail: `https://img.youtube.com/vi/y2Zwq4oijMg/maxresdefault.jpg`,
-      description: "আধুনিক চিকিৎসা পদ্ধতিতে ব্যথাহীন স্বাভাবিক প্রসব সম্পর্কে বিস্তারিত তথ্য।"
-    },
-    {
-      id: "SoXibqSYDzs",
-      title: "সকল স্বাস্থ্যসেবা নিয়ে প্রো-অ্যাকটিভ মেডিকেল কলেজ এন্ড হসপিটাল লিঃ সবসময় আপনার পাশে🩺",
-      category: "হাসপাতাল সেবা",
-      duration: "6:20",
-      publishedAt: "২০২৫-০৪-১০",
-      thumbnail: `https://img.youtube.com/vi/SoXibqSYDzs/maxresdefault.jpg`,
-      description: "প্রো-অ্যাকটিভ হাসপাতালের সকল স্বাস্থ্যসেবা সম্পর্কে বিস্তারিত পরিচিতি।"
-    },
-    {
-      id: "AjQlE7DU3Lc",
-      title: "মহান শ্রমিক দিবস উপলক্ষে শ্রমিকদের মানসিক স্বাস্থ্য নিয়ে বিশেষ আলোচনা🩺",
-      category: "মানসিক স্বাস্থ্য",
-      duration: "12:15",
-      publishedAt: "২০২৫-০৫-০১",
-      thumbnail: `https://img.youtube.com/vi/AjQlE7DU3Lc/maxresdefault.jpg`,
-      description: "শ্রমিকদের মানসিক স্বাস্থ্য নিয়ে বিশেষজ্ঞ চিকিৎসকদের পরামর্শ ও আলোচনা।"
-    },
-    {
-      id: "uppZWNDLFHs",
-      title: "শ্রমিকদের স্বাস্থ্য ঝুঁকি ও স্বাস্থ্য নিরাপত্তা নিয়ে বিশেষ আলোচনা🩺",
-      category: "কর্মক্ষেত্রে স্বাস্থ্য",
-      duration: "10:30",
-      publishedAt: "২০২৫-০৫-০১",
-      thumbnail: `https://img.youtube.com/vi/uppZWNDLFHs/maxresdefault.jpg`,
-      description: "কর্মক্ষেত্রে স্বাস্থ্য ঝুঁকি ও নিরাপত্তা বিষয়ে বিশেষজ্ঞ মতামত।"
-    },
-    {
-      id: "CukTfOAhe_I",
-      title: "সকল স্বাস্থ্যসেবা নিয়ে ২৪ ঘন্টা আপনার পাশে প্রো-অ্যাকটিভ মেডিকেল কলেজ হসপিটাল🩺",
-      category: "হাসপাতাল সেবা",
-      duration: "7:45",
-      publishedAt: "২০২৫-০৪-০৮",
-      thumbnail: `https://img.youtube.com/vi/CukTfOAhe_I/maxresdefault.jpg`,
-      description: "২৪ ঘন্টা জরুরি সেবা ও সকল বিভাগের চিকিৎসা সুবিধা সম্পর্কে তথ্য।"
-    },
-    {
-      id: "LQOPBvm4c8Q",
-      title: "Pro-Active Medical College & Hospital Ltd",
-      category: "হাসপাতাল পরিচিতি",
-      duration: "4:20",
-      publishedAt: "২০২৫-০৩-২৫",
-      thumbnail: `https://img.youtube.com/vi/LQOPBvm4c8Q/maxresdefault.jpg`,
-      description: "প্রো-অ্যাকটিভ মেডিকেল কলেজ ও হাসপাতালের সার্বিক পরিচিতি।"
-    },
-    {
-      id: "vPtK83Hmi9s",
-      title: "প্রো-অ্যাকটিভ টিকা কেন্দ্রে জাতীয় ভিটামিন 'এ' প্লাস ক্যাম্পেইন ২০২৩",
-      category: "টিকাদান কর্মসূচি",
-      duration: "3:15",
-      publishedAt: "২০২৩-০৬-১৫",
-      thumbnail: `https://img.youtube.com/vi/vPtK83Hmi9s/maxresdefault.jpg`,
-      description: "জাতীয় ভিটামিন 'এ' প্লাস ক্যাম্পেইনে প্রো-অ্যাকটিভ টিকা কেন্দ্রের অংশগ্রহণ।"
-    },
-    {
-      id: "QV-jaTHCW8A",
-      title: "আরও একটি সফলতার গল্প | Success Story | Dr. Priyanka Podder | PMCHL",
-      category: "সফলতার গল্প",
-      duration: "6:50",
-      publishedAt: "২০২৫-০৩-২০",
-      thumbnail: `https://img.youtube.com/vi/QV-jaTHCW8A/maxresdefault.jpg`,
-      description: "ডা. প্রিয়াংকা পোদ্দারের চিকিৎসায় রোগীর সফল আরোগ্যের গল্প।"
-    },
-    {
-      id: "MGthXS3bdjg",
-      title: "টিউবে বাচ্চা ছিলো এবং ফেটে গিয়ে প্রচুর রক্তক্ষরণ হয়। প্রো-অ্যাকটিভে সফল অপারশেন❤",
-      category: "সফলতার গল্প",
-      duration: "5:25",
-      publishedAt: "২০২৫-০৩-১৮",
-      thumbnail: `https://img.youtube.com/vi/MGthXS3bdjg/maxresdefault.jpg`,
-      description: "জটিল গর্ভকালীন জরুরি অবস্থায় প্রো-অ্যাকটিভে সফল অপারেশনের গল্প।"
-    },
-    {
-      id: "3M52Hd1W4mg",
-      title: "প্রো-অ্যাকটিভ মেডিকেল কলেজ হসপিটালের বিশেষজ্ঞ ডাক্তারগণের তালিকা 🩺Specialist Doctor List",
-      category: "ডাক্তার পরিচিতি",
-      duration: "9:30",
-      publishedAt: "২০২৫-০৩-১৫",
-      thumbnail: `https://img.youtube.com/vi/3M52Hd1W4mg/maxresdefault.jpg`,
-      description: "প্রো-অ্যাকটিভ হাসপাতালের সকল বিশেষজ্ঞ চিকিৎসকদের পরিচিতি।"
-    },
-    {
-      id: "HLrYEckYMa0",
-      title: "ডাঃ নাজিয়া সুলতানা, ল্যাপারোস্কপিক সার্জন ও ইনফার্টিলিটি স্পেশালিস্ট, সিনিয়র স্পেশালিস্ট PMCHL",
-      category: "ডাক্তার পরিচিতি",
-      duration: "7:20",
-      publishedAt: "২০২৫-০৩-১২",
-      thumbnail: `https://img.youtube.com/vi/HLrYEckYMa0/maxresdefault.jpg`,
-      description: "ডাঃ নাজিয়া সুলতানা, ল্যাপারোস্কপিক সার্জন ও বন্ধ্যাত্ব বিশেষজ্ঞের পরিচিতি।"
-    },
-    {
-      id: "YAjf68Kzo7k",
-      title: "জরায়ু ক্যান্সারের কারণ, লক্ষণ ও প্রতিকার | Dr. Priyanka Podder | PMCHL",
-      category: "ক্যান্সার সচেতনতা",
-      duration: "11:45",
-      publishedAt: "২০২৫-০৩-১০",
-      thumbnail: `https://img.youtube.com/vi/YAjf68Kzo7k/maxresdefault.jpg`,
-      description: "জরায়ু ক্যান্সার সম্পর্কে বিস্তারিত তথ্য ও প্রতিরোধের উপায়।"
-    },
-    {
-      id: "JPpfsWun8Z0",
-      title: "প্রচন্ড মাথা ব্যাথায় ভুগছিলো। প্রো-অ্যাকটিভে নিউরো বিশেষজ্ঞ এর চিকিৎসায় ১ দিনেই আল্লাহর রহমতে সুস্থ",
-      category: "সফলতার গল্প",
-      duration: "4:30",
-      publishedAt: "২০২৫-০৩-০৮",
-      thumbnail: `https://img.youtube.com/vi/JPpfsWun8Z0/maxresdefault.jpg`,
-      description: "নিউরোলজি বিভাগে দ্রুত চিকিৎসায় রোগীর আরোগ্যের গল্প।"
-    },
-    {
-      id: "9kbtxqJWyLs",
-      title: "নরমাল ডেলিভারীর সাফল্য | Success Story | Dr. Priyanka Podder | PMCHL",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "5:15",
-      publishedAt: "২০২৫-০৩-০৫",
-      thumbnail: `https://img.youtube.com/vi/9kbtxqJWyLs/maxresdefault.jpg`,
-      description: "স্বাভাবিক প্রসবে সফলতার আরেকটি গল্প।"
-    },
-    {
-      id: "9gbwRsNcvKQ",
-      title: "সফল নরমাল ডেলিভারীতে রোগীর আত্মতৃপ্তি | Success Story | Dr. Priyanka Podder | PMCHL",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "6:10",
-      publishedAt: "২০২৫-০৩-০৩",
-      thumbnail: `https://img.youtube.com/vi/9gbwRsNcvKQ/maxresdefault.jpg`,
-      description: "নরমাল ডেলিভারিতে রোগীর সন্তুষ্টি ও কৃতজ্ঞতার বহিঃপ্রকাশ।"
-    },
-    {
-      id: "-pK3zHpKOTw",
-      title: "নরমাল ডেলিভারীর টিপস | Tips For Normal Delivery | Dr. Priyanka Podder | PMCHL",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "8:25",
-      publishedAt: "২০২৫-০৩-০১",
-      thumbnail: `https://img.youtube.com/vi/-pK3zHpKOTw/maxresdefault.jpg`,
-      description: "স্বাভাবিক প্রসবের জন্য গুরুত্বপূর্ণ টিপস ও পরামর্শ।"
-    },
-    {
-      id: "N7a5dlsIdAo",
-      title: "কিডনী জটিলতা সহ মাত্র ৩২ সপ্তাহেই জটিল অবস্থায় প্রো-অ্যাকটিভ হসপিটালে সফল সিজার | Success Story",
-      category: "সফলতার গল্প",
-      duration: "7:40",
-      publishedAt: "২০২৫-০২-২৮",
-      thumbnail: `https://img.youtube.com/vi/N7a5dlsIdAo/maxresdefault.jpg`,
-      description: "জটিল গর্ভাবস্থায় কিডনি সমস্যা সহ সফল সিজারিয়ান অপারেশন।"
-    },
-    {
-      id: "xowFbUicRIo",
-      title: "রক্তের গ্রুপ জানা কেন জরুরী? ডাঃ প্রিয়াংকা পোদ্দার | PMCHL",
-      category: "স্বাস্থ্য সচেতনতা",
-      duration: "6:30",
-      publishedAt: "২০২৫-০২-২৫",
-      thumbnail: `https://img.youtube.com/vi/xowFbUicRIo/maxresdefault.jpg`,
-      description: "রক্তের গ্রুপ জানার গুরুত্ব ও প্রয়োজনীয়তা সম্পর্কে আলোচনা।"
-    },
-    {
-      id: "F-0bYyYKfGQ",
-      title: "সন্তান প্রসবের পর কিভাবে মায়ের যত্ন নিবেন?",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "9:15",
-      publishedAt: "২০২৫-০২-২২",
-      thumbnail: `https://img.youtube.com/vi/F-0bYyYKfGQ/maxresdefault.jpg`,
-      description: "প্রসবোত্তর মায়ের যত্ন ও পরিচর্যার বিস্তারিত গাইডলাইন।"
-    },
-    {
-      id: "5JrUeiAwRJs",
-      title: "নিরাপদ মাতৃত্বের টিপস | Tips For Safe motherhood | Dr. Priyanka Podder | PMCHL",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "10:20",
-      publishedAt: "২০২৫-০২-২০",
-      thumbnail: `https://img.youtube.com/vi/5JrUeiAwRJs/maxresdefault.jpg`,
-      description: "নিরাপদ মাতৃত্বের জন্য প্রয়োজনীয় টিপস ও পরামর্শ।"
-    }
-  ]
-
-  const categories = [
-    { name: "সব ক্যাটেগরি", slug: "all", count: allVideos.length },
-    { name: "স্বাস্থ্য সচেতনতা", slug: "স্বাস্থ্য সচেতনতা", count: 3 },
-    { name: "মাতৃত্ব ও শিশু স্বাস্থ্য", slug: "মাতৃত্ব ও শিশু স্বাস্থ্য", count: 7 },
-    { name: "হাসপাতাল সেবা", slug: "হাসপাতাল সেবা", count: 2 },
-    { name: "সফলতার গল্প", slug: "সফলতার গল্প", count: 5 },
-    { name: "ডাক্তার পরিচিতি", slug: "ডাক্তার পরিচিতি", count: 2 },
-    { name: "মানসিক স্বাস্থ্য", slug: "মানসিক স্বাস্থ্য", count: 1 },
-    { name: "ক্যান্সার সচেতনতা", slug: "ক্যান্সার সচেতনতা", count: 1 },
-    { name: "টিকাদান কর্মসূচি", slug: "টিকাদান কর্মসূচি", count: 1 },
-  ]
+  }, [selectedCategory, searchQuery, videos])
 
   // Filter videos based on category and search
-  const filteredVideos = allVideos.filter((video) => {
+  const filteredVideos = videos.filter((video) => {
     const matchesCategory = selectedCategory === "all" || video.category === selectedCategory
     const matchesSearch =
       searchQuery === "" ||
@@ -245,6 +111,31 @@ export default function VideosPage() {
       video.category.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#017381] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading videos...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-500 text-2xl">⚠</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Error Loading Videos</h3>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -364,7 +255,7 @@ export default function VideosPage() {
                       <Image
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         src={video.thumbnail || "/placeholder.svg"}
-                        alt={video.title} 
+                        alt={video.title}
                         width={600}
                         height={400}
                         onError={(e) => {
@@ -388,12 +279,14 @@ export default function VideosPage() {
                       </div>
 
                       {/* Duration Badge */}
-                      <div className="absolute top-4 right-4">
-                        <div className="bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm font-medium flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {video.duration}
+                      {video.duration !== "N/A" && (
+                        <div className="absolute top-4 right-4">
+                          <div className="bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm font-medium flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {video.duration}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
 
                     {/* Content */}
@@ -422,7 +315,7 @@ export default function VideosPage() {
           </div>
 
           {/* No Results */}
-          {filteredVideos.length === 0 && (
+          {filteredVideos.length === 0 && !loading && (
             <div className="text-center py-20">
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Search className="w-12 h-12 text-gray-400" />

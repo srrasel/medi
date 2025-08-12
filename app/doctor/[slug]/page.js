@@ -4,10 +4,10 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Stethoscope, ArrowLeft, Calendar, Clock, User, Mail, Phone, Send } from "lucide-react"
+import { Stethoscope, ArrowLeft, Calendar, Clock, User, Mail, Phone, Send, FileText } from "lucide-react"
 
 export default function DoctorPage() {
-  const { slug } = useParams() // Get the slug from the URL parameters
+  const { slug } = useParams()
   const [doctor, setDoctor] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -32,7 +32,7 @@ export default function DoctorPage() {
       try {
         setLoading(true)
         setError(null)
-        const response = await fetch(`/api/doctors/${slug}`) // Fetch from your new API route
+        const response = await fetch(`/api/doctors/${slug}`)
         if (!response.ok) {
           const errorData = await response.json()
           throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
@@ -48,7 +48,7 @@ export default function DoctorPage() {
     }
 
     fetchDoctor()
-  }, [slug]) // Re-run when slug changes
+  }, [slug])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -60,7 +60,6 @@ export default function DoctorPage() {
     setIsSubmitting(true)
     setFormStatus("")
 
-    // Basic form validation
     if (!formData.name || !formData.email || !formData.phone || !formData.date || !formData.time) {
       setFormStatus("Please fill in all required fields.")
       setIsSubmitting(false)
@@ -74,9 +73,9 @@ export default function DoctorPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          doctorId: doctor?.id, // Use the fetched doctor's ID
-          doctorName: doctor?.name, // Pass doctor's name for email context
-          doctorSpecialty: doctor?.specialty, // Pass doctor's specialty for email context
+          doctorId: doctor?.id,
+          doctorName: doctor?.name,
+          doctorSpecialty: doctor?.specialty,
           ...formData,
         }),
       })
@@ -151,7 +150,7 @@ export default function DoctorPage() {
 
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
-            href="/all-consultants" // Assuming this is your main doctors listing page
+            href="/all-consultants"
             className="inline-flex items-center text-white hover:text-[#b8e6ea] mb-6 transition-colors duration-300"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -197,14 +196,19 @@ export default function DoctorPage() {
                     <span className="font-semibold">Qualifications:</span> {doctor.qualifications}
                   </p>
                 </div>
-                {/* Removed Availability as it's not in Strapi data */}
-                {/* <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-[#017381]" />
-                  <p>
-                    <span className="font-semibold">Availability:</span> Contact for schedule
-                  </p>
-                </div> */}
               </div>
+
+              {doctor.bio && (
+                <div className="mt-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <FileText className="w-5 h-5 text-[#017381]" />
+                    <h4 className="text-xl font-semibold text-gray-800">Biography</h4>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">{doctor.bio}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-8">
                 <h4 className="text-xl font-semibold text-gray-800 mb-4">Book an Appointment</h4>

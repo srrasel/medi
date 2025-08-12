@@ -6,114 +6,66 @@ import { Play, Heart, Users, Award, Star, ChevronLeft, ChevronRight } from "luci
 
 export default function SuccessStoriesPage() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [successVideos, setSuccessVideos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const videosPerPage = 6
 
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
+    const fetchSuccessStories = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("https://admin.pmchl.com/api/success-stories?populate=*")
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch success stories: ${response.status} ${response.statusText}`)
+        }
+
+        const data = await response.json()
+
+        console.log("API Response:", data)
+
+        if (!data.data || !Array.isArray(data.data)) {
+          throw new Error("Invalid API response format")
+        }
+
+        // Transform API data to match component structure
+        const transformedStories = data.data.map((story) => {
+          // Extract YouTube video ID from URL
+          const videoId = story.videourl.includes("youtu.be/")
+            ? story.videourl.split("youtu.be/")[1].split("?")[0]
+            : story.videourl.includes("youtube.com/watch?v=")
+              ? story.videourl.split("v=")[1].split("&")[0]
+              : story.videourl
+
+          // Extract description text from rich text array
+          const description =
+            story.Description && story.Description.length > 0
+              ? story.Description.map((block) =>
+                  block.children ? block.children.map((child) => child.text).join("") : "",
+                ).join(" ")
+              : "No description available"
+
+          return {
+            id: videoId,
+            title: story.Title,
+            description: description,
+            category: story.Category,
+          }
+        })
+
+        console.log("Transformed stories:", transformedStories)
+        setSuccessVideos(transformedStories)
+      } catch (err) {
+        setError(err.message)
+        console.error("Error fetching success stories:", err)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-fade-in-up")
-        }
-      })
-    }, observerOptions)
-
-    const elements = document.querySelectorAll(".animate-on-scroll")
-    elements.forEach((el) => observer.observe(el))
-
-    return () => observer.disconnect()
-  }, [currentPage])
-
-  const successVideos = [
-    {
-      id: "SWVrdPDFsh8",
-      title: "Cardiac Surgery Success Story",
-      description: "A remarkable recovery journey of our cardiac patient",
-      category: "Cardiac Care",
-    },
-    {
-      id: "qLHjlVuHdu0",
-      title: "Emergency Care Excellence",
-      description: "Life-saving emergency treatment and patient recovery",
-      category: "Emergency Care",
-    },
-    {
-      id: "OnwBQDz2Ysg",
-      title: "Pediatric Care Success",
-      description: "Specialized pediatric treatment and family testimonial",
-      category: "Pediatric Care",
-    },
-    {
-      id: "1DtNChSLuX0",
-      title: "Orthopedic Recovery",
-      description: "Complete rehabilitation and mobility restoration",
-      category: "Orthopedic Care",
-    },
-    {
-      id: "QR7UvlfV8g0",
-      title: "Cancer Treatment Journey",
-      description: "Comprehensive cancer care and patient triumph",
-      category: "Oncology",
-    },
-    {
-      id: "WeFhXz7J2Nw",
-      title: "Maternity Care Excellence",
-      description: "Safe delivery and maternal care success story",
-      category: "Maternity Care",
-    },
-    {
-      id: "iIEbjo6JcQ4",
-      title: "Neurological Recovery",
-      description: "Advanced neurological treatment and rehabilitation",
-      category: "Neurology",
-    },
-    {
-      id: "DBJEWsSyfM8",
-      title: "ICU Success Story",
-      description: "Critical care excellence and patient recovery",
-      category: "Critical Care",
-    },
-    {
-      id: "h1SoZ_Dljp4",
-      title: "Surgical Excellence",
-      description: "Complex surgical procedure and successful outcome",
-      category: "Surgery",
-    },
-    {
-      id: "TOsYhMAbYks",
-      title: "Dialysis Patient Journey",
-      description: "Long-term dialysis care and quality of life improvement",
-      category: "Nephrology",
-    },
-    {
-      id: "JPpfsWun8Z0",
-      title: "Physiotherapy Success",
-      description: "Complete rehabilitation and mobility restoration",
-      category: "Rehabilitation",
-    },
-    {
-      id: "VukGuSF-cUI",
-      title: "Family Care Story",
-      description: "Comprehensive family healthcare and support",
-      category: "Family Care",
-    },
-    {
-      id: "Zre9DB-8FDM",
-      title: "Medical Excellence",
-      description: "Outstanding medical care and patient satisfaction",
-      category: "General Medicine",
-    },
-    {
-      id: "6NE8JvAIn8Q",
-      title: "Community Health Impact",
-      description: "Our commitment to community healthcare excellence",
-      category: "Community Care",
-    },
-  ]
+    fetchSuccessStories()
+  }, [])
 
   const totalPages = Math.ceil(successVideos.length / videosPerPage)
   const startIndex = (currentPage - 1) * videosPerPage
@@ -125,6 +77,29 @@ export default function SuccessStoriesPage() {
     { number: "15+", label: "Medical Specialties", icon: Award },
     { number: "24/7", label: "Emergency Care", icon: Star },
   ]
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#017381] mx-auto"></div>
+          <p className="mt-4 text-xl text-[#017381]">Loading success stories...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Success Stories</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -141,14 +116,13 @@ export default function SuccessStoriesPage() {
         </div>
 
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
+          <div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
               Success Stories
             </h1>
             <p className="text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto">
               Real stories of hope, healing, and triumph from our patients and their families. Witness the difference
-quality healthcare makes in people&apos;s lives.
-
+              quality healthcare makes in people&apos;s lives.
             </p>
             <div className="mt-8 flex justify-center">
               <div className="w-24 h-1 bg-gradient-to-r from-white to-slate-200 rounded-full"></div>
@@ -164,12 +138,10 @@ quality healthcare makes in people&apos;s lives.
         </div>
       </section>
 
-     
-
       {/* Video Stories Section */}
       <section className="py-20 bg-gradient-to-br from-slate-100 to-slate-200">
         <div className="container mx-auto px-4">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000">
+          <div>
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-[#017381] mb-6">Patient Stories</h2>
               <div className="w-24 h-1 bg-gradient-to-r from-[#017381] to-[#025a65] mx-auto rounded-full"></div>
@@ -178,91 +150,94 @@ quality healthcare makes in people&apos;s lives.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {currentVideos.map((video, index) => (
-                <Card
-                  key={video.id}
-                  className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-1000 hover:scale-105 hover:shadow-2xl group cursor-pointer border-0 shadow-lg overflow-hidden"
-                  style={{ transitionDelay: `${index * 150}ms` }}
-                >
-                  <div className="relative">
-                    <div className="aspect-video bg-black rounded-t-lg overflow-hidden">
-                      <iframe
-                        src={`https://www.youtube.com/embed/${video.id}`}
-                        title={video.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="w-full h-full"
-                        loading="lazy"
-                      ></iframe>
-                    </div>
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-[#017381] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                        {video.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-[#017381] mb-3 group-hover:text-[#025a65] transition-colors duration-300">
-                      {video.title}
-                    </h3>
-                    <p className="text-slate-600 leading-relaxed mb-4">{video.description}</p>
-                    <div className="flex items-center gap-2 text-[#017381] font-semibold">
-                      <Play className="w-4 h-4" />
-                      <span>Watch Story</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-4 mt-12">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="flex items-center gap-2 px-6 py-3 bg-white text-[#017381] rounded-full font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Previous
-                </button>
-
-                <div className="flex gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-12 h-12 rounded-full font-semibold transition-all duration-300 ${
-                        currentPage === page
-                          ? "bg-[#017381] text-white shadow-lg"
-                          : "bg-white text-[#017381] hover:bg-[#017381] hover:text-white"
-                      }`}
+            {successVideos.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-xl text-slate-600">No success stories available at the moment.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                  {currentVideos.map((video, index) => (
+                    <Card
+                      key={video.id}
+                      className="hover:scale-105 hover:shadow-2xl group cursor-pointer border-0 shadow-lg overflow-hidden transition-all duration-300"
                     >
-                      {page}
-                    </button>
+                      <div className="relative">
+                        <div className="aspect-video bg-black rounded-t-lg overflow-hidden">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${video.id}`}
+                            title={video.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                            loading="lazy"
+                          ></iframe>
+                        </div>
+                        <div className="absolute top-4 left-4">
+                          <span className="bg-[#017381] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {video.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-bold text-[#017381] mb-3 group-hover:text-[#025a65] transition-colors duration-300">
+                          {video.title}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed mb-4">{video.description}</p>
+                        <div className="flex items-center gap-2 text-[#017381] font-semibold">
+                          <Play className="w-4 h-4" />
+                          <span>Watch Story</span>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
 
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="flex items-center gap-2 px-6 py-3 bg-white text-[#017381] rounded-full font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 mt-12">
+                    <button
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="flex items-center gap-2 px-6 py-3 bg-white text-[#017381] rounded-full font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Previous
+                    </button>
+
+                    <div className="flex gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-12 h-12 rounded-full font-semibold transition-all duration-300 ${
+                            currentPage === page
+                              ? "bg-[#017381] text-white shadow-lg"
+                              : "bg-white text-[#017381] hover:bg-[#017381] hover:text-white"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center gap-2 px-6 py-3 bg-white text-[#017381] rounded-full font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </section>
-
-     
-
-      
     </div>
   )
 }

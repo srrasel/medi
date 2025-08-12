@@ -15,112 +15,114 @@ import {
   Scan,
   CreditCard,
   ArrowLeft,
-  Phone,
-  Clock,
-  MapPin,
-  Calendar,
   CheckCircle,
   Star,
-  Mail,
 } from "lucide-react"
 
 export default function ServicePage() {
   const params = useParams()
   const slug = params.slug
   const [isVisible, setIsVisible] = useState(false)
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Icon mapping for categories
+  const iconMap = {
+    "Critical Care": Heart,
+    "Cardiac Care": Activity,
+    "Neonatal Care": Baby,
+    "Pediatric Care": Users,
+    Nephrology: Droplets,
+    Rehabilitation: Dumbbell,
+    Diagnostics: Search,
+    Imaging: Scan,
+    Administrative: CreditCard,
+    default: Heart,
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100)
     return () => clearTimeout(timer)
   }, [])
 
-  const services = [
-    {
-      title: "ICU",
-      slug: "icu",
-      description:
-        "Intensive Care Unit providing critical care for life-threatening conditions with advanced monitoring systems.",
-      image_url: "/images/ICU-Final.jpeg",
-      read_more_link: "/services/icu",
-      icon: Heart,
-      category: "Critical Care",
-    },
-    {
-      title: "CCU",
-      slug: "ccu",
-      description:
-        "Coronary Care Unit specialized in treating heart conditions with state-of-the-art cardiac monitoring.",
-      image_url: "/images/CCU-Final.jpeg",
-      read_more_link: "/services/ccu",
-      icon: Activity,
-      category: "Cardiac Care",
-    },
-    {
-      title: "NICU",
-      slug: "nicu",
-      description: "Neonatal Intensive Care Unit providing specialized care for premature and critically ill newborns.",
-      image_url: "/images/NICU-Final.jpeg",
-      read_more_link: "/services/nicu",
-      icon: Baby,
-      category: "Neonatal Care",
-    },
-    {
-      title: "PICU",
-      slug: "picu",
-      description:
-        "Pediatric Intensive Care Unit offering comprehensive critical care services for children and infants.",
-      image_url: "/images/464683711_1058648339603436_1958753658212568146_n-1.jpg",
-      read_more_link: "/services/picu",
-      icon: Users,
-      category: "Pediatric Care",
-    },
-    {
-      title: "Dialysis",
-      slug: "dialysis",
-      description: "Advanced dialysis services for patients with kidney failure, providing life-sustaining treatment.",
-      image_url: "/images/Dialysis-1-scaled.jpg",
-      read_more_link: "/services/dialysis",
-      icon: Droplets,
-      category: "Nephrology",
-    },
-    {
-      title: "Physiotherapy",
-      slug: "physiotherapy",
-      description:
-        "Comprehensive physiotherapy services for rehabilitation, pain management, and mobility improvement.",
-      image_url: "/images/Physioteraphy-scaled.jpg",
-      read_more_link: "/services/physiotherapy",
-      icon: Dumbbell,
-      category: "Rehabilitation",
-    },
-    {
-      title: "Endoscopy",
-      slug: "endoscopy",
-      description: "Advanced endoscopic procedures for diagnosis and treatment of gastrointestinal conditions.",
-      image_url: "/images/Endoscopy-scaled.jpg",
-      read_more_link: "/services/endoscopy",
-      icon: Search,
-      category: "Diagnostics",
-    },
-    {
-      title: "CT-Scan",
-      slug: "ct-scan",
-      description: "High-resolution CT scanning services for accurate diagnosis and detailed imaging.",
-      image_url: "/images/CT-Scan-scaled.jpg",
-      read_more_link: "/services/ct-scan",
-      icon: Scan,
-      category: "Imaging",
-    },
-    {
-      title: "Cash & Billing",
-      slug: "cash-billing",
-      description: "Streamlined billing and payment services with transparent pricing and multiple payment options.",
-      image_url: "/images/Cash-Billing-scaled.jpg",
-      read_more_link: "/services/cash-billing",
-      icon: CreditCard,
-      category: "Administrative",
-    },
-  ]
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        if (!response.ok) {
+          throw new Error("Failed to fetch services")
+        }
+        const data = await response.json()
+
+        // Transform Strapi data to match component structure
+        const transformedServices = data.data.map((service) => {
+          // Extract description text from rich text array
+          const descriptionText =
+            service.Description?.map((block) => {
+              if (block.type === "paragraph") {
+                return block.children?.map((child) => child.text).join("") || ""
+              }
+              return ""
+            }).join(" ") || "No description available"
+
+          // Create slug from name
+          const serviceSlug = service.Name.toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "")
+
+          return {
+            title: service.Name,
+            slug: serviceSlug,
+            description: descriptionText,
+            image_url: service.Image?.formats?.large?.url || service.Image?.url || "/placeholder.svg",
+            category: service.category || "General",
+            icon: iconMap[service.category] || iconMap.default,
+          }
+        })
+
+        setServices(transformedServices)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#017381] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading service details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Heart className="w-12 h-12 text-red-500" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Error Loading Service</h1>
+          <p className="text-gray-600 mb-8">{error}</p>
+          <Link
+            href="/services"
+            className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Services
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   const service = services.find((srv) => srv.slug === slug)
 
@@ -132,7 +134,7 @@ export default function ServicePage() {
             <Heart className="w-12 h-12 text-red-500" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Service Not Found</h1>
-          <p className="text-gray-600 mb-8">The service you&apos;re looking for doesn&apos;t exist or may have been moved.</p>
+          <p className="text-gray-600 mb-8">The service you're looking for doesn't exist or may have been moved.</p>
           <Link
             href="/services"
             className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
@@ -229,19 +231,15 @@ export default function ServicePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <Image
-                  src={service.image_url || "/placeholder.svg"}
-                  alt={service.title}
-                  width={800}
-                  height={600}
-                    />
-
-            
+              src={service.image_url || "/placeholder.svg"}
+              alt={service.title}
+              width={800}
+              height={600}
+              className="w-full h-auto rounded-2xl shadow-lg"
+            />
           </div>
         </div>
       </section>
-
-    
-
     </div>
   )
 }

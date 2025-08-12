@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server';
+
+// ... existing code ...
 
 export async function GET(request, { params }) {
   const { slug } = params
@@ -32,12 +34,31 @@ export async function GET(request, { params }) {
       ? `${item.image.url}`
       : "/placeholder.svg"
 
+    // <CHANGE> Extract bio text from rich text array
+    const extractTextFromRichText = (richTextArray) => {
+      if (!richTextArray || !Array.isArray(richTextArray)) return ""
+      
+      return richTextArray
+        .map(block => {
+          if (block.type === "paragraph" && block.children) {
+            return block.children
+              .filter(child => child.type === "text")
+              .map(child => child.text)
+              .join("")
+          }
+          return ""
+        })
+        .filter(text => text.trim())
+        .join("\n\n")
+    }
+
     const transformedDoctor = {
       id: item.id,
       name: item.Name,
       specialty: item.Specialty,
       qualifications: item.Qualifications,
       position: item.Position,
+      bio: extractTextFromRichText(item.Bio), // <CHANGE> Add bio field
       image: imageUrl,
       link: `/doctor/${item.slug}`,
     }

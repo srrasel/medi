@@ -10,64 +10,116 @@ export default function VideoPage() {
   const videoId = params.id
   const [video, setVideo] = useState(null)
   const [relatedVideos, setRelatedVideos] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const allVideos = [
-    {
-      id: "mLajU0eBIV8",
-      title: "বিশ্ব হিমোফিলিয়া দিবস-২০২৫",
-      category: "স্বাস্থ্য সচেতনতা",
-      duration: "5:30",
-      publishedAt: "২০২৫-০৪-১৭",
-      thumbnail: `https://img.youtube.com/vi/mLajU0eBIV8/maxresdefault.jpg`,
-      description: "বিশ্ব হিমোফিলিয়া দিবস উপলক্ষে বিশেষ আলোচনা। হিমোফিলিয়া রোগ সম্পর্কে সচেতনতা বৃদ্ধি।",
-      views: "১,২৩৪",
-      likes: "৮৯",
-    },
-    {
-      id: "y2Zwq4oijMg",
-      title: "স্বাভাবিক ডেলিভারি—এখন ব্যথাহীন! সুস্থ মা, নিরাপদ সন্তান।",
-      category: "মাতৃত্ব ও শিশু স্বাস্থ্য",
-      duration: "8:45",
-      publishedAt: "২০২৫-০৪-১৫",
-      thumbnail: `https://img.youtube.com/vi/y2Zwq4oijMg/maxresdefault.jpg`,
-      description: "আধুনিক চিকিৎসা পদ্ধতিতে ব্যথাহীন স্বাভাবিক প্রসব সম্পর্কে বিস্তারিত তথ্য।",
-      views: "২,৫৬৭",
-      likes: "১৫৬",
-    },
-    {
-      id: "SoXibqSYDzs",
-      title: "সকল স্বাস্থ্যসেবা নিয়ে প্রো-অ্যাকটিভ মেডিকেল কলেজ এন্ড হসপিটাল লিঃ সবসময় আপনার পাশে🩺",
-      category: "হাসপাতাল সেবা",
-      duration: "6:20",
-      publishedAt: "২০২৫-০৪-১০",
-      thumbnail: `https://img.youtube.com/vi/SoXibqSYDzs/maxresdefault.jpg`,
-      description: "প্রো-অ্যাকটিভ হাসপাতালের সকল স্বাস্থ্যসেবা সম্পর্কে বিস্তারিত পরিচিতি।",
-      views: "৩,৪৫৬",
-      likes: "২১২",
-    },
-    {
-      id: "AjQlE7DU3Lc",
-      title: "মহান শ্রমিক দিবস উপলক্ষে শ্রমিকদের মানসিক স্বাস্থ্য নিয়ে বিশেষ আলোচনা🩺",
-      category: "মানসিক স্বাস্থ্য",
-      duration: "12:15",
-      publishedAt: "২০২৫-০৫-০১",
-      thumbnail: `https://img.youtube.com/vi/AjQlE7DU3Lc/maxresdefault.jpg`,
-      description: "শ্রমিকদের মানসিক স্বাস্থ্য নিয়ে বিশেষজ্ঞ চিকিৎসকদের পরামর্শ ও আলোচনা।",
-      views: "১,৮৯০",
-      likes: "১২৩",
-    },
-  ]
+  // Helper function to extract YouTube video ID from URL
+  const extractVideoId = (url) => {
+    if (!url) return null
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
+    return match ? match[1] : null
+  }
+
+  // Helper function to extract text from rich text description
+  const extractDescription = (descriptionArray) => {
+    if (!descriptionArray || !Array.isArray(descriptionArray)) return ""
+    return descriptionArray.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ")
+  }
+
+  // Helper function to format date to Bengali
+  const formatDateToBengali = (dateString) => {
+    const date = new Date(dateString)
+    const day = date.getDate().toString().padStart(2, "0")
+    const month = (date.getMonth() + 1).toString().padStart(2, "0")
+    const year = date.getFullYear()
+
+    // Convert to Bengali numerals
+    const bengaliNumerals = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"]
+    const bengaliDate = `${year}-${month}-${day}`.replace(/\d/g, (digit) => bengaliNumerals[Number.parseInt(digit)])
+
+    return bengaliDate
+  }
 
   useEffect(() => {
-    const foundVideo = allVideos.find((v) => v.id === videoId)
-    setVideo(foundVideo)
+    const fetchVideos = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("https://admin.pmchl.com/api/videos?populate=*")
 
-    if (foundVideo) {
-      // Get related videos from same category
-      const related = allVideos.filter((v) => v.id !== videoId && v.category === foundVideo.category).slice(0, 3)
-      setRelatedVideos(related)
+        if (!response.ok) {
+          throw new Error("Failed to fetch videos")
+        }
+
+        const data = await response.json()
+
+        // Transform API data to match component structure
+        const transformedVideos = data.data
+          .map((video) => {
+            const youtubeId = extractVideoId(video.Videourl)
+            return {
+              id: youtubeId,
+              title: video.Title,
+              category: video.Category,
+              duration: "N/A", // Not available in API
+              publishedAt: formatDateToBengali(video.publishedAt),
+              thumbnail: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : null,
+              description: extractDescription(video.Description),
+              views: "N/A", // Not available in API
+              likes: "N/A", // Not available in API
+              videoUrl: video.Videourl,
+            }
+          })
+          .filter((video) => video.id) // Filter out videos without valid YouTube IDs
+
+        // Find the current video
+        const foundVideo = transformedVideos.find((v) => v.id === videoId)
+        setVideo(foundVideo)
+
+        if (foundVideo) {
+          // Get related videos from same category
+          const related = transformedVideos
+            .filter((v) => v.id !== videoId && v.category === foundVideo.category)
+            .slice(0, 3)
+          setRelatedVideos(related)
+        }
+      } catch (err) {
+        console.error("Error fetching videos:", err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (videoId) {
+      fetchVideos()
     }
   }, [videoId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#017381] mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-700">Loading video...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error loading video</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Link href="/all-videos" className="inline-flex items-center text-[#017381] hover:underline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Videos
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   if (!video) {
     return (
@@ -118,14 +170,18 @@ export default function VideoPage() {
                 <Calendar className="w-4 h-4" />
                 <span>{video.publishedAt}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span>{video.duration}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                <span>{video.views} views</span>
-              </div>
+              {video.duration !== "N/A" && (
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{video.duration}</span>
+                </div>
+              )}
+              {video.views !== "N/A" && (
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4" />
+                  <span>{video.views} views</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -152,17 +208,20 @@ export default function VideoPage() {
                 {/* Video Actions */}
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
                   <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
-                      <ThumbsUp className="w-5 h-5" />
-                      <span>{video.likes}</span>
-                    </button>
+                    {video.likes !== "N/A" && (
+                      <button className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors">
+                        <ThumbsUp className="w-5 h-5" />
+                        <span>{video.likes}</span>
+                      </button>
+                    )}
                     <button className="flex items-center gap-2 text-gray-600 hover:text-blue-500 transition-colors">
                       <Share2 className="w-5 h-5" />
                       <span>Share</span>
                     </button>
                   </div>
                   <div className="text-gray-500 text-sm">
-                    {video.views} views • {video.publishedAt}
+                    {video.views !== "N/A" && `${video.views} views • `}
+                    {video.publishedAt}
                   </div>
                 </div>
 
@@ -206,11 +265,13 @@ export default function VideoPage() {
                             </span>
                           </div>
 
-                          <div className="absolute top-4 right-4">
-                            <div className="bg-black/70 text-white px-2 py-1 rounded text-xs">
-                              {relatedVideo.duration}
+                          {relatedVideo.duration !== "N/A" && (
+                            <div className="absolute top-4 right-4">
+                              <div className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                                {relatedVideo.duration}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                         <div className="p-6">
                           <h3 className="text-lg font-bold text-gray-800 group-hover:text-[#017381] transition-colors line-clamp-2">
@@ -218,7 +279,7 @@ export default function VideoPage() {
                           </h3>
                           <p className="text-gray-600 text-sm mt-2 line-clamp-2">{relatedVideo.description}</p>
                           <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
-                            <span>{relatedVideo.views} views</span>
+                            {relatedVideo.views !== "N/A" && <span>{relatedVideo.views} views</span>}
                             <span>{relatedVideo.publishedAt}</span>
                           </div>
                         </div>

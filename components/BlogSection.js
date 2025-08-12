@@ -15,13 +15,19 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch("/api/blogs") // Fetch from your new API route
+        const response = await fetch("/api/blogs")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        setBlogPosts(data)
-       
+
+        const sortedPosts = data.sort((a, b) => {
+          const idA = Number.parseInt(a.id) || 0
+          const idB = Number.parseInt(b.id) || 0
+          return idB - idA // Descending order (highest ID first)
+        })
+
+        setBlogPosts(sortedPosts)
       } catch (e) {
         setError(e.message)
       } finally {
@@ -47,16 +53,15 @@ const BlogSection = () => {
       })
     }, observerOptions)
 
-    // Observe elements after posts are loaded
     if (!loading && blogPosts.length > 0) {
       const elements = document.querySelectorAll(".blog-card")
       elements.forEach((el) => observer.observe(el))
     }
 
     return () => observer.disconnect()
-  }, [loading, blogPosts]) // Re-run effect when loading or blogPosts change
+  }, [loading, blogPosts])
 
-  const displayedPosts = blogPosts.slice(0, 6) // Still displaying first 6 as per your original code
+  const displayedPosts = blogPosts.slice(0, 6)
 
   if (loading) {
     return (
@@ -76,26 +81,21 @@ const BlogSection = () => {
 
   return (
     <div className="relative py-24 bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden">
-      {/* Professional Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Large floating shapes */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#017381]/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#025a65]/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-[#017381]/3 rounded-full blur-3xl animate-pulse delay-500"></div>
 
-        {/* Medical cross patterns */}
         <div className="absolute top-20 left-20 w-16 h-2 bg-[#017381]/10 rounded-full"></div>
         <div className="absolute top-28 left-28 w-2 h-16 bg-[#017381]/10 rounded-full"></div>
         <div className="absolute bottom-32 right-32 w-12 h-1.5 bg-[#025a65]/10 rounded-full"></div>
         <div className="absolute bottom-38 right-38 w-1.5 h-12 bg-[#025a65]/10 rounded-full"></div>
 
-        {/* Geometric shapes */}
         <div className="absolute top-1/4 right-16 w-32 h-32 bg-gradient-to-br from-[#017381]/10 to-[#025a65]/10 rounded-3xl rotate-45 animate-pulse"></div>
         <div className="absolute bottom-1/4 left-20 w-24 h-24 bg-gradient-to-br from-[#025a65]/10 to-[#034a52]/10 rounded-2xl rotate-12 animate-pulse delay-700"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
         <div className="text-center mb-20">
           <div className="inline-block mb-6">
             <span className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white text-sm font-bold tracking-wider uppercase px-8 py-3 rounded-full shadow-lg">
@@ -112,7 +112,6 @@ const BlogSection = () => {
           </p>
         </div>
 
-        {/* Blog Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {displayedPosts.map((post, index) => {
             const isVisible = visibleCards.has(index)
@@ -139,14 +138,12 @@ const BlogSection = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
-                    {/* Category Badge */}
                     <div className="absolute bottom-4 left-4">
                       <span className="bg-[#017381]/90 backdrop-blur-sm hover:bg-[#025a65] px-4 py-2 text-white text-sm font-bold rounded-full transition-all duration-300 border border-white/20">
                         {post.category}
                       </span>
                     </div>
 
-                    {/* Date Badge */}
                     <div className="absolute top-4 right-4">
                       <div className="bg-white/95 backdrop-blur-sm text-gray-800 rounded-2xl h-16 w-16 flex flex-col items-center justify-center shadow-lg border border-white/50">
                         <span className="font-bold text-lg text-[#017381]">{post.date}</span>
@@ -154,7 +151,6 @@ const BlogSection = () => {
                       </div>
                     </div>
 
-                    {/* Read More Icon */}
                     <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <div className="w-10 h-10 bg-[#017381]/90 backdrop-blur-sm rounded-full flex items-center justify-center">
                         <ExternalLink className="w-5 h-5 text-white" />
@@ -162,14 +158,12 @@ const BlogSection = () => {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-8">
                     <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
                       {post.title}
                     </h3>
-                   <RichTextRenderer content={post.content.slice(0, 1)} />
+                    <RichTextRenderer content={post.content.slice(0, 1)} />
 
-                    {/* Author and Read Time */}
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <div className="flex items-center text-sm text-gray-500">
                         <User className="w-4 h-4 mr-2 text-[#017381]" />
@@ -181,7 +175,6 @@ const BlogSection = () => {
                       </div>
                     </div>
 
-                    {/* Read More Button */}
                     <div className="mt-6">
                       <div className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2 group-hover:opacity-100">
                         Read More
@@ -195,7 +188,6 @@ const BlogSection = () => {
           })}
         </div>
 
-        {/* View All Button */}
         <div className="text-center mb-20">
           <Link
             href="/blog"

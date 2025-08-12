@@ -335,7 +335,7 @@ const DoctorsSection = () => {
                         <h3 className="text-lg font-bold mb-2 text-gray-800 group-hover:text-[#017381] transition-colors leading-tight">
                           {doctor.name}
                         </h3>
-                        <p className="text-sm text-gray-600 font-medium mb-4">{doctor.position}</p>
+                      
                         {/* Action Button */}
                         <div className="flex">
                           <Link
@@ -367,10 +367,7 @@ const DoctorsSection = () => {
           ))}
         </div>
 
-        {/* Auto-play indicator */}
-        <div className="text-center mt-6">
-          <p className="text-white/60 text-sm">{isHovered ? "Auto-play paused" : "Auto-playing every 3 seconds"}</p>
-        </div>
+       
 
         {/* Statistics Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-4xl mx-auto">

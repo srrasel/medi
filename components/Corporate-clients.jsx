@@ -4,20 +4,48 @@ import { useState, useEffect } from "react"
 import { useActionState } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from "lucide-react"
-import { sendCallbackRequest } from "@/actions/send-callback-request"
-
-const clientLogos = Array.from({ length: 42 }, (_, i) => ({
-  src: `/images/client/logo-${i + 1}.jpg`,
-  alt: `Client Logo ${i + 1}`,
-  name: `Client Name ${i + 1}`,
-}))
+import { sendCallbackRequest } from "/actions/send-callback-request"
 
 export default function CorporateClients() {
+  const [clients, setClients] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const itemsPerSlide = 6 // Display 6 logos per slide on larger screens
-  const totalSlides = Math.ceil(clientLogos.length / itemsPerSlide)
 
   const [state, formAction, isPending] = useActionState(sendCallbackRequest, { success: false, message: "" })
+
+  // Fetch clients data from Strapi API
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("https://admin.pmchl.com/api/clients?populate=*")
+        if (!response.ok) {
+          throw new Error("Failed to fetch clients")
+        }
+        const data = await response.json()
+
+        // Transform Strapi data to match component expectations
+        const transformedClients = data.data.map((client, index) => ({
+          src: client.Image?.url || `/placeholder.svg?height=60&width=120&query=client+logo`,
+          alt: `${client.Name} Logo`,
+          name: client.Name,
+        }))
+
+        setClients(transformedClients)
+      } catch (err) {
+        setError(err.message)
+        console.error("Error fetching clients:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchClients()
+  }, [])
+
+  const totalSlides = Math.ceil(clients.length / itemsPerSlide)
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides)
@@ -29,13 +57,48 @@ export default function CorporateClients() {
 
   // Autoplay effect
   useEffect(() => {
+    if (clients.length === 0) return
+
     const interval = setInterval(() => {
       nextSlide()
     }, 3000) // Change slide every 3 seconds
 
-    // Cleanup the interval when the component unmounts
     return () => clearInterval(interval)
-  }, [currentSlide, totalSlides])
+  }, [currentSlide, totalSlides, clients.length])
+
+  if (loading) {
+    return (
+      <section className="relative py-16 bg-white overflow-hidden">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Our Corporate
+              <span className="block text-[#017381]">Clients</span>
+            </h2>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#017381]"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="relative py-16 bg-white overflow-hidden">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Our Corporate
+              <span className="block text-[#017381]">Clients</span>
+            </h2>
+            <p className="text-red-600">Error loading clients: {error}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <>
@@ -62,58 +125,62 @@ export default function CorporateClients() {
               strong, trusted relationships.
             </p>
           </div>
-          {/* Carousel Container */}
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                  <div key={slideIndex} className="min-w-full">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-center justify-center">
-                      {clientLogos
-                        .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
-                        .map((logo, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-center p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 group"
-                          >
-                            <Image
-                              src={logo.src || "/placeholder.svg"}
-                              alt={logo.alt}
-                              width={120}
-                              height={60}
-                              className="object-contain transition-all duration-300"
-                            />
-                          </div>
-                        ))}
-                    </div>
+
+          {clients.length > 0 && (
+            <>
+              {/* Carousel Container */}
+              <div className="relative">
+                <div className="overflow-hidden">
+                  <div
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+                      <div key={slideIndex} className="min-w-full">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-center justify-center">
+                          {clients
+                            .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
+                            .map((client, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-center p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 group"
+                              >
+                                <Image
+                                  src={client.src || "/placeholder.svg"}
+                                  alt={client.alt}
+                                  width={120}
+                                  height={60}
+                                  className="object-contain transition-all duration-300"
+                                />
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                {/* Navigation Controls */}
+                <div className="flex items-center justify-center mt-10">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={prevSlide}
+                      disabled={currentSlide === 0}
+                      className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      disabled={currentSlide === totalSlides - 1}
+                      className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-            {/* Navigation Controls */}
-            <div className="flex items-center justify-center mt-10">
-              {/* Navigation Buttons */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={prevSlide}
-                  disabled={currentSlide === 0}
-                  className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  disabled={currentSlide === totalSlides - 1}
-                  className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </section>
 

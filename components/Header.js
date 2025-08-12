@@ -266,7 +266,7 @@ const Header = () => {
               {/* Mobile Logo */}
               <Link href="/" className="flex items-center">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logoa.png"
                   alt="Pro-Active Hospital"
                   width={280}
                   height={71}
@@ -282,7 +282,7 @@ const Header = () => {
                   className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg flex items-center text-sm font-semibold"
                 >
                   <Calendar className="w-4 h-4 mr-1" />
-                  Book
+                  Appointment
                 </Link>
 
                 {/* Mobile Menu Button */}

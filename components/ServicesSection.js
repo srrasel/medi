@@ -1,23 +1,34 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-  ArrowRight,
-  Heart,
-  Activity,
-  Baby,
-  Users,
-  Droplets,
-  Dumbbell,
-  Search,
-  Scan,
-  CreditCard,
-} from "lucide-react"
+import { ArrowRight, Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
 const ServicesSection = () => {
   const [visibleCards, setVisibleCards] = useState(new Set())
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        if (!response.ok) {
+          throw new Error("Failed to fetch services")
+        }
+        const data = await response.json()
+        setServices(data.data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
 
   useEffect(() => {
     const observerOptions = {
@@ -38,86 +49,52 @@ const ServicesSection = () => {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [])
+  }, [services])
 
-  const services = [
-    {
-      title: "ICU",
-      description:
-        "Intensive Care Unit providing critical care for life-threatening conditions with advanced monitoring systems.",
-      image_url: "/images/ICU-Final.jpeg",
-      read_more_link: "/services/icu",
-      icon: Heart,
-      category: "Critical Care",
-    },
-    {
-      title: "CCU",
-      description:
-        "Coronary Care Unit specialized in treating heart conditions with state-of-the-art cardiac monitoring.",
-      image_url: "/images/CCU-Final.jpeg",
-      read_more_link: "/services/ccu",
-      icon: Activity,
-      category: "Cardiac Care",
-    },
-    {
-      title: "NICU",
-      description: "Neonatal Intensive Care Unit providing specialized care for premature and critically ill newborns.",
-      image_url: "/images/NICU-Final.jpeg",
-      read_more_link: "/services/nicu",
-      icon: Baby,
-      category: "Neonatal Care",
-    },
-    {
-      title: "PICU",
-      description:
-        "Pediatric Intensive Care Unit offering comprehensive critical care services for children and infants.",
-      image_url: "/images/464683711_1058648339603436_1958753658212568146_n-1.jpg",
-      read_more_link: "/services/picu",
-      icon: Users,
-      category: "Pediatric Care",
-    },
-    {
-      title: "Dialysis",
-      description: "Advanced dialysis services for patients with kidney failure, providing life-sustaining treatment.",
-      image_url: "/images/Dialysis-1-scaled.jpg",
-      read_more_link: "/services/dialysis",
-      icon: Droplets,
-      category: "Nephrology",
-    },
-    {
-      title: "Physiotherapy",
-      description:
-        "Comprehensive physiotherapy services for rehabilitation, pain management, and mobility improvement.",
-      image_url: "/images/Physioteraphy-scaled.jpg",
-      read_more_link: "/services/physiotherapy",
-      icon: Dumbbell,
-      category: "Rehabilitation",
-    },
-    {
-      title: "Endoscopy",
-      description: "Advanced endoscopic procedures for diagnosis and treatment of gastrointestinal conditions.",
-      image_url: "/images/Endoscopy-scaled.jpg",
-      read_more_link: "/services/endoscopy",
-      icon: Search,
-      category: "Diagnostics",
-    },
-    {
-      title: "CT-Scan",
-      description: "High-resolution CT scanning services for accurate diagnosis and detailed imaging.",
-      image_url: "/images/CT-Scan-scaled.jpg",
-      read_more_link: "/services/ct-scan",
-      icon: Scan,
-      category: "Imaging",
-    },
-    {
-      title: "Cash & Billing",
-      description: "Streamlined billing and payment services with transparent pricing and multiple payment options.",
-      image_url: "/images/Cash-Billing-scaled.jpg",
-      read_more_link: "/services/cash-billing",
-      icon: CreditCard,
-      category: "Administrative",
-    },
-  ]
+  const extractDescription = (description) => {
+    if (!description || description.length === 0) return ""
+    return description.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ")
+  }
+
+  const getImageUrl = (image) => {
+    if (!image) return "/placeholder.svg"
+    return image.formats?.medium?.url || image.formats?.small?.url || image.url
+  }
+
+  const getIconByCategory = (category) => {
+    const iconMap = {
+      "Critical Care": Heart,
+      "Cardiac Care": Activity,
+      "Neonatal Care": Baby,
+      "Pediatric Care": Users,
+      Nephrology: Droplets,
+      Rehabilitation: Dumbbell,
+      Diagnostics: Search,
+      Imaging: Scan,
+      Administrative: CreditCard,
+    }
+    return iconMap[category] || Heart
+  }
+
+  if (loading) {
+    return (
+      <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-white text-xl">Loading services...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-white text-xl">Error loading services: {error}</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24 overflow-hidden">
@@ -140,18 +117,19 @@ const ServicesSection = () => {
             Comprehensive
             <span className="block text-[#b8e6ea]">Healthcare Solutions</span>
           </h2>
-         
         </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {services.map((service, index) => {
-            const IconComponent = service.icon
+            const IconComponent = getIconByCategory(service.category)
             const isVisible = visibleCards.has(index)
+            const description = extractDescription(service.Description)
+            const imageUrl = getImageUrl(service.Image)
 
             return (
               <div
-                key={index}
+                key={service.id}
                 data-index={index}
                 className={`service-card bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-4 cursor-pointer group border border-gray-100 hover:border-[#017381]/20 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
@@ -160,12 +138,12 @@ const ServicesSection = () => {
               >
                 <div className="relative h-64 overflow-hidden">
                   <Image
-                    src={service.image_url || "/placeholder.svg"}
-                    alt={service.title}
+                    src={imageUrl || "/placeholder.svg"}
+                    alt={service.Name}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                     onError={(e) => {
-                      e.target.src = `/placeholder.svg?height=256&width=400&text=${service.title}`
+                      e.target.src = `/placeholder.svg?height=256&width=400&text=${service.Name}`
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
@@ -185,32 +163,25 @@ const ServicesSection = () => {
                   {/* Title Overlay */}
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#b8e6ea] transition-colors duration-300">
-                      {service.title}
+                      {service.Name}
                     </h3>
                   </div>
                 </div>
 
                 <div className="p-8">
-                  <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{service.description}</p>
-
+                  <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{description}</p>
                   <Link
-                    href={service.read_more_link}
-                   
+                    href={`/services/${service.Name.toLowerCase().replace(/\s+/g, "-")}`}
                     className="inline-flex items-center gap-3 bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:gap-4 group-hover:scale-105"
                   >
                     Learn More
-                    
+                    <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
             )
           })}
         </div>
-
-       
-
-      
-
       </div>
     </div>
   )

@@ -18,8 +18,9 @@ import {
   ArrowRight,
   Clock,
   CheckCircle,
-  Star,
-  Phone,
+  Stethoscope,
+  Shield,
+  Zap,
 } from "lucide-react"
 
 export default function ServicesPage() {
@@ -27,6 +28,97 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Icon mapping for different service types
+  const getServiceIcon = (serviceName, category) => {
+    const name = serviceName.toLowerCase()
+    const cat = category.toLowerCase()
+
+    if (name.includes("icu") || name.includes("intensive")) return Heart
+    if (name.includes("ccu") || name.includes("cardiac") || name.includes("heart")) return Activity
+    if (name.includes("nicu") || name.includes("neonatal") || name.includes("baby")) return Baby
+    if (name.includes("picu") || name.includes("pediatric") || name.includes("children")) return Users
+    if (name.includes("dialysis") || name.includes("kidney") || name.includes("nephrology")) return Droplets
+    if (name.includes("physio") || name.includes("therapy") || name.includes("rehabilitation")) return Dumbbell
+    if (name.includes("endoscopy") || name.includes("diagnostic")) return Search
+    if (name.includes("scan") || name.includes("imaging") || name.includes("ct") || name.includes("mri")) return Scan
+    if (name.includes("billing") || name.includes("cash") || name.includes("payment")) return CreditCard
+    if (cat.includes("emergency") || cat.includes("urgent")) return Zap
+    if (cat.includes("surgery") || cat.includes("surgical")) return Shield
+
+    return Stethoscope // Default medical icon
+  }
+
+  // Extract text from Strapi rich text format
+  const extractTextFromRichText = (richTextArray) => {
+    if (!richTextArray || !Array.isArray(richTextArray)) return ""
+
+    return richTextArray
+      .map((block) => {
+        if (block.type === "paragraph" && block.children) {
+          return block.children.map((child) => child.text || "").join("")
+        }
+        return ""
+      })
+      .join(" ")
+      .trim()
+  }
+
+  // Generate slug from service name
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+  }
+
+  // Fetch services from Strapi API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        // Transform Strapi data to match component structure
+        const transformedServices = data.data.map((service) => ({
+          title: service.Name || "Untitled Service",
+          description: extractTextFromRichText(service.Description) || "No description available",
+          image_url: service.Image?.formats?.medium?.url || service.Image?.url || "/placeholder.svg",
+          read_more_link: `/services/${generateSlug(service.Name || "service")}`,
+          icon: getServiceIcon(service.Name || "", service.category || ""),
+          category: service.category || "General",
+        }))
+
+        setServices(transformedServices)
+      } catch (err) {
+        console.error("Error fetching services:", err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  // Generate categories dynamically from services
+  const categories = [
+    { name: "All Services", slug: "all", count: services.length },
+    ...Array.from(new Set(services.map((s) => s.category))).map((category) => ({
+      name: category,
+      slug: category,
+      count: services.filter((s) => s.category === category).length,
+    })),
+  ]
 
   useEffect(() => {
     const observerOptions = {
@@ -47,99 +139,7 @@ export default function ServicesPage() {
     elements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
-  }, [selectedCategory, searchQuery])
-
-  const services = [
-    {
-      title: "ICU",
-      description:
-        "Intensive Care Unit providing critical care for life-threatening conditions with advanced monitoring systems.",
-      image_url: "/images/ICU-Final.jpeg",
-      read_more_link: "/services/icu",
-      icon: Heart,
-      category: "Critical Care",
-    },
-    {
-      title: "CCU",
-      description:
-        "Coronary Care Unit specialized in treating heart conditions with state-of-the-art cardiac monitoring.",
-      image_url: "/images/CCU-Final.jpeg",
-      read_more_link: "/services/ccu",
-      icon: Activity,
-      category: "Cardiac Care",
-    },
-    {
-      title: "NICU",
-      description: "Neonatal Intensive Care Unit providing specialized care for premature and critically ill newborns.",
-      image_url: "/images/NICU-Final.jpeg",
-      read_more_link: "/services/nicu",
-      icon: Baby,
-      category: "Neonatal Care",
-    },
-    {
-      title: "PICU",
-      description:
-        "Pediatric Intensive Care Unit offering comprehensive critical care services for children and infants.",
-      image_url: "/images/464683711_1058648339603436_1958753658212568146_n-1.jpg",
-      read_more_link: "/services/picu",
-      icon: Users,
-      category: "Pediatric Care",
-    },
-    {
-      title: "Dialysis",
-      description: "Advanced dialysis services for patients with kidney failure, providing life-sustaining treatment.",
-      image_url: "/images/Dialysis-1-scaled.jpg",
-      read_more_link: "/services/dialysis",
-      icon: Droplets,
-      category: "Nephrology",
-    },
-    {
-      title: "Physiotherapy",
-      description:
-        "Comprehensive physiotherapy services for rehabilitation, pain management, and mobility improvement.",
-      image_url: "/images/Physioteraphy-scaled.jpg",
-      read_more_link: "/services/physiotherapy",
-      icon: Dumbbell,
-      category: "Rehabilitation",
-    },
-    {
-      title: "Endoscopy",
-      description: "Advanced endoscopic procedures for diagnosis and treatment of gastrointestinal conditions.",
-      image_url: "/images/Endoscopy-scaled.jpg",
-      read_more_link: "/services/endoscopy",
-      icon: Search,
-      category: "Diagnostics",
-    },
-    {
-      title: "CT-Scan",
-      description: "High-resolution CT scanning services for accurate diagnosis and detailed imaging.",
-      image_url: "/images/CT-Scan-scaled.jpg",
-      read_more_link: "/services/ct-scan",
-      icon: Scan,
-      category: "Imaging",
-    },
-    {
-      title: "Cash & Billing",
-      description: "Streamlined billing and payment services with transparent pricing and multiple payment options.",
-      image_url: "/images/Cash-Billing-scaled.jpg",
-      read_more_link: "/services/cash-billing",
-      icon: CreditCard,
-      category: "Administrative",
-    },
-  ]
-
-  const categories = [
-    { name: "All Services", slug: "all", count: services.length },
-    { name: "Critical Care", slug: "Critical Care", count: 1 },
-    { name: "Cardiac Care", slug: "Cardiac Care", count: 1 },
-    { name: "Neonatal Care", slug: "Neonatal Care", count: 1 },
-    { name: "Pediatric Care", slug: "Pediatric Care", count: 1 },
-    { name: "Nephrology", slug: "Nephrology", count: 1 },
-    { name: "Rehabilitation", slug: "Rehabilitation", count: 1 },
-    { name: "Diagnostics", slug: "Diagnostics", count: 1 },
-    { name: "Imaging", slug: "Imaging", count: 1 },
-    { name: "Administrative", slug: "Administrative", count: 1 },
-  ]
+  }, [selectedCategory, searchQuery, services])
 
   // Filter services based on category and search
   const filteredServices = services.filter((service) => {
@@ -151,6 +151,31 @@ export default function ServicesPage() {
       service.category.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#017381] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading services...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-500 text-2xl">⚠</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Services</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -187,7 +212,16 @@ export default function ServicesPage() {
           {/* Category Filter */}
           <div className="max-w-4xl mx-auto">
             <div className="relative">
-             
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-white/20 transition-all duration-300 flex items-center gap-2 mx-auto"
+              >
+                <Filter className="w-5 h-5" />
+                Filter by Category
+                <ChevronDown
+                  className={`w-5 h-5 transition-transform duration-300 ${showFilters ? "rotate-180" : ""}`}
+                />
+              </button>
 
               {showFilters && (
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 z-50 min-w-96">
@@ -216,13 +250,16 @@ export default function ServicesPage() {
         </div>
       </section>
 
-  
-
       {/* Services Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Results Count */}
-      
+          <div className="text-center mb-12">
+            <p className="text-gray-600 text-lg">
+              Showing <span className="font-semibold text-[#017381]">{filteredServices.length}</span> of{" "}
+              <span className="font-semibold">{services.length}</span> services
+            </p>
+          </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredServices.map((service, index) => {
@@ -312,13 +349,19 @@ export default function ServicesPage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">No services found</h3>
               <p className="text-gray-600 mb-8">Try adjusting your search or filter criteria</p>
-              
+              <button
+                onClick={() => {
+                  setSearchQuery("")
+                  setSelectedCategory("all")
+                }}
+                className="bg-[#017381] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#025a65] transition-colors duration-300"
+              >
+                Clear Filters
+              </button>
             </div>
           )}
         </div>
       </section>
-
-    
     </div>
   )
 }
