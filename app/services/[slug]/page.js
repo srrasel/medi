@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
@@ -27,20 +27,24 @@ export default function ServicePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Icon mapping for categories
-  const iconMap = {
-    "Critical Care": Heart,
-    "Cardiac Care": Activity,
-    "Neonatal Care": Baby,
-    "Pediatric Care": Users,
-    Nephrology: Droplets,
-    Rehabilitation: Dumbbell,
-    Diagnostics: Search,
-    Imaging: Scan,
-    Administrative: CreditCard,
-    default: Heart,
-  }
+  // Memoized icon map so it doesn't change on every render
+  const iconMap = useMemo(
+    () => ({
+      "Critical Care": Heart,
+      "Cardiac Care": Activity,
+      "Neonatal Care": Baby,
+      "Pediatric Care": Users,
+      Nephrology: Droplets,
+      Rehabilitation: Dumbbell,
+      Diagnostics: Search,
+      Imaging: Scan,
+      Administrative: CreditCard,
+      default: Heart,
+    }),
+    []
+  )
 
+  // Simple fade-in effect
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100)
     return () => clearTimeout(timer)
@@ -90,7 +94,7 @@ export default function ServicePage() {
     }
 
     fetchServices()
-  }, [])
+  }, [iconMap]) // iconMap is stable because of useMemo
 
   if (loading) {
     return (
@@ -134,7 +138,9 @@ export default function ServicePage() {
             <Heart className="w-12 h-12 text-red-500" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Service Not Found</h1>
-          <p className="text-gray-600 mb-8">The service you're looking for doesn't exist or may have been moved.</p>
+          <p className="text-gray-600 mb-8">
+            The service you&apos;re looking for doesn&apos;t exist or may have been moved.
+          </p>
           <Link
             href="/services"
             className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
@@ -148,7 +154,6 @@ export default function ServicePage() {
   }
 
   const IconComponent = service.icon
-  const relatedServices = services.filter((srv) => srv.slug !== slug).slice(0, 3)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -174,7 +179,9 @@ export default function ServicePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Service Info */}
             <div
-              className={`text-white transition-all duration-1000 text-center lg:text-left ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}
+              className={`text-white transition-all duration-1000 text-center lg:text-left ${
+                isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+              }`}
             >
               <div className="flex items-center gap-4 mb-6 justify-center lg:justify-start">
                 <div className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 shadow-lg">
@@ -209,7 +216,9 @@ export default function ServicePage() {
 
             {/* Service Image */}
             <div
-              className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
+              className={`transition-all duration-1000 delay-300 ${
+                isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
+              }`}
             >
               <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
                 <Image
