@@ -76,7 +76,7 @@ export default function HospitalHeroSection() {
       </video> 
 
       {/* Overlay - render immediately */}
-      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-end pb-4 md:pb-4 p-4">
+      <div className="absolute inset-0  flex flex-col items-center justify-end pb-4 md:pb-4 p-4">
         <div className="container mx-auto text-center text-white">
           {/* Search Form - positioned at bottom */}
           <div className="search-block w-full max-w-xl mx-auto mb-6 py-12">

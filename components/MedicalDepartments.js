@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Heart, Users, Stethoscope, Award, Star, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
 import WhyChooseUsSection from "./WhyChppseUs"
+import SpecialityLeft from "./SpecialityLeft"
 
 const departments = [
   {
@@ -324,36 +325,7 @@ export default function MedicalSpecialties() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-16 lg:flex-row lg:gap-20">
             {/* Left Side - Image */}
-            <div className="flex w-full lg:w-2/5">
-              <div className="relative w-full h-[500px] lg:h-[650px] rounded-3xl overflow-hidden shadow-2xl group">
-                <Image
-                  src="/images/image-our-specialities.jpg"
-                  alt="Our Specialities - Evercare Hospital Dhaka"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  priority={false}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-
-                {/* Floating Badge */}
-                <div className="absolute top-8 left-8 bg-white/95 backdrop-blur-sm rounded-2xl px-5 py-3 shadow-xl">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-[#017381] to-[#025a65] rounded-full flex items-center justify-center">
-                      <Star className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm font-bold text-[#017381]">World-Class Care</span>
-                  </div>
-                </div>
-
-                {/* Bottom Info Card */}
-                <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-                  <h3 className="text-lg font-bold text-[#017381] mb-2">Pro Active Hospital</h3>
-                  <p className="text-sm text-gray-600">
-                    Best Hospital in Narayanganj, Dhaka
-                  </p>
-                </div>
-              </div>
-            </div>
+           <SpecialityLeft/>
 
             {/* Right Side - Specialities */}
             <div className="w-full lg:w-3/5">
@@ -373,7 +345,7 @@ export default function MedicalSpecialties() {
                     <div className="flex">
                       {Array.from({ length: totalSlides }).map((_, slideIndex) => (
                         <div key={slideIndex} className="min-w-full">
-                          <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+                          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 pt-4">
                             {departments
                               .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
                               .map((department, index) => {
@@ -381,7 +353,7 @@ export default function MedicalSpecialties() {
                                 return (
                                   <Link
                                     key={index}
-                                    href={department.link}
+                                    href="#"
                                     className="group bg-white rounded-2xl p-5 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-[#017381]/30 hover:bg-gradient-to-br hover:from-[#017381] hover:to-[#025a65] min-h-[120px] flex flex-col justify-center"
                                   >
                                     <div className="flex flex-col items-center space-y-3">
@@ -445,7 +417,7 @@ export default function MedicalSpecialties() {
                 {/* View All Button */}
                 <div className="flex justify-center mt-10">
                   <Link
-                    href="/department"
+                    href="/departments"
                     className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-10 py-4 rounded-2xl font-bold transition-all duration-300 hover:shadow-2xl hover:scale-105 inline-flex items-center space-x-3"
                   >
                     <span>View All Specialities</span>

@@ -297,7 +297,7 @@ const DoctorsSection = () => {
                 const isVisible = visibleCards.has(index)
 
                 return (
-                  <div key={doctor.id || index} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3">
+                  <div key={doctor.id || index} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex-shrink-0 px-3 py-4">
                     <div
                       data-index={index}
                       className={`doctor-card bg-white/95 backdrop-blur-md rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-6 border border-white/20 hover:border-white/40 group h-full hover:bg-white ${

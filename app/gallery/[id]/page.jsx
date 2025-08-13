@@ -3,72 +3,67 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { ArrowLeft, Download, Share2 } from "lucide-react"
+import { ArrowLeft, Share2, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { useParams } from "next/navigation"
 
-export default function SingleImagePage() {
+export default function SingleGalleryPage() {
   const params = useParams()
-  const [image, setImage] = useState(null)
-  const [relatedImages, setRelatedImages] = useState([])
+  const [gallery, setGallery] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
-    const fetchImageData = async () => {
+    const fetchGalleryData = async () => {
       try {
         const response = await fetch("https://admin.pmchl.com/api/galleries?populate=*")
         if (!response.ok) {
-          throw new Error("Failed to fetch gallery images")
+          throw new Error("Failed to fetch gallery data")
         }
         const data = await response.json()
 
-        // Flatten all images from all galleries
-        const allImages = []
-        data.data.forEach((gallery) => {
-          // Add main image if exists
-          if (gallery.image) {
-            allImages.push({
-              id: `${gallery.documentId}-main`,
-              url: gallery.image.url,
-              alt: gallery.image.alternativeText || `Gallery Image`,
-              width: gallery.image.width,
-              height: gallery.image.height,
-              formats: gallery.image.formats,
-              galleryId: gallery.documentId,
-              isMain: true,
-            })
-          }
-
-          // Add gallery images
-          if (gallery.Galleryimages && gallery.Galleryimages.length > 0) {
-            gallery.Galleryimages.forEach((img) => {
-              allImages.push({
-                id: `${gallery.documentId}-${img.documentId}`,
-                url: img.url,
-                alt: img.alternativeText || `Gallery Image`,
-                width: img.width,
-                height: img.height,
-                formats: img.formats,
-                galleryId: gallery.documentId,
-                isMain: false,
-              })
-            })
-          }
-        })
-
-        // Find the specific image
-        const currentImage = allImages.find((img) => img.id === params.id)
-        if (!currentImage) {
-          throw new Error("Image not found")
+        // Find the specific gallery by ID
+        const currentGallery = data.data.find((g) => g.id.toString() === params.id)
+        if (!currentGallery) {
+          throw new Error("Gallery not found")
         }
 
-        setImage(currentImage)
+        // Transform gallery data
+        const transformedGallery = {
+          id: currentGallery.id,
+          title: currentGallery.Title || "Gallery",
+          images: [
+            // Add main image if exists
+            ...(currentGallery.image
+              ? [
+                  {
+                    id: `main-${currentGallery.image.documentId}`,
+                    url: currentGallery.image.url,
+                    alt: currentGallery.image.alternativeText || currentGallery.Title || "Gallery Image",
+                    width: currentGallery.image.width,
+                    height: currentGallery.image.height,
+                    formats: currentGallery.image.formats,
+                    isMain: true,
+                  },
+                ]
+              : []),
+            // Add gallery images
+            ...(currentGallery.Galleryimages?.map((img) => ({
+              id: img.documentId,
+              url: img.url,
+              alt: img.alternativeText || `${currentGallery.Title} Image` || "Gallery Image",
+              width: img.width,
+              height: img.height,
+              formats: img.formats,
+              isMain: false,
+            })) || []),
+          ],
+        }
 
-        // Get related images (exclude current image)
-        const related = allImages.filter((img) => img.id !== params.id).slice(0, 6)
-        setRelatedImages(related)
+        setGallery(transformedGallery)
       } catch (err) {
-        console.error("Error fetching image:", err)
+        console.error("Error fetching gallery:", err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -76,15 +71,53 @@ export default function SingleImagePage() {
     }
 
     if (params.id) {
-      fetchImageData()
+      fetchGalleryData()
     }
   }, [params.id])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!lightboxOpen) return
+
+      if (e.key === "Escape") {
+        setLightboxOpen(false)
+      } else if (e.key === "ArrowLeft") {
+        navigateImage("prev")
+      } else if (e.key === "ArrowRight") {
+        navigateImage("next")
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [lightboxOpen, currentImageIndex, gallery])
+
+  const openLightbox = (index) => {
+    setCurrentImageIndex(index)
+    setLightboxOpen(true)
+    document.body.style.overflow = "hidden"
+  }
+
+  const closeLightbox = () => {
+    setLightboxOpen(false)
+    document.body.style.overflow = "unset"
+  }
+
+  const navigateImage = (direction) => {
+    if (!gallery?.images) return
+
+    if (direction === "next") {
+      setCurrentImageIndex((prev) => (prev + 1) % gallery.images.length)
+    } else {
+      setCurrentImageIndex((prev) => (prev - 1 + gallery.images.length) % gallery.images.length)
+    }
+  }
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: image.alt,
+          title: gallery?.title || "Gallery",
           url: window.location.href,
         })
       } catch (err) {
@@ -97,15 +130,6 @@ export default function SingleImagePage() {
     }
   }
 
-  const handleDownload = () => {
-    const link = document.createElement("a")
-    link.href = image.url
-    link.download = image.alt || "gallery-image"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -114,12 +138,12 @@ export default function SingleImagePage() {
     )
   }
 
-  if (error || !image) {
+  if (error || !gallery) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Image Not Found</h2>
-          <p className="text-gray-600 mb-6">{error || "The requested image could not be found."}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Gallery Not Found</h2>
+          <p className="text-gray-600 mb-6">{error || "The requested gallery could not be found."}</p>
           <Link
             href="/gallery"
             className="inline-flex items-center px-6 py-3 bg-[#017381] text-white rounded-lg hover:bg-[#025a65] transition-colors duration-200"
@@ -136,88 +160,148 @@ export default function SingleImagePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link
-              href="/gallery"
-              className="inline-flex items-center text-[#017381] hover:text-[#025a65] transition-colors duration-200"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Gallery
-            </Link>
-
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={handleShare}
-                className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-[#017381] transition-colors duration-200"
+            <div className="flex items-center">
+              <Link
+                href="/gallery"
+                className="inline-flex items-center text-[#017381] hover:text-[#025a65] transition-colors duration-200 mr-6"
               >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </button>
-              <button
-                onClick={handleDownload}
-                className="inline-flex items-center px-4 py-2 bg-[#017381] text-white rounded-lg hover:bg-[#025a65] transition-colors duration-200"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Image */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="relative">
-              <Image
-                src={image.formats?.large?.url || image.url}
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-                className="w-full h-auto object-contain max-h-[70vh]"
-                priority
-              />
-            </div>
-
-            <div className="p-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{image.alt}</h1>
-              <div className="flex items-center text-gray-600 space-x-6">
-                <span>
-                  Dimensions: {image.width} × {image.height}
-                </span>
-                {image.isMain && (
-                  <span className="bg-[#017381] text-white px-3 py-1 rounded-full text-sm">Featured</span>
-                )}
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Gallery
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{gallery.title}</h1>
+                <p className="text-gray-600">{gallery.images.length} Images</p>
               </div>
             </div>
+
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-[#017381] transition-colors duration-200"
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share Gallery
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Related Images */}
-      {relatedImages.length > 0 && (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">More from Gallery</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {relatedImages.map((relatedImage) => (
-                <Link
-                  key={relatedImage.id}
-                  href={`/gallery/${relatedImage.id}`}
-                  className="relative aspect-square rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 group"
-                >
-                  <Image
-                    src={relatedImage.formats?.thumbnail?.url || relatedImage.url}
-                    alt={relatedImage.alt}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-200"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
-                  />
-                </Link>
+      {/* Gallery Images Grid */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          {gallery.images.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {gallery.images.map((image, index) => (
+                <div key={image.id} className="relative group cursor-pointer" onClick={() => openLightbox(index)}>
+                  <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <Image
+                      src={image.formats?.medium?.url || image.url}
+                      alt={image.alt}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    />
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Main image badge */}
+                    {image.isMain && (
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-[#017381] text-white px-2 py-1 rounded-full text-xs font-medium">
+                          Cover
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Image info */}
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-600 truncate">{image.alt}</p>
+                    <p className="text-xs text-gray-400">
+                      {image.width} × {image.height}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No images found in this gallery.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {lightboxOpen && gallery.images[currentImageIndex] && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
+          {/* Close Button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 z-60 text-white hover:text-gray-300 transition-colors duration-200"
+          >
+            <X className="w-8 h-8" />
+          </button>
+
+          {/* Image Counter */}
+          <div className="absolute top-4 left-4 z-60 text-white">
+            <span className="bg-black/50 px-3 py-1 rounded-full text-sm">
+              {currentImageIndex + 1} / {gallery.images.length}
+            </span>
+          </div>
+
+          {/* Previous Button */}
+          {gallery.images.length > 1 && (
+            <button
+              onClick={() => navigateImage("prev")}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-60 text-white hover:text-gray-300 transition-colors duration-200"
+            >
+              <ChevronLeft className="w-12 h-12" />
+            </button>
+          )}
+
+          {/* Next Button */}
+          {gallery.images.length > 1 && (
+            <button
+              onClick={() => navigateImage("next")}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-60 text-white hover:text-gray-300 transition-colors duration-200"
+            >
+              <ChevronRight className="w-12 h-12" />
+            </button>
+          )}
+
+          {/* Main Image */}
+          <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+            <Image
+              src={gallery.images[currentImageIndex].formats?.large?.url || gallery.images[currentImageIndex].url}
+              alt={gallery.images[currentImageIndex].alt}
+              width={gallery.images[currentImageIndex].width}
+              height={gallery.images[currentImageIndex].height}
+              className="max-w-full max-h-full object-contain"
+              priority
+            />
+          </div>
+
+          {/* Image Info */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-white">
+            <p className="text-lg font-medium">{gallery.images[currentImageIndex].alt}</p>
+            <p className="text-sm text-gray-300">
+              {gallery.images[currentImageIndex].width} × {gallery.images[currentImageIndex].height}
+            </p>
           </div>
         </div>
       )}

@@ -5,63 +5,39 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 
 export default function GalleryPage() {
-  const [images, setImages] = useState([])
+  const [galleries, setGalleries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchGalleryImages = async () => {
+    const fetchGalleries = async () => {
       try {
         const response = await fetch("https://admin.pmchl.com/api/galleries?populate=*")
         if (!response.ok) {
-          throw new Error("Failed to fetch gallery images")
+          throw new Error("Failed to fetch galleries")
         }
         const data = await response.json()
 
-        // Flatten all images from all galleries
-        const allImages = []
-        data.data.forEach((gallery, galleryIndex) => {
-          // Add main image if exists
-          if (gallery.image) {
-            allImages.push({
-              id: `${gallery.documentId}-main`,
-              url: gallery.image.url,
-              alt: gallery.image.alternativeText || `Gallery Image ${allImages.length + 1}`,
-              width: gallery.image.width,
-              height: gallery.image.height,
-              formats: gallery.image.formats,
-              galleryId: gallery.documentId,
-              isMain: true,
-            })
-          }
+        // Transform galleries data
+        const transformedGalleries = data.data.map((gallery) => ({
+          id: gallery.id,
+          documentId: gallery.documentId,
+          title: gallery.Title || "Gallery",
+          coverImage: gallery.image,
+          imageCount: (gallery.Galleryimages?.length || 0) + (gallery.image ? 1 : 0),
+          images: [...(gallery.image ? [gallery.image] : []), ...(gallery.Galleryimages || [])],
+        }))
 
-          // Add gallery images
-          if (gallery.Galleryimages && gallery.Galleryimages.length > 0) {
-            gallery.Galleryimages.forEach((img, imgIndex) => {
-              allImages.push({
-                id: `${gallery.documentId}-${img.documentId}`,
-                url: img.url,
-                alt: img.alternativeText || `Gallery Image ${allImages.length + 1}`,
-                width: img.width,
-                height: img.height,
-                formats: img.formats,
-                galleryId: gallery.documentId,
-                isMain: false,
-              })
-            })
-          }
-        })
-
-        setImages(allImages)
+        setGalleries(transformedGalleries)
       } catch (err) {
-        console.error("Error fetching gallery:", err)
+        console.error("Error fetching galleries:", err)
         setError(err.message)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchGalleryImages()
+    fetchGalleries()
   }, [])
 
   if (loading) {
@@ -101,21 +77,28 @@ export default function GalleryPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {images.map((image) => (
+          {galleries.map((gallery) => (
             <Link
-              key={image.id}
-              href={`/gallery/${image.id}`}
+              key={gallery.id}
+              href={`/gallery/${gallery.id}`}
               className="relative w-full h-64 rounded-2xl overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer block"
             >
               <Image
-                src={image.formats?.medium?.url || image.url || "/placeholder.svg?height=400&width=600"}
-                alt={image.alt}
+                src={
+                  gallery.coverImage?.formats?.medium?.url ||
+                  gallery.coverImage?.url ||
+                  "/placeholder.svg?height=400&width=600"
+                }
+                alt={gallery.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="text-white text-lg font-semibold">{image.alt}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-white text-xl font-bold mb-2">{gallery.title}</h3>
+                  <p className="text-white/80 text-sm">{gallery.imageCount} Images</p>
+                </div>
               </div>
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
@@ -133,9 +116,9 @@ export default function GalleryPage() {
           ))}
         </div>
 
-        {images.length === 0 && !loading && (
+        {galleries.length === 0 && !loading && (
           <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No gallery images found.</p>
+            <p className="text-gray-600 text-lg">No galleries found.</p>
           </div>
         )}
       </div>

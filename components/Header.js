@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Menu, X, ChevronDown, Search, User, Phone, MessageCircle, Calendar, Clock } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import TopHeader from "./TopHeader"
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -32,7 +33,7 @@ const Header = () => {
 
   const servicesItems = [
     { name: "All Services", href: "/services", description: "Complete medical services" },
-    { name: "Health Package", href: "/health-package", description: "Comprehensive health plans" },
+    { name: "Health Package", href: "/health-packages", description: "Comprehensive health plans" },
   ]
 
   const newsItems = [
@@ -45,40 +46,7 @@ const Header = () => {
   return (
     <>
       {/* Top Info Bar - Only visible when not scrolled */}
-      <div
-        className={`bg-gradient-to-r from-[#017381] via-[#025a65] to-[#034a52] text-white transition-all duration-500 overflow-hidden ${isScrolled ? "h-0 opacity-0" : "h-auto opacity-100"}`}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-3">
-            {/* Contact Info */}
-            <div className="flex items-center space-x-8">
-              <div className="flex items-center space-x-2 text-sm">
-                <Phone className="w-4 h-4 text-[#b8e6ea]" />
-                <span className="text-slate-200">Emergency:</span>
-                <Link href="tel:01902556060" className="font-bold hover:text-[#b8e6ea] transition-colors">
-                  01902556060
-                </Link>
-              </div>
-              <div className="hidden lg:flex items-center space-x-2 text-sm">
-                <Clock className="w-4 h-4 text-[#b8e6ea]" />
-                <span className="text-slate-200">24/7 Service Available</span>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2 text-sm">
-                <MessageCircle className="w-4 h-4 text-[#b8e6ea]" />
-                <span className="text-slate-200">Hotline:</span>
-                <Link href="tel:09666997997" className="font-bold hover:text-[#b8e6ea] transition-colors">
-                  09666-997997
-                </Link>
-              </div>
-             
-            </div>
-          </div>
-        </div>
-      </div>
+     <TopHeader isScrolled={isScrolled} />
 
       {/* Main Header - Sticky */}
       <header
@@ -184,7 +152,7 @@ const Header = () => {
                 </div>
 
                 <Link
-                  href="/department"
+                  href="/departments"
                   className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
                 >
                   Departments
@@ -194,7 +162,7 @@ const Header = () => {
                 {/* News & Media Dropdown */}
                 <div className="relative group">
                   <button className="flex items-center px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300">
-                    News
+                    Media
                     <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
                   </button>
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 bg-white shadow-2xl rounded-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
@@ -389,7 +357,7 @@ const Header = () => {
                       onClick={() => toggleDropdown("news")}
                       className="flex items-center justify-between w-full text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
                     >
-                      <span>📰 News & Media</span>
+                      <span>📰 Media</span>
                       <ChevronDown
                         className={`w-5 h-5 transition-transform duration-300 ${
                           openDropdown === "news" ? "rotate-180" : ""

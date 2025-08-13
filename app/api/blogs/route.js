@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://pmchl.onrender.com/api"
+    const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
     const fetchUrl = `${strapiApiUrl}/blogs?populate=*`
 
     console.log(`Attempting to fetch from Strapi: ${fetchUrl}`)
