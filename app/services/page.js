@@ -91,7 +91,7 @@ export default function ServicesPage() {
         // Transform Strapi data to match component structure
         const transformedServices = data.data.map((service) => ({
           title: service.Name || "Untitled Service",
-          description: extractTextFromRichText(service.Description) || "No description available",
+          description: service.ShortDescription || "No description available",
           image_url: service.Image?.formats?.medium?.url || service.Image?.url || "/placeholder.svg",
           read_more_link: `/services/${generateSlug(service.Name || "service")}`,
           icon: getServiceIcon(service.Name || "", service.category || ""),
