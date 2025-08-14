@@ -1,379 +1,418 @@
 "use client"
-import { useState } from "react"
-import { Menu, X, ChevronDown, Search, User, Mail, Phone, MessageCircle, Calendar, MapPin } from "lucide-react"
+
+import { useState, useEffect } from "react"
+import { Menu, X, ChevronDown, Search, User, Phone, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import TopHeader from "./TopHeader"
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const toggleDropdown = (dropdown) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown)
   }
 
- 
- 
   const aboutItems = [
-    { name: "Mission and Vision", href: "/mission-vision" },
-    { name: "CEO Message", href: "/ceo-message" },
+    { name: "Mission and Vision", href: "/mission-vision"},
+    //   { name: "Message From Board Chairman", href: "/board-chairman-message"},
+    // { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
+    { name: "CEO Message", href: "/ceo-message"},
   
   ]
-   const servicesItems = [
-   { name: "All Services", href: "/all-services" },
-    { name: "Health Package", href: "/health-package" },
+
+  const servicesItems = [
+    { name: "All Services", href: "/services", description: "Complete medical services" },
+    { name: "Health Package", href: "/health-packages", description: "Comprehensive health plans" },
   ]
 
+  const newsItems = [
+    { name: "News", href: "/blog", description: "Medical news" },
+    { name: "All Videos", href: "/all-videos", description: "Medical education videos" },
+    { name: "Gallery", href: "/gallery", description: "Hospital photo gallery" },
+    { name: "Success Stories", href: "/success-stories", description: "Patient testimonials" },
+  ]
 
   return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 sticky top-0 z-50">
-      {/* Top Bar */}
-      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-200/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-3">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-3 group">
-                <Image
-                  src="/images/logo.png"
-                  alt="Unico Hospitals Logo"
-                  width={400}
-                  height={100}
-                  className=" transition-transform duration-300 group-hover:scale-105"
-                />
-                
-              </Link>
-            </div>
+    <>
+      {/* Top Info Bar - Only visible when not scrolled */}
+     <TopHeader isScrolled={isScrolled} />
 
-            {/* Contact Info & Actions */}
-            <div className="flex items-center space-x-2 lg:space-x-6">
-              {/* Phone */}
-              <Link
-                href="tel:09677667766"
-                className="hidden md:flex items-center text-gray-600 hover:text-blue-600 transition-all duration-300 text-sm group"
-              >
-                <div className="p-2 bg-green-50 rounded-lg mr-3 group-hover:bg-green-100 transition-colors">
-                  <Phone className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 font-medium">	Hotline</div>
-                  <div className="font-semibold">09666-997997</div>
-                </div>
-              </Link>
+      {/* Main Header - Sticky */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-500 ${
+          isScrolled ? "bg-white/95 backdrop-blur-xl shadow-2xl border-b border-gray-200" : "bg-white shadow-xl"
+        }`}
+      >
+        {/* Desktop Header */}
+        <div className="hidden lg:block">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              className={`flex items-center justify-between transition-all duration-500 ${
+                isScrolled ? "py-4" : "py-6"
+              }`}
+            >
+              {/* Logo Section */}
+              <div className="flex items-center space-x-4">
+                <Link href="/" className="group flex items-center space-x-4">
+                  <div className="relative">
+                    {/* Logo Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#017381]/20 to-[#025a65]/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                    <Image
+                      src="/images/logoa.png"
+                      alt="Pro-Active Hospital"
+                      width={isScrolled ? 300 : 350}
+                      height={isScrolled ? 76 : 89}
+                      className="relative transition-all duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                </Link>
+              </div>
 
-              {/* Mobile Phone */}
-              <Link
-                href="tel:09677667766"
-                className="md:hidden flex items-center text-gray-600 hover:text-blue-600 transition-colors text-sm"
-              >
-                <Phone className="w-4 h-4 mr-1" />
-                <span>Call</span>
-              </Link>
+              {/* Navigation Menu */}
+              <nav className="flex items-center space-x-1">
+                <Link
+                  href="/"
+                  className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
+                >
+                  Home
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
+                </Link>
+
+                {/* About Dropdown */}
+                <div className="relative group">
+                  <button className="flex items-center px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300">
+                    About
+                    <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
+                  </button>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 bg-white shadow-2xl rounded-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="p-2">
+                     
+                      <div className="space-y-2">
+                        {aboutItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="block p-4 rounded-xl hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 group"
+                          >
+                            <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
+                              {item.name}
+                            </div>
+                          
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/all-consultants"
+                  className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
+                >
+                  Consultants
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
+                </Link>
+
+                {/* Services Dropdown */}
+                <div className="relative group">
+                  <button className="flex items-center px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300">
+                    Services
+                    <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
+                  </button>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 bg-white shadow-2xl rounded-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="p-6">
+                     
+                      <div className="space-y-2">
+                        {servicesItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="block p-4 rounded-xl hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 group"
+                          >
+                            <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
+                              {item.name}
+                            </div>
+                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/departments"
+                  className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
+                >
+                  Departments
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
+                </Link>
+
+                {/* News & Media Dropdown */}
+                <div className="relative group">
+                  <button className="flex items-center px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300">
+                    Media
+                    <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
+                  </button>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-80 bg-white shadow-2xl rounded-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="p-6">
+                      
+                      <div className="space-y-2">
+                        {newsItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="block p-4 rounded-xl hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 group"
+                          >
+                            <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
+                              {item.name}
+                            </div>
+                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/our-corporate-clients"
+                  className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
+                >
+                  Clients
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
+                >
+                  Contact
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
+                </Link>
+              </nav>
 
               {/* Action Buttons */}
               <div className="flex items-center space-x-3">
+                {/* Search Button */}
+               
+
+                
+
                 {/* Book Appointment Button */}
-                <button className="hidden lg:flex bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2.5 rounded-xl items-center text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Book Appointment
-                </button>
+                <Link
+                  href="/appointments"
+                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl flex items-center font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 relative overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Calendar className="w-5 h-5 mr-2 relative z-10" />
+                  <span className="relative z-10">Appointment</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                {/* Ask Question Button */}
-                <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-xl flex items-center text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  <MessageCircle className="w-4 h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Ask Question</span>
-                  <span className="sm:hidden">Ask</span>
-                </button>
+        {/* Mobile Header */}
+        <div className="lg:hidden">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-between py-4">
+              {/* Mobile Logo */}
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/images/logoa.png"
+                  alt="Pro-Active Hospital"
+                  width={280}
+                  height={71}
+                  className="transition-all duration-300"
+                />
+              </Link>
 
-                {/* Search & User Icons */}
-                <div className="hidden lg:flex items-center space-x-2">
-                  <button className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                    <Search className="w-5 h-5" />
-                  </button>
-                  <button className="p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                    <User className="w-5 h-5" />
-                  </button>
-                </div>
+              {/* Mobile Actions */}
+              <div className="flex items-center space-x-3">
+                {/* Mobile Book Appointment */}
+                <Link
+                  href="/appointments"
+                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg flex items-center text-sm font-semibold"
+                >
+                  <Calendar className="w-4 h-4 mr-1" />
+                  Appointment
+                </Link>
 
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300"
+                  className="p-3 text-[#017381] hover:text-white hover:bg-gradient-to-r hover:from-[#017381] hover:to-[#025a65] rounded-xl transition-all duration-300"
                 >
                   {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Navigation */}
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex justify-center py-4">
-          <ul className="flex items-center space-x-8 text-gray-700">
-            <li>
-              <Link
-                href="/"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-                Home
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-              {/* About Dropdown */}
-            <li className="relative group">
-              <button className="flex items-center px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold">
-                About
-                <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
-              </button>
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-72 bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl border border-gray-200/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <div className="p-6">
-                  <ul className="space-y-2">
-                    {aboutItems.map((item, index) => (
-                      <li key={index}>
-                        <Link
-                          href={item.href}
-                          className="text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 block py-2.5 px-3 rounded-lg"
-                        >
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </li>
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <div className="border-t border-gray-100 bg-gradient-to-br from-slate-50 to-white">
+              <div className="container mx-auto px-4 py-6">
+                <div className="space-y-2">
+                  <Link
+                    href="/"
+                    className="block text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏠 Home
+                  </Link>
 
-            <li>
-              <Link
-                href="/all-consultants"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-                Our Consultants
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-
-               {/* services Dropdown */}
-            <li className="relative group">
-              <button className="flex items-center px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold">
-                Services
-                <ChevronDown className="w-4 h-4 ml-1 group-hover:rotate-180 transition-transform duration-300" />
-              </button>
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-72 bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl border border-gray-200/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <div className="p-6">
-                  <ul className="space-y-2">
-                    {servicesItems.map((item, index) => (
-                      <li key={index}>
-                        <Link
-                          href={item.href}
-                          className="text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 block py-2.5 px-3 rounded-lg"
-                        >
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </li>
-
-
-          
-            <li>
-              <Link
-                href="/department"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-                Department
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/news-media"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-                News & Media
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-              <li>
-              <Link
-                href="/our-corporate-clients"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-               Corporate Clients
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="relative px-4 py-2 hover:text-blue-600 transition-all duration-300 font-semibold group"
-              >
-                Contact
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-blue-700 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </li>
-
-          
-          </ul>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200">
-            <div className="space-y-4">
-              <Link
-                href="/"
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-              >
-                Home
-              </Link>
-              <Link
-                href="/doctors"
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-              >
-                Doctors
-              </Link>
-
-              {/* Mobile Department Dropdown */}
-              <div>
-                <button
-                  onClick={() => toggleDropdown("department")}
-                  className="flex items-center justify-between w-full text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-                >
-                  Department
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${openDropdown === "department" ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {openDropdown === "department" && (
-                  <div className="mt-2 ml-4 space-y-2">
-                    {departments.slice(0, 8).map((dept, index) => (
-                      <Link
-                        key={index}
-                        href={dept.href}
-                        className="block text-sm text-gray-600 hover:text-blue-600 transition-colors py-2 px-3 rounded-lg hover:bg-blue-50"
-                      >
-                        {dept.name}
-                      </Link>
-                    ))}
-                    <Link
-                      href="/department"
-                      className="block text-sm text-blue-600 font-medium mt-3 py-2 px-3 rounded-lg bg-blue-50"
+                  {/* Mobile About Dropdown */}
+                  <div>
+                    <button
+                      onClick={() => toggleDropdown("about")}
+                      className="flex items-center justify-between w-full text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
                     >
-                      All Departments →
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile Services Dropdown */}
-              <div>
-                <button
-                  onClick={() => toggleDropdown("services")}
-                  className="flex items-center justify-between w-full text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-                >
-                  Services
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${openDropdown === "services" ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {openDropdown === "services" && (
-                  <div className="mt-2 ml-4 space-y-3">
-                    <div>
-                      <h4 className="font-medium text-gray-800 mb-2">Clinical Services</h4>
-                      <div className="space-y-1">
-                        {services.clinical.slice(0, 5).map((service, index) => (
+                      <span>📋 About</span>
+                      <ChevronDown
+                        className={`w-5 h-5 transition-transform duration-300 ${
+                          openDropdown === "about" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "about" && (
+                      <div className="mt-2 ml-4 space-y-1 bg-white rounded-xl p-3 shadow-lg border border-gray-100">
+                        {aboutItems.map((item, index) => (
                           <Link
                             key={index}
-                            href={service.href}
-                            className="block text-sm text-gray-600 hover:text-blue-600 transition-colors py-1.5 px-3 rounded-lg hover:bg-blue-50"
+                            href={item.href}
+                            className="block text-sm text-gray-600 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 py-3 px-4 rounded-lg"
+                            onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            {service.name}
+                            {item.name}
                           </Link>
                         ))}
                       </div>
-                    </div>
-                    <Link
-                      href="/services"
-                      className="block text-sm text-blue-600 font-medium mt-3 py-2 px-3 rounded-lg bg-blue-50"
+                    )}
+                  </div>
+
+                  <Link
+                    href="/all-consultants"
+                    className="block text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    👨‍⚕️ Our Consultants
+                  </Link>
+
+                  {/* Mobile Services Dropdown */}
+                  <div>
+                    <button
+                      onClick={() => toggleDropdown("services")}
+                      className="flex items-center justify-between w-full text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
                     >
-                      All Services →
+                      <span>🏥 Services</span>
+                      <ChevronDown
+                        className={`w-5 h-5 transition-transform duration-300 ${
+                          openDropdown === "services" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "services" && (
+                      <div className="mt-2 ml-4 space-y-1 bg-white rounded-xl p-3 shadow-lg border border-gray-100">
+                        {servicesItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="block text-sm text-gray-600 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 py-3 px-4 rounded-lg"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <Link
+                    href="/departments"
+                    className="block text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏢 Departments
+                  </Link>
+
+                  {/* Mobile News Dropdown */}
+                  <div>
+                    <button
+                      onClick={() => toggleDropdown("news")}
+                      className="flex items-center justify-between w-full text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    >
+                      <span>📰 Media</span>
+                      <ChevronDown
+                        className={`w-5 h-5 transition-transform duration-300 ${
+                          openDropdown === "news" ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {openDropdown === "news" && (
+                      <div className="mt-2 ml-4 space-y-1 bg-white rounded-xl p-3 shadow-lg border border-gray-100">
+                        {newsItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            href={item.href}
+                            className="block text-sm text-gray-600 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 py-3 px-4 rounded-lg"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <Link
+                    href="/our-corporate-clients"
+                    className="block text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏢 Corporate Clients
+                  </Link>
+
+                  <Link
+                    href="/contact"
+                    className="block text-gray-700 hover:text-[#017381] hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 font-semibold py-3 px-4 rounded-xl"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    📞 Contact
+                  </Link>
+
+                  {/* Mobile Emergency Contact */}
+                  <div className="pt-6 border-t border-gray-200 space-y-3">
+                    <Link
+                      href="tel:01902556070"
+                      className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
+                    >
+                      <Phone className="w-5 h-5" />
+                      <span>Emergency: 01902556070</span>
                     </Link>
+
+                    
+
                   </div>
-                )}
-              </div>
-
-              <Link
-                href="/packages"
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-              >
-                Packages
-              </Link>
-              <Link
-                href="/news-events"
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-              >
-                News & Events
-              </Link>
-              <Link
-                href="/contact"
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-              >
-                Contact
-              </Link>
-
-              {/* Mobile About Dropdown */}
-              <div>
-                <button
-                  onClick={() => toggleDropdown("about")}
-                  className="flex items-center justify-between w-full text-gray-700 hover:text-blue-600 transition-colors font-medium py-2 px-4 rounded-lg hover:bg-blue-50"
-                >
-                  About
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${openDropdown === "about" ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {openDropdown === "about" && (
-                  <div className="mt-2 ml-4 space-y-2">
-                    {aboutItems.map((item, index) => (
-                      <Link
-                        key={index}
-                        href={item.href}
-                        className="block text-sm text-gray-600 hover:text-blue-600 transition-colors py-2 px-3 rounded-lg hover:bg-blue-50"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile Action Buttons */}
-              <div className="pt-4 border-t border-gray-200 space-y-3">
-                <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold flex items-center justify-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>Book Appointment</span>
-                </button>
-                <div className="flex space-x-3">
-                  <button className="flex-1 p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 flex items-center justify-center">
-                    <Search className="w-5 h-5" />
-                  </button>
-                  <button className="flex-1 p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 flex items-center justify-center">
-                    <User className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </nav>
-    </header>
+          )}
+        </div>
+      </header>
+    </>
   )
 }
 

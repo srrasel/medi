@@ -1,313 +1,434 @@
 "use client"
+
 import { useState } from "react"
-import { ArrowRight, ExternalLink } from "lucide-react"
+import Link from "next/link"
 import Image from "next/image"
+import { Heart, Users, Stethoscope, Award, Star, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
+import WhyChooseUsSection from "./WhyChppseUs"
+import SpecialityLeft from "./SpecialityLeft"
 
-const MedicalDepartments = () => {
-  const [hoveredDepartment, setHoveredDepartment] = useState(null)
-  const [showAll, setShowAll] = useState(false)
+const departments = [
+  {
+    name: "Department of Gynaecology",
+    slug: "gynaecology",
+    image: "/images/গাইনোকোলজি.jpg",
+    link: "/department/gynaecology/",
+    category: "Women's Health",
+    icon: Heart,
+    description:
+      "Comprehensive women's health care including pregnancy, childbirth, and reproductive health services with expert gynecologists.",
+    services: ["Pregnancy Care", "Reproductive Health", "Gynecological Surgery", "Family Planning"],
+    doctors: 8,
+    established: "2015",
+  },
+  {
+    name: "Department of Neonatology",
+    slug: "neonatology",
+    image: "/images/NICU-1-Final.jpeg",
+    link: "/department/neonatology/",
+    category: "Pediatric Care",
+    icon: Users,
+    description:
+      "Specialized care for newborns, particularly premature and critically ill infants with state-of-the-art NICU facilities.",
+    services: ["NICU Care", "Premature Baby Care", "Newborn Surgery", "Pediatric Cardiology"],
+    doctors: 6,
+    established: "2016",
+  },
+  {
+    name: "Department of Ophthalmology",
+    slug: "ophthalmology",
+    image: "/images/OPTHALMOLOGY_Final.jpg",
+    link: "/department/department-of-opthalmolog/",
+    category: "Eye Care",
+    icon: Stethoscope,
+    description:
+      "Complete eye care services including vision correction, eye surgery, and treatment of various eye diseases.",
+    services: ["Cataract Surgery", "Retinal Treatment", "Glaucoma Care", "Pediatric Ophthalmology"],
+    doctors: 5,
+    established: "2014",
+  },
+  {
+    name: "Department of Intensive Care",
+    slug: "intensive-care",
+    image: "/images/ICU-5.jpg",
+    link: "/department/department-of-intensive-care/",
+    category: "Critical Care",
+    icon: Heart,
+    description:
+      "Advanced critical care for patients requiring intensive monitoring and life support with 24/7 expert medical team.",
+    services: ["ICU Care", "Ventilator Support", "Cardiac Monitoring", "Post-Surgery Care"],
+    doctors: 12,
+    established: "2013",
+  },
+  {
+    name: "Department of Endocrinology",
+    slug: "endocrinology",
+    image: "/images/Endocrinology.jpg",
+    link: "/department/department-of-endocrinology/",
+    category: "Hormone Care",
+    icon: Award,
+    description: "Treatment of hormone-related disorders including diabetes, thyroid, and metabolic conditions.",
+    services: ["Diabetes Care", "Thyroid Treatment", "Hormone Therapy", "Metabolic Disorders"],
+    doctors: 4,
+    established: "2017",
+  },
+  {
+    name: "Department of Hematology",
+    slug: "hematology",
+    image: "/images/Medical-Specialty-1109x675-1.jpg",
+    link: "/department/department-of-hematology/",
+    category: "Blood Care",
+    icon: Heart,
+    description: "Specialized care for blood disorders, cancers of the blood, and bone marrow diseases.",
+    services: ["Blood Cancer Treatment", "Anemia Care", "Bone Marrow Disorders", "Blood Transfusion"],
+    doctors: 3,
+    established: "2018",
+  },
+  {
+    name: "Department of Neuromedicine",
+    slug: "neuromedicine",
+    image: "/images/spinal-disorder-2.jpg",
+    link: "/department/department-of-nuromedicine/",
+    category: "Neurological Care",
+    icon: Stethoscope,
+    description: "Comprehensive neurological care for brain, spine, and nervous system disorders.",
+    services: ["Stroke Treatment", "Epilepsy Care", "Parkinson's Disease", "Spinal Disorders"],
+    doctors: 7,
+    established: "2015",
+  },
+  {
+    name: "Department of Internal Medicine",
+    slug: "internal-medicine",
+    image: "/images/internal-medicine.jpg",
+    link: "/department/department-of-internal-medicine/",
+    category: "General Medicine",
+    icon: Users,
+    description: "Primary care and treatment of adult diseases affecting internal organs and systems.",
+    services: ["General Consultation", "Chronic Disease Management", "Preventive Care", "Health Screening"],
+    doctors: 15,
+    established: "2012",
+  },
+  {
+    name: "Department of Physical Medicine",
+    slug: "physical-medicine",
+    image: "/images/physical_Medicine.jpg",
+    link: "/department/department-of-physical-medicine/",
+    category: "Rehabilitation",
+    icon: Award,
+    description: "Comprehensive rehabilitation services for recovery from injuries, surgeries, and chronic conditions.",
+    services: ["Physiotherapy", "Occupational Therapy", "Pain Management", "Sports Medicine"],
+    doctors: 6,
+    established: "2016",
+  },
+  {
+    name: "Department of Hepatobiliary",
+    slug: "hepatobiliary",
+    image: "/images/liverdiagram.png",
+    link: "/department/department-of-hepatobiliary/",
+    category: "Liver Care",
+    icon: Heart,
+    description: "Specialized treatment for liver, gallbladder, and bile duct diseases and disorders.",
+    services: ["Liver Disease Treatment", "Gallbladder Surgery", "Bile Duct Procedures", "Liver Transplant"],
+    doctors: 4,
+    established: "2019",
+  },
+  {
+    name: "Department of Gastroenterology",
+    slug: "gastroenterology",
+    image: "/images/Gastroenterology-1.jpg",
+    link: "/department/department-of-gastroenterology/",
+    category: "Digestive Care",
+    icon: Stethoscope,
+    description: "Treatment of digestive system disorders including stomach, intestines, liver, and pancreas.",
+    services: ["Endoscopy", "Colonoscopy", "Liver Disease", "Inflammatory Bowel Disease"],
+    doctors: 5,
+    established: "2014",
+  },
+  {
+    name: "Department of Radioncology",
+    slug: "radioncology",
+    image: "/images/1585218080116.png",
+    link: "/department/department-of-radioncology/",
+    category: "Cancer Care",
+    icon: Users,
+    description: "Advanced radiation therapy and cancer treatment with state-of-the-art equipment.",
+    services: ["Radiation Therapy", "Cancer Treatment", "Tumor Management", "Palliative Care"],
+    doctors: 3,
+    established: "2020",
+  },
+  {
+    name: "Department of Radiology and Imaging",
+    slug: "radiology-imaging",
+    image: "/images/lab2.jpg",
+    link: "/department/department-of-radi-oncology/",
+    category: "Diagnostic Imaging",
+    icon: Award,
+    description: "Comprehensive diagnostic imaging services including CT, MRI, X-ray, and ultrasound.",
+    services: ["CT Scan", "MRI", "X-Ray", "Ultrasound", "Mammography"],
+    doctors: 8,
+    established: "2013",
+  },
+  {
+    name: "Department of Paediatric Surgery",
+    slug: "paediatric-surgery",
+    image: "/images/padeatric.jpg",
+    link: "/department/department-of-paediatric-surgery/",
+    category: "Pediatric Surgery",
+    icon: Heart,
+    description: "Specialized surgical care for infants, children, and adolescents with expert pediatric surgeons.",
+    services: ["Pediatric Surgery", "Neonatal Surgery", "Minimally Invasive Surgery", "Emergency Surgery"],
+    doctors: 4,
+    established: "2017",
+  },
+  {
+    name: "Department of Paediatric Medicine",
+    slug: "paediatric-medicine",
+    image: "/images/padeatric.jpg",
+    link: "/department/paediatrics/",
+    category: "Child Care",
+    icon: Users,
+    description: "Comprehensive medical care for children from birth to adolescence with specialized pediatricians.",
+    services: ["Child Health Check-ups", "Vaccination", "Growth Monitoring", "Pediatric Emergency"],
+    doctors: 10,
+    established: "2013",
+  },
+  {
+    name: "Department of Pathology and BioChemistry",
+    slug: "pathology-biochemistry",
+    image: "/images/Department-of-Phatology-and-Biochemistry.jpg",
+    link: "/department/gastroenterology/",
+    category: "Laboratory",
+    icon: Stethoscope,
+    description: "Advanced laboratory services for accurate diagnosis and monitoring of various medical conditions.",
+    services: ["Blood Tests", "Tissue Analysis", "Biochemical Tests", "Microbiology"],
+    doctors: 6,
+    established: "2012",
+  },
+  {
+    name: "Department of Critical Care",
+    slug: "critical-care",
+    image: "/images/patient-intensive-care.jpg",
+    link: "/department/department-of-critical-care/",
+    category: "Emergency Care",
+    icon: Heart,
+    description: "24/7 emergency and critical care services for life-threatening conditions and medical emergencies.",
+    services: ["Emergency Medicine", "Trauma Care", "Critical Care", "Ambulance Service"],
+    doctors: 14,
+    established: "2012",
+  },
+  {
+    name: "Department of General Surgery",
+    slug: "general-surgery",
+    image: "/images/Critical-Care-Final.png",
+    link: "/department/department-of-general-surgery/",
+    category: "Surgical Care",
+    icon: Award,
+    description: "Comprehensive surgical services including general, laparoscopic, and minimally invasive procedures.",
+    services: ["General Surgery", "Laparoscopic Surgery", "Emergency Surgery", "Day Care Surgery"],
+    doctors: 12,
+    established: "2012",
+  },
+  {
+    name: "Department of Nephrology",
+    slug: "nephrology",
+    image: "/images/Nephrology.jpg",
+    link: "/department/nephrology/",
+    category: "Kidney Care",
+    icon: Users,
+    description: "Specialized care for kidney diseases, dialysis services, and kidney transplantation.",
+    services: ["Dialysis", "Kidney Disease Treatment", "Kidney Transplant", "Hypertension Management"],
+    doctors: 5,
+    established: "2014",
+  },
+  {
+    name: "Department of Urology",
+    slug: "urology",
+    image: "/images/urology.jpg",
+    link: "/department/urology/",
+    category: "Urological Care",
+    icon: Stethoscope,
+    description:
+      "Treatment of urinary tract and male reproductive system disorders with advanced urological procedures.",
+    services: ["Kidney Stone Treatment", "Prostate Surgery", "Urinary Tract Surgery", "Male Infertility"],
+    doctors: 4,
+    established: "2015",
+  },
+  {
+    name: "Department of Cardiology",
+    slug: "cardiology",
+    image: "/images/CCU-2-Final.jpeg",
+    link: "/department/cardiology/",
+    category: "Heart Care",
+    icon: Heart,
+    description: "Comprehensive cardiac care including diagnosis, treatment, and prevention of heart diseases.",
+    services: ["Heart Surgery", "Angioplasty", "Cardiac Catheterization", "Heart Failure Treatment"],
+    doctors: 8,
+    established: "2013",
+  },
+  {
+    name: "Department of ENT, Head and Neck Surgery",
+    slug: "ent-head-neck-surgery",
+    image: "/images/neck-hear.jpg",
+    link: "/department/ent-ear-nose-throat/",
+    category: "ENT Surgery",
+    icon: Award,
+    description: "Treatment of ear, nose, throat, head, and neck disorders with advanced surgical techniques.",
+    services: ["ENT Surgery", "Hearing Tests", "Sinus Surgery", "Voice Disorders"],
+    doctors: 6,
+    established: "2014",
+  },
+  {
+    name: "Department of Dental Surgery",
+    slug: "dental-surgery",
+    image: "/images/Dental-1.jpg",
+    link: "/department/dental-surgery/",
+    category: "Dental Care",
+    icon: Users,
+    description: "Comprehensive dental care including preventive, restorative, and surgical dental procedures.",
+    services: ["Dental Surgery", "Orthodontics", "Root Canal", "Dental Implants"],
+    doctors: 7,
+    established: "2013",
+  },
+]
 
-  const departments = [
-    {
-      name: "Department of Gynaecology",
-      image: "/images/গাইনোকোলজি.jpg",
-      link: "https://pmchl.com/department-item/gynaecology/",
-    },
-    {
-      name: "Department of Neonatology",
-      image: "/images/NICU-1-Final.jpeg",
-      link: "https://pmchl.com/department-item/neonatology/",
-    },
-    {
-      name: "Department of Opthalmology",
-      image: "/images/OPTHALMOLOGY_Final.jpg",
-      link: "https://pmchl.com/department-item/department-of-opthalmolog/",
-    },
-    {
-      name: "Department of Intensive Care",
-      image: "/images/ICU-5.jpg",
-      link: "https://pmchl.com/department-item/department-of-intensive-care/",
-    },
-    {
-      name: "Department of Endocrinology",
-      image: "/images/Endocrinology.jpg",
-      link: "https://pmchl.com/department-item/department-of-endocrinology/",
-    },
-    {
-      name: "Department of Hematology",
-      image: "/images/Medical-Specialty-1109x675-1.jpg",
-      link: "https://pmchl.com/department-item/department-of-hematology/",
-    },
-    {
-      name: "Department of Neuromedicine",
-      image: "/images/spinal-disorder-2.jpg",
-      link: "https://pmchl.com/department-item/department-of-nuromedicine/",
-    },
-    {
-      name: "Department of Internal Medicine",
-      image: "/images/internal-medicine.jpg",
-      link: "https://pmchl.com/department-item/department-of-internal-medicine/",
-    },
-    {
-      name: "Department of Physical Medicine",
-      image: "/images/physical_Medicine.jpg",
-      link: "https://pmchl.com/department-item/department-of-physical-medicine/",
-    },
-    {
-      name: "Department of Hepatobiliary",
-      image: "/images/liverdiagram.png",
-      link: "https://pmchl.com/department-item/department-of-hepatobiliary/",
-    },
-    {
-      name: "Department of Gastroenterology",
-      image: "/images/Gastroenterology-1.jpg",
-      link: "https://pmchl.com/department-item/department-of-gastroenterology/",
-    },
-    {
-      name: "Department of Radioncology",
-      image: "/images/1585218080116.png",
-      link: "https://pmchl.com/department-item/department-of-radioncology/",
-    },
-    {
-      name: "Department of Radiology and Imaging",
-      image: "/images/lab2.jpg",
-      link: "https://pmchl.com/department-item/department-of-radi-oncology/",
-    },
-    {
-      name: "Department of Paediatric Surgery",
-      image: "/images/padeatric.jpg",
-      link: "https://pmchl.com/department-item/department-of-paediatric-surgery/",
-    },
-    {
-      name: "Department of Paediatric Medicine",
-      image: "/images/padeatric.jpg",
-      link: "https://pmchl.com/department-item/paediatrics/",
-    },
-    {
-      name: "Department of Pathology and BioChemistry",
-      image: "/images/Department-of-Phatology-and-Biochemistry.jpg",
-      link: "https://pmchl.com/department-item/gastroenterology/",
-    },
-    {
-      name: "Department of Critical Care",
-      image: "/images/patient-intensive-care.jpg",
-      link: "https://pmchl.com/department-item/department-of-critical-care/",
-    },
-    {
-      name: "Department of General Surgery",
-      image: "/images/Critical-Care-Final.png",
-      link: "https://pmchl.com/department-item/department-of-general-surgery/",
-    },
-    {
-      name: "Department of Nephrology",
-      image: "/images/Nephrology.jpg",
-      link: "https://pmchl.com/department-item/nephrology/",
-    },
-    {
-      name: "Department of Urology",
-      image: "/images/urology.jpg",
-      link: "https://pmchl.com/department-item/urology/",
-    },
-    {
-      name: "Department of Cardiology",
-      image: "/images/CCU-2-Final.jpeg",
-      link: "https://pmchl.com/department-item/cardiology/",
-    },
-    {
-      name: "Department of ENT, Head and Neck Surgery",
-      image: "/images/neck-hear.jpg",
-      link: "https://pmchl.com/department-item/ent-ear-nose-throat/",
-    },
-    {
-      name: "Department of Dental Surgery",
-      image: "/images/Dental-1.jpg",
-      link: "https://pmchl.com/department-item/dental-surgery/",
-    },
-  ]
+export default function MedicalSpecialties() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const itemsPerSlide = 12
+  const totalSlides = Math.ceil(departments.length / itemsPerSlide)
 
-  // Show first 8 departments initially, or all if showAll is true
-  const displayedDepartments = showAll ? departments : departments.slice(0, 8)
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides)
+  }
 
-  // Get featured images for the gallery from the first few departments
-  const featuredImages = departments.slice(0, 6).map((dept) => dept.image)
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
+  }
 
-  const getDepartmentDescription = (name) => {
-    const descriptions = {
-      "Department of Gynaecology":
-        "Comprehensive women's health care including pregnancy, childbirth, and reproductive health services.",
-      "Department of Neonatology": "Specialized care for newborns, particularly premature and critically ill infants.",
-      "Department of Opthalmology":
-        "Complete eye care services including vision correction, eye surgery, and treatment of eye diseases.",
-      "Department of Intensive Care":
-        "Advanced critical care for patients requiring intensive monitoring and life support.",
-      "Department of Endocrinology":
-        "Treatment of hormone-related disorders including diabetes, thyroid, and metabolic conditions.",
-      "Department of Hematology":
-        "Specialized care for blood disorders, cancers of the blood, and bone marrow diseases.",
-      "Department of Neuromedicine": "Comprehensive neurological care for brain, spine, and nervous system disorders.",
-      "Department of Internal Medicine":
-        "Primary care and treatment of adult diseases affecting internal organs and systems.",
-    }
-    return descriptions[name] || "Expert medical care and treatment in this specialized field of medicine."
+  const getCurrentDepartments = () => {
+    const startIndex = currentSlide * itemsPerSlide
+    return departments.slice(startIndex, startIndex + itemsPerSlide)
   }
 
   return (
-    <div className="bg-gray-50 py-20">
-      <div className="container mx-auto px-4">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <div className="mb-8">
-            <span className="text-sm font-medium text-gray-500 tracking-wider uppercase mb-4 block">Departments</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Expert care across every specialty</h2>
-          </div>
-          <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Discover our hospital&apos;s specialized departments, each dedicated to delivering top-tier medical care with a focus on your unique needs.
+    <div className="relative bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#017381]/3 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#025a65]/3 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#017381]/2 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
 
-          </p>
-        </div>
+     <WhyChooseUsSection />
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Departments List */}
-          <div className="space-y-4">
-            <div
-              className={`space-y-4 transition-all duration-500 ${showAll ? "max-h-none" : "max-h-[600px] overflow-hidden"}`}
-            >
-              {displayedDepartments.map((dept, index) => (
-                <a
-                  key={index}
-                  href={dept.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group relative rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border block ${
-                    hoveredDepartment === index
-                      ? "bg-blue-700 text-white border-blue-700 shadow-lg"
-                      : "bg-white border-gray-100 hover:bg-blue-600 hover:text-white hover:border-blue-600"
-                  }`}
-                  onMouseEnter={() => setHoveredDepartment(index)}
-                  onMouseLeave={() => setHoveredDepartment(null)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4 flex-1">
-                      <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image src={dept.image || "/placeholder.svg"} alt={dept.name} fill className="object-cover" />
-                      </div>
-                      <div className="flex-1">
-                        <h4
-                          className={`text-lg font-semibold mb-2 transition-colors ${
-                            hoveredDepartment === index ? "text-white" : "text-gray-800 group-hover:text-white"
-                          }`}
-                        >
-                          {dept.name}
-                        </h4>
-                        <p
-                          className={`text-sm leading-relaxed transition-colors ${
-                            hoveredDepartment === index ? "text-blue-100" : "text-gray-600 group-hover:text-blue-100"
-                          }`}
-                        >
-                          {getDepartmentDescription(dept.name)}
-                        </p>
-                      </div>
-                    </div>
-                    <div
-                      className={`ml-4 p-2 rounded-full transition-all duration-300 flex-shrink-0 ${
-                        hoveredDepartment === index
-                          ? "bg-white/20 rotate-45"
-                          : "bg-gray-100 group-hover:bg-white/20 group-hover:rotate-45"
-                      }`}
-                    >
-                      <ExternalLink
-                        className={`w-4 h-4 transition-colors ${
-                          hoveredDepartment === index ? "text-white" : "text-gray-600 group-hover:text-white"
-                        }`}
-                      />
+      {/* Our Specialities Section */}
+      <section className="relative z-10 pb-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-16 lg:flex-row lg:gap-20">
+            {/* Left Side - Image */}
+           <SpecialityLeft/>
+
+            {/* Right Side - Specialities */}
+            <div className="w-full lg:w-3/5">
+              {/* Header */}
+              <div className="mb-12">
+                <h2 className="text-4xl md:text-5xl font-bold text-[#017381] mb-6">Our Specialities</h2>
+              </div>
+
+              {/* Carousel Container */}
+              <div className="relative">
+                {/* Specialties Grid */}
+                <div className="overflow-hidden">
+                  <div
+                    className="transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    <div className="flex">
+                      {Array.from({ length: totalSlides }).map((_, slideIndex) => (
+                        <div key={slideIndex} className="min-w-full">
+                          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 pt-4">
+                            {departments
+                              .slice(slideIndex * itemsPerSlide, (slideIndex + 1) * itemsPerSlide)
+                              .map((department, index) => {
+                                const IconComponent = department.icon
+                                return (
+                                  <Link
+                                    key={index}
+                                    href="#"
+                                    className="group bg-white rounded-2xl p-5 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-[#017381]/30 hover:bg-gradient-to-br hover:from-[#017381] hover:to-[#025a65] min-h-[120px] flex flex-col justify-center"
+                                  >
+                                    <div className="flex flex-col items-center space-y-3">
+                                      <div className="w-14 h-14 bg-[#017381]/10 rounded-2xl flex items-center justify-center group-hover:bg-white/20 transition-all duration-300 group-hover:scale-110">
+                                        <IconComponent className="w-7 h-7 text-[#017381] group-hover:text-white transition-colors duration-300" />
+                                      </div>
+                                      <h3 className="text-base font-semibold text-gray-800 group-hover:text-white transition-colors duration-300 leading-tight text-center">
+                                        {department.name}
+                                      </h3>
+                                    </div>
+                                  </Link>
+                                )
+                              })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </a>
-              ))}
-            </div>
-
-            {/* Show More/Less Button */}
-            <div className="pt-8 flex gap-4">
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="group bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg flex items-center space-x-3"
-              >
-                <span>{showAll ? "Show Less" : `View All ${departments.length} Departments`}</span>
-                <ArrowRight
-                  className={`w-4 h-4 transition-transform ${showAll ? "rotate-180" : "group-hover:translate-x-1"}`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Images Gallery */}
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4 h-[600px]">
-              {/* First Column */}
-              <div className="space-y-4">
-                <div className="h-48 rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 shadow-lg">
-                  <Image
-                    src={featuredImages[0] || "/placeholder.svg"}
-                    alt="Medical department"
-                    fill
-                    className="object-cover"
-                  />
                 </div>
-                <div className="h-60 rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 shadow-lg">
-                  <Image
-                    src={featuredImages[1] || "/placeholder.svg"}
-                    alt="Medical equipment"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
 
-              {/* Second Column */}
-              <div className="space-y-4 pt-8">
-                <div className="h-72 rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 shadow-lg">
-                  <Image
-                    src={featuredImages[2] || "/placeholder.svg"}
-                    alt="Patient care"
-                    fill
-                    className="object-cover"
-                  />
+                {/* Navigation Controls */}
+                <div className="flex items-center justify-between mt-8">
+                  {/* Navigation Buttons */}
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={prevSlide}
+                      disabled={currentSlide === 0}
+                      className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      onClick={nextSlide}
+                      disabled={currentSlide === totalSlides - 1}
+                      className="w-12 h-12 rounded-full bg-white border-2 border-[#017381]/20 flex items-center justify-center hover:bg-[#017381] hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-400 shadow-lg"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Slide Indicators */}
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: totalSlides }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          currentSlide === index ? "bg-[#017381] scale-125" : "bg-gray-300 hover:bg-[#017381]/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Slide Counter */}
+                  <div className="text-sm text-gray-600 font-medium">
+                    {currentSlide + 1} of {totalSlides}
+                  </div>
                 </div>
-                <div className="h-44 rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 shadow-lg">
-                  <Image
-                    src={featuredImages[3] || "/placeholder.svg"}
-                    alt="Medical consultation"
-                    fill
-                    className="object-cover"
-                  />
+
+                {/* View All Button */}
+                <div className="flex justify-center mt-10">
+                  <Link
+                    href="/departments"
+                    className="group bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white px-10 py-4 rounded-2xl font-bold transition-all duration-300 hover:shadow-2xl hover:scale-105 inline-flex items-center space-x-3"
+                  >
+                    <span>View All Specialities</span>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </div>
               </div>
-            </div>
-
-            {/* Floating Images */}
-            <div className="absolute -top-4 -right-4 w-32 h-32 rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 transition-transform duration-300 border-4 border-white">
-              <Image
-                src={featuredImages[4] || "/placeholder.svg"}
-                alt="Medical professional"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-2xl overflow-hidden shadow-xl transform hover:scale-105 transition-transform duration-300 border-4 border-white">
-              <Image
-                src={featuredImages[5] || "/placeholder.svg"}
-                alt="Medical facility"
-                fill
-                className="object-cover"
-              />
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }
-
-export default MedicalDepartments

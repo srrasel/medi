@@ -1,27 +1,34 @@
-'use client';
-import { useEffect, useRef } from 'react';
-import LocomotiveScroll from 'locomotive-scroll';
-import 'locomotive-scroll/dist/locomotive-scroll.css';
+// app/SmoothScrollWrapper.js
+"use client";
+import { useEffect } from "react";
+import Lenis from "@studio-freight/lenis";
 
-export default function SmoothScroll({ children }) {
-  const containerRef = useRef(null);
-
+export default function SmoothScrollWrapper({ children }) {
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const scroll = new LocomotiveScroll({
-      el: containerRef.current,
+    const lenis = new Lenis({
+      duration: 0.5, // Faster scroll duration (reduced from 1.2)
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -15 * t)), // More responsive easing
       smooth: true,
+      direction: "vertical",
+      gestureDirection: "vertical",
+      smoothTouch: false,
+      touchMultiplier: 1.5, // Better touch response
+      infinite: false,
     });
 
+    // Optimized animation frame loop
+    let animationFrameId;
+    const raf = (time) => {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    };
+    animationFrameId = requestAnimationFrame(raf);
+
     return () => {
-      if (scroll) scroll.destroy();
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
     };
   }, []);
 
-  return (
-    <div data-scroll-container ref={containerRef}>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 }

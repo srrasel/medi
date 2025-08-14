@@ -1,129 +1,186 @@
-import { ArrowRight, ExternalLink } from "lucide-react"
+"use client"
+
+import { useState, useEffect } from "react"
+import { ArrowRight, Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 const ServicesSection = () => {
-  const services = [
-    {
-      title: "ICU",
-      image_url: "/images/ICU-Final.jpeg",
-      read_more_link: "https://pmchl.com/service-item/icu/",
-    },
-    {
-      title: "CCU",
-      image_url: "/images/CCU-Final.jpeg",
-      read_more_link: "https://pmchl.com/service-item/ambulance-service-2/",
-    },
-    {
-      title: "NICU",
-      image_url: "/images/NICU-Final.jpeg",
-      read_more_link: "https://pmchl.com/service-item/nicu/",
-    },
-    {
-      title: "PICU",
-      image_url: "/images/464683711_1058648339603436_1958753658212568146_n-1.jpg",
-      read_more_link: "https://pmchl.com/service-item/picu/",
-    },
-    {
-      title: "Dialysis",
-      image_url: "/images/Dialysis-1-scaled.jpg",
-      read_more_link: "https://pmchl.com/service-item/dialysis/",
-    },
-    {
-      title: "Physiotherapy",
-      image_url: "/images/Physioteraphy-scaled.jpg",
-      read_more_link: "https://pmchl.com/service-item/physiotherapy/",
-    },
-    {
-      title: "Endoscopy",
-      image_url: "/images/Endoscopy-scaled.jpg",
-      read_more_link: "https://pmchl.com/service-item/endoscopy-2/",
-    },
-    {
-      title: "CT-Scan",
-      image_url: "/images/CT-Scan-scaled.jpg",
-      read_more_link: "https://pmchl.com/service-item/endoscopy/",
-    },
-    {
-      title: "Cash & Billing",
-      image_url: "/images/Cash-Billing-scaled.jpg",
-      read_more_link: "https://pmchl.com/service-item/hdu/",
-    },
-  ]
+  const [visibleCards, setVisibleCards] = useState(new Set())
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        if (!response.ok) {
+          throw new Error("Failed to fetch services")
+        }
+        const data = await response.json()
+        setServices(data.data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = entry.target.getAttribute("data-index")
+          setVisibleCards((prev) => new Set([...prev, Number.parseInt(index)]))
+        }
+      })
+    }, observerOptions)
+
+    const elements = document.querySelectorAll(".service-card")
+    elements.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [services])
+
+  const extractDescription = (description) => {
+    if (!description || description.length === 0) return ""
+    return description.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ")
+  }
+
+  const getImageUrl = (image) => {
+    if (!image) return "/placeholder.svg"
+    return image.formats?.medium?.url || image.formats?.small?.url || image.url
+  }
+
+  const getIconByCategory = (category) => {
+    const iconMap = {
+      "Critical Care": Heart,
+      "Cardiac Care": Activity,
+      "Neonatal Care": Baby,
+      "Pediatric Care": Users,
+      Nephrology: Droplets,
+      Rehabilitation: Dumbbell,
+      Diagnostics: Search,
+      Imaging: Scan,
+      Administrative: CreditCard,
+    }
+    return iconMap[category] || Heart
+  }
+
+  if (loading) {
+    return (
+      <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-white text-xl">Loading services...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-white text-xl">Error loading services: {error}</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="bg-white py-20 px-4">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] py-24 overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-white/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="grid grid-cols-1 gap-12 mb-16">
-          <div>
-            <div className="mb-4">
-              <span className="text-blue-500 text-sm font-medium tracking-wider uppercase">Services</span>
-            </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">What we do</h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              Our state-of-the-art facility is equipped with the latest medical technology, and our team of experienced
-              professionals is committed to delivering personalized, compassionate care.
-            </p>
+        <div className="text-center mb-20">
+          <div className="inline-block mb-6">
+            <span className="bg-white text-[#017381] text-sm font-semibold tracking-wider uppercase px-6 py-2 rounded-full">
+              Our Services
+            </span>
           </div>
+          <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            Comprehensive
+            <span className="block text-[#b8e6ea]">Healthcare Solutions</span>
+          </h2>
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
-            >
-              <div className="relative h-64 overflow-hidden">
-                <Image
-                  src={service.image_url || "/placeholder.svg"}
-                  alt={service.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+          {services.map((service, index) => {
+            const IconComponent = getIconByCategory(service.category)
+            const isVisible = visibleCards.has(index)
+            const description = extractDescription(service.Description)
+            const imageUrl = getImageUrl(service.Image)
+
+            return (
+              <div
+                key={service.id}
+                data-index={index}
+                className={`service-card bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-4 cursor-pointer group border border-gray-100 hover:border-[#017381]/20 ${
+                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <Image
+                    src={imageUrl || "/placeholder.svg"}
+                    alt={service.Name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    onError={(e) => {
+                      e.target.src = `/placeholder.svg?height=256&width=400&text=${service.Name}`
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-[#017381] text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+                      {service.category}
+                    </span>
+                  </div>
+
+                  {/* Icon */}
+                  <div className="absolute top-4 right-4 p-3 bg-white/20 backdrop-blur-sm rounded-full group-hover:bg-white/30 transition-colors duration-300">
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Title Overlay */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#b8e6ea] transition-colors duration-300">
+                      {service.Name}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="p-8">
+                  <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{description}</p>
+                  <Link
+                    href={`/services/${service.Name.toLowerCase().replace(/\s+/g, "-")}`}
+                    className="inline-flex items-center gap-3 bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:gap-4 group-hover:scale-105"
+                  >
+                    Learn More
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
-
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
-                  {service.title}
-                </h3>
-
-                <a
-                  href={service.read_more_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-blue-500 hover:text-blue-700 font-medium transition-all duration-300 hover:gap-3"
-                >
-                  Read More
-                  <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Call to Action Section */}
-        <div className="mt-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-transparent"></div>
-          <div className="relative z-10 p-8 lg:p-12">
-            <div className="max-w-2xl">
-              <h3 className="text-3xl lg:text-4xl font-bold text-white mb-6 leading-tight">
-                Experience healthcare redefined with excellence and care.
-              </h3>
-              <p className="text-blue-100 text-lg mb-8 leading-relaxed">
-                Our comprehensive medical services are designed to provide you with the highest quality care in a
-                comfortable and supportive environment.
-              </p>
-              <button className="bg-white hover:bg-gray-100 text-blue-600 px-8 py-4 rounded-full font-semibold inline-flex items-center gap-3 transition-all duration-300 hover:gap-4 hover:shadow-lg">
-                View All Services
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-          <div className="absolute right-0 top-0 w-1/3 h-full opacity-10">
-            <div className="w-full h-full bg-gradient-to-l from-white/20 to-transparent"></div>
-          </div>
+            )
+          })}
         </div>
       </div>
     </div>
