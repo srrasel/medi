@@ -104,3 +104,6 @@ html {
   max-width:960px;
   margin: 0 auto;
 }
+.group.cursor-pointer.bg-gradient-to-br.from-\[\#673AB7\].to-\[\#7E57C2\].rounded-3xl.overflow-hidden.shadow-xl.hover\:shadow-2xl.transition-all.duration-500.hover\:-translate-y-4.flex.flex-col.justify-between.text-white {
+  background: #017cff !important;
+}
