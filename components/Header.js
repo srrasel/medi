@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, ChevronDown, Search, User, Phone, MessageCircle, Calendar, Clock } from "lucide-react"
+import { Menu, X, ChevronDown, Search, User, Phone, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import TopHeader from "./TopHeader"
@@ -208,10 +208,7 @@ const Header = () => {
                 {/* Search Button */}
                
 
-                {/* User Button */}
-                <button className="p-3 text-[#017381] hover:text-white hover:bg-gradient-to-r hover:from-[#017381] hover:to-[#025a65] rounded-xl transition-all duration-300 hover:scale-110 transform hover:shadow-lg group">
-                  <User className="w-5 h-5" />
-                </button>
+                
 
                 {/* Book Appointment Button */}
                 <Link
@@ -406,14 +403,8 @@ const Header = () => {
                       <span>Emergency: 01902556070</span>
                     </Link>
 
-                    <div className="flex space-x-3">
-                      <button className="flex-1 p-4 text-[#017381] hover:text-white hover:bg-gradient-to-r hover:from-[#017381] hover:to-[#025a65] rounded-xl transition-all duration-300 flex items-center justify-center border-2 border-[#017381]">
-                        <Search className="w-5 h-5" />
-                      </button>
-                      <button className="flex-1 p-4 text-[#017381] hover:text-white hover:bg-gradient-to-r hover:from-[#017381] hover:to-[#025a65] rounded-xl transition-all duration-300 flex items-center justify-center border-2 border-[#017381]">
-                        <User className="w-5 h-5" />
-                      </button>
-                    </div>
+                    
+
                   </div>
                 </div>
               </div>
