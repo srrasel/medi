@@ -31,16 +31,16 @@ export async function POST(req) {
 const resend = new Resend(process.env.RESEND_API_KEY);
      await resend.emails.send({
        from: 'noreply@pmchl.com',
-     to: 'info@pmcml.com', // Your target email address
+     to: 'proactivehospital.dm@gmail.com', // Your target email address
     subject: emailSubject,
      html: `<p>${emailBody.replace(/\n/g, '<br/>')}</p>`,
      });
 
-    console.log("--- Simulating Email Send ---")
-    console.log("To: info@pmcml.com")
-    console.log("Subject:", emailSubject)
-    console.log("Body:\n", emailBody)
-    console.log("----------------------------")
+    // console.log("--- Simulating Email Send ---")
+    // console.log("To: info@pmcml.com")
+    // console.log("Subject:", emailSubject)
+    // console.log("Body:\n", emailBody)
+    // console.log("----------------------------")
 
     return NextResponse.json(
       { message: "Appointment request received and email simulated successfully!" },
