@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import {
@@ -49,24 +48,16 @@ export default function ServicePage() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/services")
         if (!response.ok) {
           throw new Error("Failed to fetch services")
         }
         const data = await response.json()
 
-        // Transform Strapi data to match component structure
-        const transformedServices = data.data.map((service) => {
-          // Extract description text from rich text array
-          const descriptionText =
-            service.Description?.map((block) => {
-              if (block.type === "paragraph") {
-                return block.children?.map((child) => child.text).join("") || ""
-              }
-              return ""
-            }).join(" ") || "No description available"
+        const transformedServices = data.map((service) => {
+          const descriptionText = service.ShortDescription || "No description available"
+          const longDescription = service.Description || service.ShortDescription || "No description available"
 
-          // Create slug from name
           const serviceSlug = service.Name.toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)/g, "")
@@ -74,10 +65,10 @@ export default function ServicePage() {
           return {
             title: service.Name,
             slug: serviceSlug,
-            shortDescription: service.ShortDescription || descriptionText,
-            longDescription: descriptionText,
-            description: service.ShortDescription || descriptionText, // Keep for hero section
-            image_url: service.Image?.formats?.large?.url || service.Image?.url || "/placeholder.svg",
+            shortDescription: descriptionText,
+            longDescription: longDescription,
+            description: descriptionText,
+            image_url: service.Image || "/placeholder.svg",
             category: service.category || "General",
             icon: iconMap[service.category] || iconMap.default,
           }
@@ -136,7 +127,10 @@ export default function ServicePage() {
             <Heart className="w-12 h-12 text-red-500" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Service Not Found</h1>
-          <p className="text-gray-600 mb-8">  The service you&apos;re looking for doesn&apos;t exist or may have been moved.</p>
+          <p className="text-gray-600 mb-8">
+            {" "}
+            The service you&apos;re looking for doesn&apos;t exist or may have been moved.
+          </p>
           <Link
             href="/services"
             className="bg-gradient-to-r from-[#017381] to-[#025a65] text-white px-8 py-4 rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all duration-300 inline-flex items-center gap-2"
@@ -214,11 +208,9 @@ export default function ServicePage() {
               className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
             >
               <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                <Image
+                <img
                   src={service.image_url || "/placeholder.svg"}
                   alt={service.title}
-                  width={600}
-                  height={400}
                   className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent group-hover:from-black/40 transition-all duration-300"></div>
@@ -239,23 +231,20 @@ export default function ServicePage() {
                 <div className="mb-12">
                   <h2 className="text-3xl font-bold text-gray-800 mb-6">About {service.title}</h2>
                   <div className="prose prose-lg max-w-none">
-                    <p className="text-gray-600 leading-relaxed text-lg mb-6">{service.longDescription}</p>
+                    <div
+                      className="text-gray-600 leading-relaxed text-lg mb-6"
+                      dangerouslySetInnerHTML={{ __html: service.longDescription }}
+                    />
                   </div>
                 </div>
-
-                
               </div>
-
-             
             </div>
 
             {/* Service Image */}
             <div className="text-center">
-              <Image
+              <img
                 src={service.image_url || "/placeholder.svg"}
                 alt={service.title}
-                width={800}
-                height={600}
                 className="w-full h-auto rounded-2xl shadow-lg"
               />
             </div>

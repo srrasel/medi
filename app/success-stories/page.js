@@ -15,7 +15,7 @@ export default function SuccessStoriesPage() {
     const fetchSuccessStories = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/success-stories?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/success-stories")
 
         if (!response.ok) {
           throw new Error(`Failed to fetch success stories: ${response.status} ${response.statusText}`)
@@ -25,31 +25,26 @@ export default function SuccessStoriesPage() {
 
         console.log("API Response:", data)
 
-        if (!data.data || !Array.isArray(data.data)) {
+        if (!data|| !Array.isArray(data)) {
           throw new Error("Invalid API response format")
         }
 
         // Transform API data to match component structure
-        const transformedStories = data.data.map((story) => {
+        const transformedStories = data.map((story) => {
           // Extract YouTube video ID from URL
-          const videoId = story.videourl.includes("youtu.be/")
-            ? story.videourl.split("youtu.be/")[1].split("?")[0]
-            : story.videourl.includes("youtube.com/watch?v=")
-              ? story.videourl.split("v=")[1].split("&")[0]
-              : story.videourl
+          const videoId = story.Video.includes("youtu.be/")
+            ? story.Video.split("youtu.be/")[1].split("?")[0]
+            : story.Video.includes("youtube.com/watch?v=")
+              ? story.Video.split("v=")[1].split("&")[0]
+              : story.Video
 
           // Extract description text from rich text array
-          const description =
-            story.Description && story.Description.length > 0
-              ? story.Description.map((block) =>
-                  block.children ? block.children.map((child) => child.text).join("") : "",
-                ).join(" ")
-              : "No description available"
+         
 
           return {
             id: videoId,
             title: story.Title,
-            description: description,
+            description: story.Description,
             category: story.Category,
           }
         })
@@ -185,7 +180,7 @@ export default function SuccessStoriesPage() {
                         <h3 className="text-xl font-bold text-[#017381] mb-3 group-hover:text-[#025a65] transition-colors duration-300">
                           {video.title}
                         </h3>
-                        <p className="text-slate-600 leading-relaxed mb-4">{video.description}</p>
+                        <div className="text-slate-600 leading-relaxed mb-4" dangerouslySetInnerHTML={{__html:video.description}} />
                         <div className="flex items-center gap-2 text-[#017381] font-semibold">
                           <Play className="w-4 h-4" />
                           <span>Watch Story</span>

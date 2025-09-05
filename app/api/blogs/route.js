@@ -2,10 +2,9 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-    const fetchUrl = `${strapiApiUrl}/blogs?populate=*`
+    const fetchUrl = "https://api.pmchl.com/api/news"
 
-    console.log(`Attempting to fetch from Strapi: ${fetchUrl}`)
+    console.log(`Attempting to fetch from API: ${fetchUrl}`)
 
     const response = await fetch(fetchUrl)
 
@@ -16,26 +15,24 @@ export async function GET() {
 
     const data = await response.json()
 
-    if (!data.data || !Array.isArray(data.data)) {
-      throw new Error("Strapi response 'data' field is missing or not an array.")
+    if (!Array.isArray(data)) {
+      throw new Error("API response is not an array.")
     }
 
-    const transformedPosts = data.data.map((item) => {
-      const imageUrl = item.Image?.formats?.medium?.url || item.Image?.url
-      const fullImageUrl = imageUrl ? `${imageUrl}` : "/placeholder.svg"
-
+    const transformedPosts = data.map((item) => {
       return {
         id: item.id,
-        image: fullImageUrl,
+        image: item.Image || "/placeholder.svg",
         alt: item.Title,
         title: item.Title,
-        slug: item.Slug,
-        content: item.Content,
+        slug: item.id, // Using id as slug since no slug field provided
+        content: item.Description,
         author: item.Author,
-        date: new Date(item.publishedAt).getDate().toString(),
-        month: new Date(item.publishedAt).toLocaleString("en-US", { month: "short" }),
-        readTime: "5 min read", // fallback as no 'readTime' field exists
-        link: `/blog/${item.Slug}`,
+        category: item.Category,
+        date: new Date(item.createdAt).getDate().toString(),
+        month: new Date(item.createdAt).toLocaleString("en-US", { month: "short" }),
+        readTime: "5 min read",
+        link: `/blog/${item.id}`,
       }
     })
 

@@ -4,9 +4,7 @@ export async function GET(request, { params }) {
   const { slug } = params
 
   try {
-    const strapiApiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL
-    const baseUrl = strapiApiUrl.replace("/api", "")
-    const fetchUrl = `${strapiApiUrl}/blogs?filters[Slug][$eq]=${slug}&populate=*`
+    const fetchUrl = `https://api.pmchl.com/api/news`
 
     console.log(`Fetching blog post: ${fetchUrl}`)
 
@@ -16,29 +14,36 @@ export async function GET(request, { params }) {
       const errorText = await response.text()
       return NextResponse.json(
         { message: `Failed to fetch blog post with slug "${slug}"`, error: errorText },
-        { status: response.status }
+        { status: response.status },
       )
     }
 
     const data = await response.json()
 
-    if (!data.data || data.data.length === 0) {
+    if (!data || data.length === 0) {
       return NextResponse.json({ message: "Blog post not found" }, { status: 404 })
     }
 
-    const item = data.data[0]
+    const item = data.find(
+      (post) =>
+        post.slug === slug ||
+        post.id.toString() === slug ||
+        post.Title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug,
+    )
 
-    const imageUrl = item.Image?.formats?.medium?.url || item.Image?.url
-    const fullImageUrl = imageUrl ? `${imageUrl}` : "/placeholder.svg"
+    if (!item) {
+      return NextResponse.json({ message: "Blog post not found" }, { status: 404 })
+    }
 
     const transformedPost = {
       id: item.id,
-      slug: item.Slug,
+      slug: item.slug || item.id.toString(),
       title: item.Title,
-      content: item.Content,
-      image: fullImageUrl,
+      content: item.Description,
+      image: item.Image,
       author: item.Author || "Unknown Author",
-      publishedAt: new Date(item.publishedAt).toLocaleDateString("bn-BD", {
+      category: item.Category,
+      publishedAt: new Date(item.createdAt).toLocaleDateString("bn-BD", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -49,9 +54,6 @@ export async function GET(request, { params }) {
     return NextResponse.json(transformedPost)
   } catch (error) {
     console.error(`Error in /api/blogs/[slug]:`, error)
-    return NextResponse.json(
-      { message: "Error fetching blog post details", error: error.message },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: "Error fetching blog post details", error: error.message }, { status: 500 })
   }
 }

@@ -18,30 +18,30 @@ export default function VideosPage() {
     const fetchVideos = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/videos?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/videos")
         if (!response.ok) {
           throw new Error("Failed to fetch videos")
         }
         const data = await response.json()
 
         // Transform Strapi data to match component structure
-        const transformedVideos = data.data.map((video) => {
+        const transformedVideos = data.map((video) => {
           // Extract YouTube video ID from URL
-          const videoId = extractYouTubeId(video.Videourl)
+          const videoId = extractYouTubeId(video.VideoUrl)
 
           // Extract description text from rich text array
-          const description =
-            video.Description?.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ") || ""
+          const description = video.Description
+
 
           // Format date
-          const publishedDate = new Date(video.publishedAt).toLocaleDateString("bn-BD", {
+          const publishedDate = new Date(video.createdAt).toLocaleDateString("bn-BD", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
           })
 
           return {
-            id: videoId,
+            id: video.id,
             title: video.Title,
             category: video.Category,
             duration: "N/A", // Duration not available from API
@@ -294,7 +294,7 @@ export default function VideosPage() {
                       <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
                         {video.title}
                       </h3>
-                      <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">{video.description}</p>
+                      <div className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3" dangerouslySetInnerHTML={{__html:video.description}}/>
 
                       {/* Published Date */}
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">

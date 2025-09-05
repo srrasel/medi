@@ -13,7 +13,7 @@ const TopHeader = ({ isScrolled }) => {
     const fetchHeaderData = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/top-headers?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/topHeader")
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -21,8 +21,8 @@ const TopHeader = ({ isScrolled }) => {
 
         const data = await response.json()
 
-        if (data.data && data.data.length > 0) {
-          setHeaderData(data.data[0]) // Get the first header data
+        if (data && data.length > 0) {
+          setHeaderData(data[0]) // Get the first header data
         } else {
           throw new Error("No header data found")
         }

@@ -2,6 +2,7 @@
 import HospitalHeroSection from "@/components/HospitalHeroSection";
 import ServicesSection from "@/components/ServicesSection";
 import MedicalDepartments from "@/components/MedicalDepartments";
+
 import Banner from "@/components/Banner";
 import DoctorsSection from "@/components/DoctorsSection";
 import BlogSection from "@/components/BlogSection";
@@ -16,6 +17,7 @@ export default function Home() {
      <QuickAccessSection />
      <ServicesSection />
      <MedicalDepartments />
+  
      <Banner/>
      <DoctorsSection />
      <BlogSection />

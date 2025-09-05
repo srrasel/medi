@@ -6,28 +6,7 @@ import { Search } from "lucide-react"
 import SegmentedButtonGroup from "./SegmentedButtonGroup"
 
 export default function HospitalHeroSection() {
-  const [data, setData] = useState(null)
   const router = useRouter()
-
-  useEffect(() => {
-    // Load data immediately but don't block rendering
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/hero")
-        const json = await res.json()
-        setData(json)
-      } catch (err) {
-        console.error("Failed to load hero data:", err)
-        // Fallback to default values if API fails
-        setData({
-          videoDesktop: { url: "/images/ff.mp4" },
-          videoMobile: { url: "/images/ff.mp4" }
-        })
-      }
-    }
-
-    fetchData()
-  }, [])
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -40,8 +19,8 @@ export default function HospitalHeroSection() {
   }
 
   // Use default values while loading
-  const videoDesktopUrl = data?.videoDesktop?.url || "/images/ff.mp4"
-  const videoMobileUrl = data?.videoMobile?.url || "/images/ff.mp4"
+  const videoDesktopUrl =  "/images/ff.mp4"
+  const videoMobileUrl =  "/images/ff.mp4"
 
   return (
     <div className="relative w-full h-[80vh] overflow-hidden">

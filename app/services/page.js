@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import {
   Heart,
@@ -67,7 +66,6 @@ export default function ServicesPage() {
       .trim()
   }
 
-  // Generate slug from service name
   const generateSlug = (name) => {
     return name
       .toLowerCase()
@@ -80,7 +78,7 @@ export default function ServicesPage() {
     const fetchServices = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/services")
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -89,10 +87,10 @@ export default function ServicesPage() {
         const data = await response.json()
 
         // Transform Strapi data to match component structure
-        const transformedServices = data.data.map((service) => ({
+        const transformedServices = data.map((service) => ({
           title: service.Name || "Untitled Service",
           description: service.ShortDescription || "No description available",
-          image_url: service.Image?.formats?.medium?.url || service.Image?.url || "/placeholder.svg",
+          image_url: service.Image || "/placeholder.svg",
           read_more_link: `/services/${generateSlug(service.Name || "service")}`,
           icon: getServiceIcon(service.Name || "", service.category || ""),
           category: service.category || "General",
@@ -277,11 +275,10 @@ export default function ServicesPage() {
                 >
                   {/* Service Image */}
                   <div className="relative h-64 overflow-hidden">
-                    <Image
+                    <img
                       src={service.image_url || "/placeholder.svg"}
                       alt={service.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Heart, Shield, Clock, Users, Award, Stethoscope, Building2, Phone, Star } from "lucide-react"
+import { Stethoscope } from "lucide-react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 
@@ -16,10 +16,11 @@ export default function CEOMessagePage() {
     const fetchCEOData = async () => {
       try {
           const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-        const response = await fetch(`${strapiBaseUrl}/ceo-message?populate=*`);
+        const response = await fetch(`${strapiBaseUrl}ceo-messages`);
         const data = await response.json();
-        if (data.data) {
-          setCeoData(data.data);
+        console.log("Fetched CEO data:", data[0]);
+        if (data) {
+          setCeoData(data[0]);
         } else {
           setError("No data found");
         }
@@ -79,17 +80,7 @@ export default function CEOMessagePage() {
   }
 
   // Helper function to render rich text content
-  const renderMessageContent = () => {
-    return ceoData.MessageContent.map((paragraph, index) => {
-      if (paragraph.children[0].text.trim() === "") return null;
-      
-      return (
-        <p key={index} className="text-lg leading-relaxed text-slate-700 mb-6">
-          {paragraph.children[0].text}
-        </p>
-      );
-    });
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -112,7 +103,7 @@ export default function CEOMessagePage() {
               <div className="flex-shrink-0">
                 <div className="w-80 h-80 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
                   <Image
-                    src={ceoData.profileImage.url}
+                    src={ceoData.Image}
                     alt={ceoData.Name}
                     width={400}
                     height={400}
@@ -163,7 +154,7 @@ export default function CEOMessagePage() {
                 <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
                   <CardContent className="p-8 md:p-12">
                     <div className="prose prose-lg max-w-none">
-                      {renderMessageContent()}
+                      <div dangerouslySetInnerHTML={{ __html: ceoData.MessageContent }} />
                       
                       <div className="mt-8 pt-6 border-t border-slate-200">
                         <p className="text-xl font-semibold text-[#017381]">Thank you</p>

@@ -1,6 +1,6 @@
 export async function GET() {
   try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/heroes?populate=*`
+    const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/heroes`
 
     const res = await fetch(apiUrl)
 

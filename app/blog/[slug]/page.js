@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import {
@@ -9,21 +8,12 @@ import {
   Clock,
   Calendar,
   Share2,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Copy,
   Heart,
   MessageCircle,
-  Bookmark,
-  ChevronRight,
-  Eye,
   ThumbsUp,
   Download,
-  PrinterIcon as Print,
-  Phone,
+  Printer as Print,
 } from "lucide-react"
-import RichTextRenderer from "@/components/RichTextRenderer"
 
 export default function SingleBlogPage() {
   const { slug } = useParams()
@@ -170,15 +160,12 @@ export default function SingleBlogPage() {
     <div className="min-h-screen bg-white">
       {/* Reading Progress */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
-        <div
-          className="h-full bg-gradient-to-r from-[#017381] to-[#025a65]"
-          style={{ width: `${readingProgress}%` }}
-        />
+        <div className="h-full bg-gradient-to-r from-[#017381] to-[#025a65]" style={{ width: `${readingProgress}%` }} />
       </div>
 
       {/* Blog Header */}
       <div className="container mx-auto py-10 px-4">
-        <Link href="/blog" className="text-[#017381] flex items-center gap-2 mb-4">
+        <Link href="/" className="text-[#017381] flex items-center gap-2 mb-4">
           <ArrowLeft className="w-4 h-4" />
           <span>ব্লগে ফিরে যান</span>
         </Link>
@@ -203,46 +190,49 @@ export default function SingleBlogPage() {
           </div>
         </div>
 
-        <div className="relative w-[700px] h-[700px] mb-10 rounded-xl ">
-          <Image
-            src={blogPost.image || "/placeholder.svg"}
+        <div className="relative w-full max-w-[700px] h-[400px] mb-10 rounded-xl overflow-hidden mx-auto">
+          <img
+            src={blogPost.image || "/placeholder.svg?height=400&width=700"}
             alt={blogPost.title}
-            fill
-            className="object-contain"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = "/placeholder.svg?height=400&width=700"
+            }}
           />
         </div>
 
         {/* Article Content */}
-        <RichTextRenderer
-          content={blogPost.content || defaultContent} />
+        <div className="article-content prose max-w-none mb-12">
+          <div dangerouslySetInnerHTML={{ __html: blogPost.content || defaultContent }} />
+        </div>
+
         {/* Tags */}
-        {blogPost.tags?.length > 0 && (
+        {blogPost.category && (
           <div className="mb-12">
-            <h3 className="font-semibold mb-2">ট্যাগসমূহ:</h3>
+            <h3 className="font-semibold mb-2">ক্যাটেগরি:</h3>
             <div className="flex flex-wrap gap-2">
-              {blogPost.tags.map((tag, i) => (
-                <Link key={i} href={`/blog/tag/${tag}`} className="text-sm bg-gray-100 px-3 py-1 rounded-full">
-                  #{tag}
-                </Link>
-              ))}
+              <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">#{blogPost.category}</span>
             </div>
           </div>
         )}
 
         {/* Buttons */}
         <div className="flex flex-wrap gap-4 mb-20 mt-20">
-          <button onClick={handleLike} className="btn">
+          <button
+            onClick={handleLike}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
             <Heart className="w-5 h-5" /> {isLiked ? "পছন্দ হয়েছে" : "পছন্দ করুন"} ({likeCount})
           </button>
-          <button className="btn">
+          <button className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
             <MessageCircle className="w-5 h-5" />
             মন্তব্য করুন
           </button>
-          <button className="btn">
+          <button className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
             <Print className="w-5 h-5" />
             প্রিন্ট করুন
           </button>
-          <button className="btn">
+          <button className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
             <Download className="w-5 h-5" />
             ডাউনলোড
           </button>
@@ -256,13 +246,24 @@ export default function SingleBlogPage() {
             <h2 className="text-2xl font-bold mb-10 text-center">সম্পর্কিত আর্টিকেল</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedPosts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`} className="block shadow-lg rounded-xl overflow-hidden">
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug || post.id}`}
+                  className="block shadow-lg rounded-xl overflow-hidden"
+                >
                   <div className="relative h-48">
-                    <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
+                    <img
+                      src={post.image || "/placeholder.svg?height=200&width=300"}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "/placeholder.svg?height=200&width=300"
+                      }}
+                    />
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold mb-2">{post.title}</h3>
-                    <p className="text-sm text-gray-500">{post.readTime}</p>
+                    <p className="text-sm text-gray-500">{post.readTime || "৫ মিনিট পড়ুন"}</p>
                   </div>
                 </Link>
               ))}

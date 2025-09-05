@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { X } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
 
 export default function DynamicPopup() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,9 +14,7 @@ export default function DynamicPopup() {
   useEffect(() => {
     const fetchPopupData = async () => {
       try {
-
-         const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-        const response = await fetch( `${strapiBaseUrl}/popups?populate=*`)
+        const response = await fetch("https://api.pmchl.com/api/popups")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -34,7 +32,7 @@ export default function DynamicPopup() {
   }, [])
 
   useEffect(() => {
-    if (!isLoading && popupData?.data?.length > 0) {
+    if (!isLoading && popupData && popupData.length > 0) {
       const timer = setTimeout(() => {
         setIsOpen(true)
       }, 1000)
@@ -46,34 +44,13 @@ export default function DynamicPopup() {
     setIsOpen(false)
   }
 
-  if (!isOpen || isLoading || error || !popupData?.data?.length) {
+  if (!isOpen || isLoading || error || !popupData || popupData.length === 0) {
     return null
   }
 
-  // Access nested Strapi data structure
-  const popup = popupData.data[0]
-  const popupUrl = popup?.URL || "#"
-  const imageData = popup?.Image
-
-  if (!imageData) {
-    console.error("No image data found in popup")
-    return null
-  }
-
-  const imageUrl = imageData.url
-  const altText = imageData.alternativeText || "Popup Image"
-  const imageWidth = imageData.width || 800
-  const imageHeight = imageData.height || 600
-
-  if (!imageUrl) {
-    console.error("No valid image URL found in popup data")
-    return null
-  }
-
-  // Handle both relative and absolute URLs
-  const fullImageUrl = imageUrl.startsWith("http")
-    ? imageUrl
-    : `https://methodical-kindness-fc585984ed.strapiapp.com${imageUrl}`
+  const popup = popupData[0]
+  const imageUrl = popup.Image
+  const linkUrl = popup.Link || "#"
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -88,13 +65,13 @@ export default function DynamicPopup() {
         </button>
 
         {/* Popup Image Content with Link */}
-        <Link href={popupUrl} className="block">
+        <Link href={linkUrl} className="block">
           <div className="relative w-full h-auto cursor-pointer hover:opacity-95 transition-opacity">
             <Image
-              src={fullImageUrl || "/placeholder.svg"}
-              alt={altText}
-              width={imageWidth}
-              height={imageHeight}
+              src={imageUrl || "/placeholder.svg"}
+              alt="Popup Image"
+              width={800}
+              height={600}
               className="w-full h-full object-cover"
               priority
             />

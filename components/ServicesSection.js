@@ -14,12 +14,12 @@ const ServicesSection = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("https://admin.pmchl.com/api/services?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/services")
         if (!response.ok) {
           throw new Error("Failed to fetch services")
         }
         const data = await response.json()
-        setServices(data.data)
+        setServices(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred")
       } finally {
@@ -52,13 +52,13 @@ const ServicesSection = () => {
   }, [services])
 
   const extractDescription = (description) => {
-    if (!description || description.length === 0) return ""
-    return description.map((block) => block.children?.map((child) => child.text).join("") || "").join(" ")
+    if (!description) return ""
+    return description.replace(/<[^>]*>/g, "").substring(0, 150) + "..."
   }
 
   const getImageUrl = (image) => {
     if (!image) return "/placeholder.svg"
-    return image.formats?.medium?.url || image.formats?.small?.url || image.url
+    return image
   }
 
   const getIconByCategory = (category) => {

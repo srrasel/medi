@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { Stethoscope, ArrowLeft, Calendar, Clock, User, Mail, Phone, Send, FileText } from "lucide-react"
@@ -116,7 +115,7 @@ export default function DoctorPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600">Error: {error}</h2>
-          <Link href="/all-consultants" className="mt-4 inline-flex items-center text-[#017381] hover:underline">
+          <Link href="/" className="mt-4 inline-flex items-center text-[#017381] hover:underline">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Doctors
           </Link>
@@ -130,7 +129,7 @@ export default function DoctorPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800">Doctor not found</h2>
-          <Link href="/all-consultants" className="mt-4 inline-flex items-center text-[#017381] hover:underline">
+          <Link href="/" className="mt-4 inline-flex items-center text-[#017381] hover:underline">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Doctors
           </Link>
@@ -150,7 +149,7 @@ export default function DoctorPage() {
 
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
           <Link
-            href="/all-consultants"
+            href="/"
             className="inline-flex items-center text-white hover:text-[#b8e6ea] mb-6 transition-colors duration-300"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -159,11 +158,10 @@ export default function DoctorPage() {
 
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative w-64 h-64 rounded-2xl overflow-hidden shadow-xl">
-              <Image
+              <img
                 src={doctor.image || "/placeholder.svg"}
                 alt={doctor.name}
-                fill
-                className="object-cover object-top"
+                className="w-full h-full object-cover object-top"
               />
             </div>
 
@@ -205,7 +203,7 @@ export default function DoctorPage() {
                     <h4 className="text-xl font-semibold text-gray-800">Biography</h4>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">{doctor.bio}</p>
+                    <div className="text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: doctor.bio }} />
                   </div>
                 </div>
               )}

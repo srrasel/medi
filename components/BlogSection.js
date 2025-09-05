@@ -1,10 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
-import RichTextRenderer from "./RichTextRenderer"
 
 const BlogSection = () => {
   const [blogPosts, setBlogPosts] = useState([])
@@ -24,7 +22,7 @@ const BlogSection = () => {
         const sortedPosts = data.sort((a, b) => {
           const idA = Number.parseInt(a.id) || 0
           const idB = Number.parseInt(b.id) || 0
-          return idB - idA // Descending order (highest ID first)
+          return idB - idA
         })
 
         setBlogPosts(sortedPosts)
@@ -126,12 +124,10 @@ const BlogSection = () => {
                   style={{ transitionDelay: `${index * 150}ms` }}
                 >
                   <div className="relative overflow-hidden h-64">
-                    <Image
+                    <img
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       src={post.image || "/placeholder.svg"}
                       alt={post.alt}
-                      width={500}
-                      height={300}
                       onError={(e) => {
                         e.target.src = `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`
                       }}
@@ -162,7 +158,10 @@ const BlogSection = () => {
                     <h3 className="font-bold text-xl text-gray-800 mb-4 group-hover:text-[#017381] transition-colors duration-300 leading-tight line-clamp-2">
                       {post.title}
                     </h3>
-                    <RichTextRenderer content={post.content.slice(0, 1)} />
+                    <div
+                      className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3"
+                      dangerouslySetInnerHTML={{ __html: post.content }}
+                    />
 
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <div className="flex items-center text-sm text-gray-500">

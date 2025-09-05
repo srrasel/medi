@@ -85,7 +85,7 @@ export default function DepartmentPage() {
     const fetchDepartment = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/departments?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/departments")
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -94,12 +94,12 @@ export default function DepartmentPage() {
         const data = await response.json()
         console.log("API Response:", data)
 
-        if (data.data && Array.isArray(data.data)) {
+        if (data && Array.isArray(data)) {
           // Transform API data and find matching department by slug
-          const transformedDepartments = data.data.map((dept) => ({
+          const transformedDepartments = data.map((dept) => ({
             id: dept.id,
-            name: dept.Name || "Unnamed Department",
-            slug: generateSlug(dept.Name || "unnamed-department"),
+            name: dept.Title || "Unnamed Department",
+            slug: generateSlug(dept.Title || "unnamed-department"),
             category: dept.Category || "General",
             description:
               dept.ShortDescription || extractTextFromRichText(dept.Description) || "No description available",

@@ -107,3 +107,9 @@ html {
 .group.cursor-pointer.bg-gradient-to-br.from-\[\#673AB7\].to-\[\#7E57C2\].rounded-3xl.overflow-hidden.shadow-xl.hover\:shadow-2xl.transition-all.duration-500.hover\:-translate-y-4.flex.flex-col.justify-between.text-white {
   background: #017cff !important;
 }
+.inline-flex.items-center.justify-center.rounded-full.bg-blue-500.text-white.px-3.py-1.text-sm.font-semibold.w-12.h-12.border-2.border-gray-300.hover\:border-blue-500.hover\:bg-blue-50.text-black-700.font-medium.bg-transparent {
+ color:#000 !important;
+}
+.px-4.py-3.bg-teal-600.text-white.rounded-r-lg.hover\:bg-teal-700.focus\:outline-none.focus\:ring-2.focus\:ring-teal-500.focus\:ring-offset-2.transition-colors {
+  border: solid #009689;
+}

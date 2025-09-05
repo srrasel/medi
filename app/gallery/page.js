@@ -12,20 +12,19 @@ export default function GalleryPage() {
   useEffect(() => {
     const fetchGalleries = async () => {
       try {
-        const response = await fetch("https://admin.pmchl.com/api/galleries?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/gallery")
         if (!response.ok) {
           throw new Error("Failed to fetch galleries")
         }
         const data = await response.json()
 
         // Transform galleries data
-        const transformedGalleries = data.data.map((gallery) => ({
+        const transformedGalleries = data.map((gallery) => ({
           id: gallery.id,
-          documentId: gallery.documentId,
           title: gallery.Title || "Gallery",
-          coverImage: gallery.image,
-          imageCount: (gallery.Galleryimages?.length || 0) + (gallery.image ? 1 : 0),
-          images: [...(gallery.image ? [gallery.image] : []), ...(gallery.Galleryimages || [])],
+          coverImage: gallery.FeaturedImage,
+          imageCount: (gallery.GalleryImages?.length || 0) + (gallery.image ? 1 : 0),
+          images: [...(gallery.image ? [gallery.image] : []), ...(gallery.GalleryImages || [])],
         }))
 
         setGalleries(transformedGalleries)

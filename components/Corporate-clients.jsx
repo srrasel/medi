@@ -1,10 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useActionState } from "react"
-import Image from "next/image"
 import { ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from "lucide-react"
-import { sendCallbackRequest } from "/actions/send-callback-request"
 
 export default function CorporateClients() {
   const [clients, setClients] = useState([])
@@ -13,24 +10,23 @@ export default function CorporateClients() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const itemsPerSlide = 6 // Display 6 logos per slide on larger screens
 
-  const [state, formAction, isPending] = useActionState(sendCallbackRequest, { success: false, message: "" })
+  const [formState, setFormState] = useState({ success: false, message: "", isPending: false })
 
-  // Fetch clients data from Strapi API
+  // Fetch clients data from API
   useEffect(() => {
     const fetchClients = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/clients?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/clients")
         if (!response.ok) {
           throw new Error("Failed to fetch clients")
         }
         const data = await response.json()
 
-        // Transform Strapi data to match component expectations
-        const transformedClients = data.data.map((client, index) => ({
-          src: client.Image?.url || `/placeholder.svg?height=60&width=120&query=client+logo`,
-          alt: `${client.Name} Logo`,
-          name: client.Name,
+        const transformedClients = data.map((client, index) => ({
+          src: client.image || `/placeholder.svg?height=60&width=120&query=client+logo`,
+          alt: `${client.title} Logo`,
+          name: client.title,
         }))
 
         setClients(transformedClients)
@@ -65,6 +61,25 @@ export default function CorporateClients() {
 
     return () => clearInterval(interval)
   }, [currentSlide, totalSlides, clients.length])
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    setFormState({ ...formState, isPending: true })
+
+    const formData = new FormData(e.target)
+    const name = formData.get("name")
+    const mobile = formData.get("mobile")
+
+    // Simulate form submission
+    setTimeout(() => {
+      setFormState({
+        success: true,
+        message: "Thank you! We will contact you soon.",
+        isPending: false,
+      })
+      e.target.reset()
+    }, 1000)
+  }
 
   if (loading) {
     return (
@@ -145,12 +160,10 @@ export default function CorporateClients() {
                                 key={index}
                                 className="flex items-center justify-center p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 group"
                               >
-                                <Image
+                                <img
                                   src={client.src || "/placeholder.svg"}
                                   alt={client.alt}
-                                  width={120}
-                                  height={60}
-                                  className="object-contain transition-all duration-300"
+                                  className="w-30 h-15 object-contain transition-all duration-300"
                                 />
                               </div>
                             ))}
@@ -195,22 +208,22 @@ export default function CorporateClients() {
               <p className="text-lg text-gray-600 mb-8">Request a Callback</p>
 
               {/* Success/Error Messages */}
-              {state && (state.success || state.error) && (
+              {formState && (formState.success || formState.error) && (
                 <div
                   className={`mb-6 p-4 rounded-xl ${
-                    state.success ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+                    formState.success ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
                   }`}
                 >
                   <div
-                    className={`flex items-center justify-center space-x-2 ${state.success ? "text-green-800" : "text-red-800"}`}
+                    className={`flex items-center justify-center space-x-2 ${formState.success ? "text-green-800" : "text-red-800"}`}
                   >
-                    {state.success ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                    <span className="font-medium">{state.success ? state.message : state.error}</span>
+                    {formState.success ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+                    <span className="font-medium">{formState.success ? formState.message : formState.error}</span>
                   </div>
                 </div>
               )}
 
-              <form action={formAction} className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
+              <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-xl mx-auto">
                 <div>
                   <label htmlFor="name" className="sr-only">
                     Name
@@ -240,10 +253,10 @@ export default function CorporateClients() {
                 <div className="md:col-span-2">
                   <button
                     type="submit"
-                    disabled={isPending}
+                    disabled={formState.isPending}
                     className="w-full bg-gradient-to-r from-[#017381] to-[#025a65] text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:from-[#025a65] hover:to-[#034a52] transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {isPending ? "Submitting..." : "Submit"}
+                    {formState.isPending ? "Submitting..." : "Submit"}
                   </button>
                 </div>
               </form>

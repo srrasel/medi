@@ -57,7 +57,7 @@ export default function DepartmentPage() {
     const fetchDepartments = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/departments?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/departments")
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -66,12 +66,12 @@ export default function DepartmentPage() {
         const data = await response.json()
         console.log("API Response:", data)
 
-        if (data.data && Array.isArray(data.data)) {
+        if (data && Array.isArray(data)) {
           // Transform API data to match component structure
-          const transformedDepartments = data.data.map((dept) => ({
+          const transformedDepartments = data.map((dept) => ({
             id: dept.id,
-            name: dept.Name || "Department",
-            slug: generateSlug(dept.Name || "department"),
+            name: dept.Title || "Department",
+            slug: generateSlug(dept.Title || "department"),
             image: getImageUrl(dept.Image),
             category: dept.Category || "General",
             description:

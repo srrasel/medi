@@ -13,7 +13,7 @@ import {
   Syringe,
   HandHeart,
   Monitor,
-  SmileIcon as Tooth,
+  Bluetooth as Tooth,
   UserCheck,
   Apple,
   AlertTriangle,
@@ -264,8 +264,6 @@ const DoctorsSection = () => {
           </p>
         </div>
 
-       
-
         {/* Doctors Carousel with Side Navigation */}
         <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           {/* Left Arrow */}
@@ -335,7 +333,6 @@ const DoctorsSection = () => {
                         <h3 className="text-lg font-bold mb-2 text-gray-800 group-hover:text-[#017381] transition-colors leading-tight">
                           {doctor.name}
                         </h3>
-                      
                         {/* Action Button */}
                         <div className="flex">
                           <Link
@@ -366,8 +363,6 @@ const DoctorsSection = () => {
             />
           ))}
         </div>
-
-       
 
         {/* Statistics Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-4xl mx-auto">

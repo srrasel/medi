@@ -2,8 +2,8 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const apiUrl = "https://api.pmchl.com/api/doctors"
-    console.log(`Fetching doctors from: ${apiUrl}`)
+    const apiUrl = "https://api.pmchl.com/api/diseases"
+    console.log(`Fetching diseases from: ${apiUrl}`)
 
     const response = await fetch(apiUrl)
 
@@ -16,27 +16,23 @@ export async function GET() {
     const data = await response.json()
 
     if (!Array.isArray(data)) {
-      console.error("Doctors response was not an array", data)
-      return NextResponse.json({ message: "Doctors response was not an array" }, { status: 500 })
+      console.error("Diseases response was not an array", data)
+      return NextResponse.json({ message: "Diseases response was not an array" }, { status: 500 })
     }
 
-    const transformedDoctors = data
+    const transformedDiseases = data
       .filter((item) => item && item.id)
       .map((item) => ({
         id: item.id,
         name: item.Name,
-        specialty: item.Specialty,
-        qualifications: item.Qualifications,
-        position: item.Position,
-        bio: item.Bio,
+        description: item.description,
         image: item.image || "/placeholder.svg",
-        link: `/doctor/${item.slug}`,
+        link: `/diseases/${item.id}`,
       }))
 
-    console.log(`Returning ${transformedDoctors.length} doctors`)
-    return NextResponse.json(transformedDoctors)
+    return NextResponse.json(transformedDiseases)
   } catch (error) {
-    console.error("Error in /api/doctors:", error)
+    console.error("Error in /api/diseases:", error)
     return NextResponse.json({ message: "Error fetching doctors", error: error.message }, { status: 500 })
   }
 }

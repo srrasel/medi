@@ -3,11 +3,14 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Heart, Users, Stethoscope, Award, Star, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
+import { Heart, Users, Stethoscope, Award,  ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
+import DiseasesSearchPage from "./DiseasesSearchPage"
 import WhyChooseUsSection from "./WhyChppseUs"
 import SpecialityLeft from "./SpecialityLeft"
 
-const departments = [
+
+
+export const departments = [
   {
     name: "Department of Gynaecology",
     slug: "gynaecology",
@@ -38,7 +41,7 @@ const departments = [
     name: "Department of Ophthalmology",
     slug: "ophthalmology",
     image: "/images/OPTHALMOLOGY_Final.jpg",
-    link: "/department/department-of-opthalmolog/",
+    link: "/department/ophthalmology/",
     category: "Eye Care",
     icon: Stethoscope,
     description:
@@ -51,7 +54,7 @@ const departments = [
     name: "Department of Intensive Care",
     slug: "intensive-care",
     image: "/images/ICU-5.jpg",
-    link: "/department/department-of-intensive-care/",
+    link: "/department/intensive-care/",
     category: "Critical Care",
     icon: Heart,
     description:
@@ -64,10 +67,11 @@ const departments = [
     name: "Department of Endocrinology",
     slug: "endocrinology",
     image: "/images/Endocrinology.jpg",
-    link: "/department/department-of-endocrinology/",
+    link: "/department/endocrinology/",
     category: "Hormone Care",
     icon: Award,
-    description: "Treatment of hormone-related disorders including diabetes, thyroid, and metabolic conditions.",
+    description:
+      "Treatment of hormone-related disorders including diabetes, thyroid, and metabolic conditions.",
     services: ["Diabetes Care", "Thyroid Treatment", "Hormone Therapy", "Metabolic Disorders"],
     doctors: 4,
     established: "2017",
@@ -76,10 +80,11 @@ const departments = [
     name: "Department of Hematology",
     slug: "hematology",
     image: "/images/Medical-Specialty-1109x675-1.jpg",
-    link: "/department/department-of-hematology/",
+    link: "/department/hematology/",
     category: "Blood Care",
     icon: Heart,
-    description: "Specialized care for blood disorders, cancers of the blood, and bone marrow diseases.",
+    description:
+      "Specialized care for blood disorders, cancers of the blood, and bone marrow diseases.",
     services: ["Blood Cancer Treatment", "Anemia Care", "Bone Marrow Disorders", "Blood Transfusion"],
     doctors: 3,
     established: "2018",
@@ -88,10 +93,11 @@ const departments = [
     name: "Department of Neuromedicine",
     slug: "neuromedicine",
     image: "/images/spinal-disorder-2.jpg",
-    link: "/department/department-of-nuromedicine/",
+    link: "/department/neuromedicine/",
     category: "Neurological Care",
     icon: Stethoscope,
-    description: "Comprehensive neurological care for brain, spine, and nervous system disorders.",
+    description:
+      "Comprehensive neurological care for brain, spine, and nervous system disorders.",
     services: ["Stroke Treatment", "Epilepsy Care", "Parkinson's Disease", "Spinal Disorders"],
     doctors: 7,
     established: "2015",
@@ -100,10 +106,11 @@ const departments = [
     name: "Department of Internal Medicine",
     slug: "internal-medicine",
     image: "/images/internal-medicine.jpg",
-    link: "/department/department-of-internal-medicine/",
+    link: "/department/internal-medicine/",
     category: "General Medicine",
     icon: Users,
-    description: "Primary care and treatment of adult diseases affecting internal organs and systems.",
+    description:
+      "Primary care and treatment of adult diseases affecting internal organs and systems.",
     services: ["General Consultation", "Chronic Disease Management", "Preventive Care", "Health Screening"],
     doctors: 15,
     established: "2012",
@@ -112,10 +119,11 @@ const departments = [
     name: "Department of Physical Medicine",
     slug: "physical-medicine",
     image: "/images/physical_Medicine.jpg",
-    link: "/department/department-of-physical-medicine/",
+    link: "/department/physical-medicine/",
     category: "Rehabilitation",
     icon: Award,
-    description: "Comprehensive rehabilitation services for recovery from injuries, surgeries, and chronic conditions.",
+    description:
+      "Comprehensive rehabilitation services for recovery from injuries, surgeries, and chronic conditions.",
     services: ["Physiotherapy", "Occupational Therapy", "Pain Management", "Sports Medicine"],
     doctors: 6,
     established: "2016",
@@ -124,10 +132,11 @@ const departments = [
     name: "Department of Hepatobiliary",
     slug: "hepatobiliary",
     image: "/images/liverdiagram.png",
-    link: "/department/department-of-hepatobiliary/",
+    link: "/department/hepatobiliary/",
     category: "Liver Care",
     icon: Heart,
-    description: "Specialized treatment for liver, gallbladder, and bile duct diseases and disorders.",
+    description:
+      "Specialized treatment for liver, gallbladder, and bile duct diseases and disorders.",
     services: ["Liver Disease Treatment", "Gallbladder Surgery", "Bile Duct Procedures", "Liver Transplant"],
     doctors: 4,
     established: "2019",
@@ -136,34 +145,24 @@ const departments = [
     name: "Department of Gastroenterology",
     slug: "gastroenterology",
     image: "/images/Gastroenterology-1.jpg",
-    link: "/department/department-of-gastroenterology/",
+    link: "/department/gastroenterology/",
     category: "Digestive Care",
     icon: Stethoscope,
-    description: "Treatment of digestive system disorders including stomach, intestines, liver, and pancreas.",
+    description:
+      "Treatment of digestive system disorders including stomach, intestines, liver, and pancreas.",
     services: ["Endoscopy", "Colonoscopy", "Liver Disease", "Inflammatory Bowel Disease"],
     doctors: 5,
     established: "2014",
   },
   {
-    name: "Department of Radioncology",
-    slug: "radioncology",
-    image: "/images/1585218080116.png",
-    link: "/department/department-of-radioncology/",
-    category: "Cancer Care",
-    icon: Users,
-    description: "Advanced radiation therapy and cancer treatment with state-of-the-art equipment.",
-    services: ["Radiation Therapy", "Cancer Treatment", "Tumor Management", "Palliative Care"],
-    doctors: 3,
-    established: "2020",
-  },
-  {
     name: "Department of Radiology and Imaging",
     slug: "radiology-imaging",
     image: "/images/lab2.jpg",
-    link: "/department/department-of-radi-oncology/",
+    link: "/department/radiology-imaging/",
     category: "Diagnostic Imaging",
     icon: Award,
-    description: "Comprehensive diagnostic imaging services including CT, MRI, X-ray, and ultrasound.",
+    description:
+      "Comprehensive diagnostic imaging services including CT, MRI, X-ray, and ultrasound.",
     services: ["CT Scan", "MRI", "X-Ray", "Ultrasound", "Mammography"],
     doctors: 8,
     established: "2013",
@@ -172,10 +171,11 @@ const departments = [
     name: "Department of Paediatric Surgery",
     slug: "paediatric-surgery",
     image: "/images/padeatric.jpg",
-    link: "/department/department-of-paediatric-surgery/",
+    link: "/department/paediatric-surgery/",
     category: "Pediatric Surgery",
     icon: Heart,
-    description: "Specialized surgical care for infants, children, and adolescents with expert pediatric surgeons.",
+    description:
+      "Specialized surgical care for infants, children, and adolescents with expert pediatric surgeons.",
     services: ["Pediatric Surgery", "Neonatal Surgery", "Minimally Invasive Surgery", "Emergency Surgery"],
     doctors: 4,
     established: "2017",
@@ -184,22 +184,24 @@ const departments = [
     name: "Department of Paediatric Medicine",
     slug: "paediatric-medicine",
     image: "/images/padeatric.jpg",
-    link: "/department/paediatrics/",
+    link: "/department/paediatric-medicine/",
     category: "Child Care",
     icon: Users,
-    description: "Comprehensive medical care for children from birth to adolescence with specialized pediatricians.",
+    description:
+      "Comprehensive medical care for children from birth to adolescence with specialized pediatricians.",
     services: ["Child Health Check-ups", "Vaccination", "Growth Monitoring", "Pediatric Emergency"],
     doctors: 10,
     established: "2013",
   },
   {
-    name: "Department of Pathology and BioChemistry",
+    name: "Department of Pathology and Biochemistry",
     slug: "pathology-biochemistry",
     image: "/images/Department-of-Phatology-and-Biochemistry.jpg",
-    link: "/department/gastroenterology/",
+    link: "/department/pathology-biochemistry/",
     category: "Laboratory",
     icon: Stethoscope,
-    description: "Advanced laboratory services for accurate diagnosis and monitoring of various medical conditions.",
+    description:
+      "Advanced laboratory services for accurate diagnosis and monitoring of various medical conditions.",
     services: ["Blood Tests", "Tissue Analysis", "Biochemical Tests", "Microbiology"],
     doctors: 6,
     established: "2012",
@@ -208,10 +210,11 @@ const departments = [
     name: "Department of Critical Care",
     slug: "critical-care",
     image: "/images/patient-intensive-care.jpg",
-    link: "/department/department-of-critical-care/",
+    link: "/department/critical-care/",
     category: "Emergency Care",
     icon: Heart,
-    description: "24/7 emergency and critical care services for life-threatening conditions and medical emergencies.",
+    description:
+      "24/7 emergency and critical care services for life-threatening conditions and medical emergencies.",
     services: ["Emergency Medicine", "Trauma Care", "Critical Care", "Ambulance Service"],
     doctors: 14,
     established: "2012",
@@ -220,10 +223,11 @@ const departments = [
     name: "Department of General Surgery",
     slug: "general-surgery",
     image: "/images/Critical-Care-Final.png",
-    link: "/department/department-of-general-surgery/",
+    link: "/department/general-surgery/",
     category: "Surgical Care",
     icon: Award,
-    description: "Comprehensive surgical services including general, laparoscopic, and minimally invasive procedures.",
+    description:
+      "Comprehensive surgical services including general, laparoscopic, and minimally invasive procedures.",
     services: ["General Surgery", "Laparoscopic Surgery", "Emergency Surgery", "Day Care Surgery"],
     doctors: 12,
     established: "2012",
@@ -235,7 +239,8 @@ const departments = [
     link: "/department/nephrology/",
     category: "Kidney Care",
     icon: Users,
-    description: "Specialized care for kidney diseases, dialysis services, and kidney transplantation.",
+    description:
+      "Specialized care for kidney diseases, dialysis services, and kidney transplantation.",
     services: ["Dialysis", "Kidney Disease Treatment", "Kidney Transplant", "Hypertension Management"],
     doctors: 5,
     established: "2014",
@@ -260,7 +265,8 @@ const departments = [
     link: "/department/cardiology/",
     category: "Heart Care",
     icon: Heart,
-    description: "Comprehensive cardiac care including diagnosis, treatment, and prevention of heart diseases.",
+    description:
+      "Comprehensive cardiac care including diagnosis, treatment, and prevention of heart diseases.",
     services: ["Heart Surgery", "Angioplasty", "Cardiac Catheterization", "Heart Failure Treatment"],
     doctors: 8,
     established: "2013",
@@ -269,10 +275,11 @@ const departments = [
     name: "Department of ENT, Head and Neck Surgery",
     slug: "ent-head-neck-surgery",
     image: "/images/neck-hear.jpg",
-    link: "/department/ent-ear-nose-throat/",
+    link: "/department/ent-head-neck-surgery/",
     category: "ENT Surgery",
     icon: Award,
-    description: "Treatment of ear, nose, throat, head, and neck disorders with advanced surgical techniques.",
+    description:
+      "Treatment of ear, nose, throat, head, and neck disorders with advanced surgical techniques.",
     services: ["ENT Surgery", "Hearing Tests", "Sinus Surgery", "Voice Disorders"],
     doctors: 6,
     established: "2014",
@@ -284,12 +291,14 @@ const departments = [
     link: "/department/dental-surgery/",
     category: "Dental Care",
     icon: Users,
-    description: "Comprehensive dental care including preventive, restorative, and surgical dental procedures.",
+    description:
+      "Comprehensive dental care including preventive, restorative, and surgical dental procedures.",
     services: ["Dental Surgery", "Orthodontics", "Root Canal", "Dental Implants"],
     doctors: 7,
     established: "2013",
-  },
-]
+  }
+];
+
 
 export default function MedicalSpecialties() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -429,6 +438,12 @@ export default function MedicalSpecialties() {
           </div>
         </div>
       </section>
+      <section className="py-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+         <DiseasesSearchPage />
+        </div>
+      </section>
+         
     </div>
   )
 }

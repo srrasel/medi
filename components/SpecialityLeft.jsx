@@ -13,14 +13,14 @@ const SpecialityLeft = () => {
     const fetchSpecialityData = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/speciality-section?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/specialities")
 
         if (!response.ok) {
           throw new Error("Failed to fetch speciality data")
         }
 
         const result = await response.json()
-        setSpecialityData(result.data)
+        setSpecialityData(result[0])
       } catch (err) {
         console.error("Error fetching speciality data:", err)
         setError(err.message)
@@ -53,8 +53,8 @@ const SpecialityLeft = () => {
     )
   }
 
-  const imageUrl = specialityData.Image.url|| "/images/image-our-specialities.jpg"
-  const topText = specialityData.TopText || "World-Class Care"
+  const imageUrl = specialityData.Image|| "/images/image-our-specialities.jpg"
+  const topText = specialityData.Category || "World-Class Care"
   const name = specialityData.Name || "Pro Active Hospital"
   const shortDescription = specialityData.ShortDescription || "Best Hospital in Narayanganj, Dhaka"
 

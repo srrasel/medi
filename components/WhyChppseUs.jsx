@@ -1,30 +1,5 @@
-import { useEffect, useState } from 'react';
-
+import React from "react";
 export default function WhyChooseUsSection() {
-  const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-        const response = await fetch(`${strapiBaseUrl}/why-choose-us?populate=*`);
-        const data = await response.json();
-        setContent(data.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   return (
     <section className="relative z-10 py-16">
        {/* Why Choose Us Section */}
@@ -41,9 +16,7 @@ export default function WhyChooseUsSection() {
         <span className="block text-[#017381]">Pro-Active Medical College Hospital Ltd</span>
       </h2>
       <div className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-        {content?.Content?.map((item, index) => (
-          <p key={index}>{item.children[0].text}</p>
-        ))}
+        At Pro-Active Medical College Hospital Ltd, we combine advanced medical technology with compassionate care to deliver the highest standards in healthcare and education.
       </div>
     </div>
   </div>

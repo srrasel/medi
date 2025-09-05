@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
+
 // Function to generate slug from title
 const generateSlug = (title) => {
   return title
@@ -13,76 +14,51 @@ const generateSlug = (title) => {
     .replace(/(^-|-$)/g, "")
 }
 
-// Function to extract text from rich text array
-const extractTextFromRichText = (richTextArray) => {
-  if (!richTextArray || !Array.isArray(richTextArray)) return ""
 
-  return richTextArray
-    .map((block) => {
-      if (block.children && Array.isArray(block.children)) {
-        return block.children.map((child) => child.text || "").join("")
-      }
-      return ""
-    })
-    .join(" ")
+
+const extractTextFromHTML = (htmlString) => {
+  if (!htmlString) return ""
+
+  // Remove HTML tags and decode entities
+  return htmlString
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
     .trim()
 }
 
 export default function HealthPackagesPage() {
   const [healthPackages, setHealthPackages] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchHealthPackages = async () => {
       try {
-        setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/health-packages?populate=*")
-
+        const response = await fetch("https://api.pmchl.com/api/health-packages")
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error("Failed to fetch health packages")
         }
-
         const result = await response.json()
+        const data = result
+        console.log("Fetched health packages:", data)
+       
 
-        if (result.data && Array.isArray(result.data)) {
-          const transformedPackages = result.data.map((pkg) => {
-            let imageUrl = "/health-package.png" // Default fallback
+        const transformedPackages = data.map((pkg) => ({
+          id: pkg.id,
+          title: pkg.Title || "Health Package",
+          shortDescription: pkg.ShortDescription || "",
+          description: extractTextFromHTML(pkg.Description),
+          image: pkg.Image || "/health-checkup-medical.jpg",
+          slug: generateSlug(pkg.Title || `health-package-${pkg.id}`),
+        }))
 
-            if (pkg.Image) {
-              // Try main image URL first (usually the best quality)
-              if (pkg.Image.url) {
-                imageUrl = pkg.Image.url
-              }
-              // If no main URL, try format URLs
-              else if (pkg.Image.formats) {
-                imageUrl =
-                  pkg.Image.formats.large?.url ||
-                  pkg.Image.formats.medium?.url ||
-                  pkg.Image.formats.small?.url ||
-                  pkg.Image.formats.thumbnail?.url ||
-                  imageUrl
-              }
-            }
-
-            return {
-              id: pkg.id,
-              title: pkg.Title || "Health Package",
-              shortDescription: pkg.ShortDescription || "",
-              description: extractTextFromRichText(pkg.Description),
-              image: imageUrl,
-              slug: generateSlug(pkg.Title || `health-package-${pkg.id}`),
-            }
-          })
-
-          setHealthPackages(transformedPackages)
-        } else {
-          console.warn("No health packages data found")
-          setHealthPackages([])
-        }
-      } catch (err) {
-        console.error("Error fetching health packages:", err)
-        setError(err.message)
+        setHealthPackages(transformedPackages)
+      } catch (error) {
+        console.error("Error fetching health packages:", error)
+        setHealthPackages([])
       } finally {
         setLoading(false)
       }
@@ -136,46 +112,6 @@ export default function HealthPackagesPage() {
     )
   }
 
-  if (error) {
-    return (
-      <div className="min-h-[70vh] bg-gradient-to-br from-slate-50 to-slate-100">
-        {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-[#017381] via-[#025a65] to-[#034a52] overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          </div>
-
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              Our Health
-              <span className="block text-[#b8e6ea]">Packages</span>
-            </h1>
-            <p className="text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto mb-8">
-              Explore comprehensive health and wellness packages offered by Pro Active Hospital.
-            </p>
-          </div>
-        </section>
-
-        {/* Error Message */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4 text-center">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">Unable to Load Health Packages</h3>
-              <p className="text-red-600 mb-4">Error: {error}</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-[70vh] bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Hero Section */}
@@ -218,7 +154,7 @@ export default function HealthPackagesPage() {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
-                          e.target.src = "/health-package.png"
+                          e.target.src = "/health-checkup-medical.jpg"
                         }}
                         priority={false}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

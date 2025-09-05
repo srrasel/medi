@@ -12,7 +12,7 @@ export default function CorporateClientPage() {
     const fetchClients = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://admin.pmchl.com/api/clients?populate=*")
+        const response = await fetch("https://api.pmchl.com/api/clients")
 
         if (!response.ok) {
           throw new Error("Failed to fetch clients")
@@ -21,10 +21,10 @@ export default function CorporateClientPage() {
         const data = await response.json()
 
         // Transform Strapi data to match component expectations
-        const transformedClients = data.data.map((client) => ({
-          src: client.Image?.url || "/generic-company-logo.png",
-          alt: `${client.Name} Logo`,
-          name: client.Name,
+        const transformedClients = data.map((client) => ({
+          src: client.image || "/generic-company-logo.png",
+          alt: `${client.title} Logo`,
+          name: client.tilte,
         }))
 
         setClients(transformedClients)
