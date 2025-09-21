@@ -120,6 +120,9 @@ html {
    .grid-cols-3 {
     grid-template-columns: repeat(2,minmax(0,1fr));
   }
+  .flex.items-center.space-x-2.text-sm {
+  flex-direction: column;
+  }
   
 }
  
