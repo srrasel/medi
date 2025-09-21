@@ -84,8 +84,7 @@ export default function GalleryPage() {
             >
               <Image
                 src={
-                  gallery.coverImage?.formats?.medium?.url ||
-                  gallery.coverImage?.url ||
+                  gallery.coverImage ||
                   "/placeholder.svg?height=400&width=600"
                 }
                 alt={gallery.title}

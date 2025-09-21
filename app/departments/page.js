@@ -38,19 +38,7 @@ export default function DepartmentPage() {
       .trim()
   }
 
-  // Get image URL from Cloudinary structure
-  const getImageUrl = (imageObj) => {
-    if (!imageObj) return "/department.png"
 
-    // Try different image formats in order of preference
-    return (
-      imageObj.url ||
-      imageObj.formats?.large?.url ||
-      imageObj.formats?.medium?.url ||
-      imageObj.formats?.small?.url ||
-      "/department.png"
-    )
-  }
 
   // Fetch departments from API
   useEffect(() => {
@@ -72,7 +60,7 @@ export default function DepartmentPage() {
             id: dept.id,
             name: dept.Title || "Department",
             slug: generateSlug(dept.Title || "department"),
-            image: getImageUrl(dept.Image),
+            image: dept.Image,
             category: dept.Category || "General",
             description:
               dept.ShortDescription || extractTextFromRichText(dept.Description) || "No description available",

@@ -29,19 +29,7 @@ const extractTextFromRichText = (richTextArray) => {
     .trim()
 }
 
-// Function to get the best image URL from Cloudinary response
-const getImageUrl = (imageObj) => {
-  if (!imageObj) return "/department.png"
 
-  // Try different possible image URL structures from Strapi/Cloudinary
-  return (
-    imageObj.url ||
-    imageObj.formats?.large?.url ||
-    imageObj.formats?.medium?.url ||
-    imageObj.formats?.small?.url ||
-    "/department.png"
-  )
-}
 
 // Function to get category icon
 const getCategoryIcon = (category) => {
@@ -107,7 +95,7 @@ export default function DepartmentPage() {
               extractTextFromRichText(dept.Description) || dept.ShortDescription || "No description available",
             doctors: dept.DoctorsCount || 0,
             established: dept.Established_Year || new Date().getFullYear(),
-            image: getImageUrl(dept.Image),
+            image: dept.Image,
             icon: getCategoryIcon(dept.Category),
             services: ["Consultation", "Treatment", "Emergency Care", "Follow-up Care"], // Default services since not in API
           }))
