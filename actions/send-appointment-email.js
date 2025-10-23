@@ -17,8 +17,6 @@ export async function sendAppointmentEmail(prevState, formData) {
       phone: formData.get("phone"),
       email: formData.get("email"),
       age: formData.get("age"),
-      department: formData.get("department"),
-      doctor: formData.get("doctor"),
       date: formData.get("date"),
       time: formData.get("time"),
       additionalInfo: formData.get("additionalInfo"),
@@ -28,7 +26,6 @@ export async function sendAppointmentEmail(prevState, formData) {
     if (
       !appointmentData.fullName ||
       !appointmentData.phone ||
-      !appointmentData.department ||
       !appointmentData.date ||
       !appointmentData.time
     ) {
@@ -52,8 +49,6 @@ export async function sendAppointmentEmail(prevState, formData) {
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #017381; margin-top: 0;">Appointment Details</h3>
           <p><strong>Type:</strong> ${appointmentData.appointmentType}</p>
-          <p><strong>Department:</strong> ${appointmentData.department}</p>
-          <p><strong>Preferred Doctor:</strong> ${appointmentData.doctor || "Any Available Doctor"}</p>
           <p><strong>Date:</strong> ${appointmentData.date}</p>
           <p><strong>Time:</strong> ${appointmentData.time}</p>
         </div>

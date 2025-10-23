@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Stethoscope, Search, Filter, ChevronDown } from "lucide-react"
+import { Stethoscope, Search } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
 export default function DoctorsPage() {
@@ -86,15 +86,23 @@ export default function DoctorsPage() {
 
   // Filter doctors based on category and search
   const filteredDoctors = useMemo(() => {
-    return doctors.filter((doctor) => {
-      const matchesCategory = selectedCategory === "all" || doctor.specialty === selectedCategory
-      const matchesSearch =
-        searchQuery === "" ||
-        doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doctor.qualifications.toLowerCase().includes(searchQuery.toLowerCase())
-      return matchesCategory && matchesSearch
-    })
+    return doctors
+      .filter((doctor) => {
+        const matchesCategory = selectedCategory === "all" || doctor.specialty === selectedCategory
+        const matchesSearch =
+          searchQuery === "" ||
+          doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doctor.qualifications.toLowerCase().includes(searchQuery.toLowerCase())
+        return matchesCategory && matchesSearch
+      })
+      .sort((a, b) => {
+        // Sort by position in ascending order (lower position numbers first)
+        // Handle cases where position might be null or undefined
+        const posA = a.position ?? Number.MAX_SAFE_INTEGER
+        const posB = b.position ?? Number.MAX_SAFE_INTEGER
+        return posA - posB
+      })
   }, [doctors, selectedCategory, searchQuery])
 
   if (loading) {
@@ -152,7 +160,6 @@ export default function DoctorsPage() {
           </div>
         </div>
       </section>
-
 
       {/* Doctors Grid */}
       <section className="py-20">

@@ -112,7 +112,12 @@ const DoctorsSection = () => {
 
         const data = await response.json()
         console.log(`Successfully fetched ${data.length} doctors from API`)
-        setDoctors(data)
+        const sortedDoctors = data.sort((a, b) => {
+          const posA = a.position ?? Number.MAX_SAFE_INTEGER
+          const posB = b.position ?? Number.MAX_SAFE_INTEGER
+          return posA - posB
+        })
+        setDoctors(sortedDoctors)
       } catch (e) {
         console.error("Error fetching doctors:", e)
         setError(e.message)

@@ -13,51 +13,59 @@ export default function SingleGalleryPage() {
   const [error, setError] = useState(null)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+useEffect(() => {
+  const fetchGalleryData = async () => {
+    try {
+      const response = await fetch("https://api.pmchl.com/api/gallery")
+      if (!response.ok) throw new Error("Failed to fetch gallery data")
+      const data = await response.json()
 
-  useEffect(() => {
-    const fetchGalleryData = async () => {
-      try {
-        const response = await fetch("https://api.pmchl.com/api/gallery")
-        if (!response.ok) throw new Error("Failed to fetch gallery data")
-        const data = await response.json()
+      // Sort all galleries by latest ID first (optional)
+      const sortedGalleries = data.sort((a, b) => b.id - a.id)
 
-        // Find the gallery by ID
-        const currentGallery = data.find((g) => g.id.toString() === params.id)
-        if (!currentGallery) throw new Error("Gallery not found")
+      // Find the gallery by ID
+      const currentGallery = sortedGalleries.find((g) => g.id.toString() === params.id)
+      if (!currentGallery) throw new Error("Gallery not found")
 
-        // Transform gallery data
-        const transformedGallery = {
-          id: currentGallery.id,
-          title: currentGallery.Title || "Gallery",
-          images: [
-            // Main featured image
-            currentGallery.FeaturedImage && {
-              id: `main-${currentGallery.id}`,
-              url: currentGallery.FeaturedImage,
-              alt: currentGallery.Title || "Gallery Image",
-              isMain: true,
-            },
-            // Gallery images from URLs
-            ...(currentGallery.GalleryImages?.map((url, index) => ({
-              id: `img-${index}`,
-              url,
-              alt: `${currentGallery.Title} Image ${index + 1}` || "Gallery Image",
-              isMain: false,
-            })) || []),
-          ].filter(Boolean), // remove nulls
-        }
+      // ✅ Sort GalleryImages if they are an array (latest first)
+      const sortedImages = Array.isArray(currentGallery.GalleryImages)
+        ? [...currentGallery.GalleryImages].reverse() // reverse order if newest last
+        : []
 
-        setGallery(transformedGallery)
-      } catch (err) {
-        console.error("Error fetching gallery:", err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
+      // Transform gallery data
+      const transformedGallery = {
+        id: currentGallery.id,
+        title: currentGallery.Title || "Gallery",
+        images: [
+          // Main featured image
+          currentGallery.FeaturedImage && {
+            id: `main-${currentGallery.id}`,
+            url: currentGallery.FeaturedImage,
+            alt: currentGallery.Title || "Gallery Image",
+            isMain: true,
+          },
+          // Gallery images (sorted)
+          ...sortedImages.map((url, index) => ({
+            id: `img-${index}`,
+            url,
+            alt: `${currentGallery.Title} Image ${index + 1}` || "Gallery Image",
+            isMain: false,
+          })),
+        ].filter(Boolean), // remove nulls
       }
-    }
 
-    if (params.id) fetchGalleryData()
-  }, [params.id])
+      setGallery(transformedGallery)
+    } catch (err) {
+      console.error("Error fetching gallery:", err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (params.id) fetchGalleryData()
+}, [params.id])
+
 
   const openLightbox = (index) => {
     setCurrentImageIndex(index)
@@ -148,9 +156,7 @@ export default function SingleGalleryPage() {
                     />
                     {image.isMain && <div className="absolute top-3 left-3 bg-[#017381] text-white px-2 py-1 rounded-full text-xs font-medium">Cover</div>}
                   </div>
-                  <div className="mt-3">
-                    <p className="text-sm text-gray-600 truncate">{image.alt}</p>
-                  </div>
+                  
                 </div>
               ))}
             </div>
@@ -171,7 +177,7 @@ export default function SingleGalleryPage() {
             <Image src={gallery.images[currentImageIndex].url} alt={gallery.images[currentImageIndex].alt} width={1920} height={1080} className="max-w-full max-h-full object-contain" priority />
           </div>
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center text-white">
-            <p className="text-lg font-medium">{gallery.images[currentImageIndex].alt}</p>
+         
           </div>
         </div>
       )}

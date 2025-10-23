@@ -8,36 +8,36 @@ export default function CorporateClientPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/clients")
+ useEffect(() => {
+  const fetchClients = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch("https://api.pmchl.com/api/clients", { cache: "no-store" })
+      if (!res.ok) throw new Error("Failed to fetch clients")
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch clients")
-        }
+      const data = await res.json()
 
-        const data = await response.json()
-
-        // Transform Strapi data to match component expectations
-        const transformedClients = data.map((client) => ({
-          src: client.image || "/generic-company-logo.png",
-          alt: `${client.title} Logo`,
-          name: client.tilte,
+      // Transform & sort by ID descending (latest first)
+      const clients = data
+        .sort((a, b) => b.id - a.id)
+        .map(c => ({
+          src: c.image || "/generic-company-logo.png",
+          alt: `${c.title} Logo`,
+          name: c.title,
         }))
 
-        setClients(transformedClients)
-      } catch (err) {
-        console.error("Error fetching clients:", err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+      setClients(clients)
+    } catch (err) {
+      console.error("Error fetching clients:", err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchClients()
-  }, [])
+  fetchClients()
+}, [])
+
 
   if (loading) {
     return (

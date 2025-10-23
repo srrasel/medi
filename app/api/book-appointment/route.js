@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { Resend } from "resend"
 export async function POST(req) {
   try {
-    const { doctorId, name, email, phone, date, time, message } = await req.json()
+    const { doctorName, name, email, phone, date, time, message } = await req.json()
 
     // In a real application, you would fetch doctor details from your database
     // using doctorId to include them in the email.
@@ -10,11 +10,11 @@ export async function POST(req) {
     // You might also want to fetch the doctor's name from Strapi here if not passed.
 
     // Construct the email content
-    const emailSubject = `New Appointment Request for Doctor ID: ${doctorId}`
+    const emailSubject = `New Appointment Request for Doctor ID: ${doctorName}`
     const emailBody = `
       New Appointment Request Details:
 
-      Doctor ID: ${doctorId}
+      Doctor Name: ${doctorName}
       Patient Name: ${name}
       Patient Email: ${email}
       Patient Phone: ${phone}

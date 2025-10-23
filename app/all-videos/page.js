@@ -13,55 +13,56 @@ export default function VideosPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+useEffect(() => {
+  const fetchVideos = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch("https://api.pmchl.com/api/videos")
+      if (!response.ok) {
+        throw new Error("Failed to fetch videos")
+      }
+      const data = await response.json()
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/videos")
-        if (!response.ok) {
-          throw new Error("Failed to fetch videos")
-        }
-        const data = await response.json()
+      // ✅ Sort videos by latest ID first
+      const sortedData = data.sort((a, b) => b.id - a.id)
 
-        // Transform Strapi data to match component structure
-        const transformedVideos = data.map((video) => {
-          // Extract YouTube video ID from URL
-          const videoId = extractYouTubeId(video.VideoUrl)
+      // Transform Strapi data to match component structure
+      const transformedVideos = sortedData.map((video) => {
+        // Extract YouTube video ID from URL
+        const videoId = extractYouTubeId(video.VideoUrl)
 
-          // Extract description text from rich text array
-          const description = video.Description
+        // Extract description text
+        const description = video.Description
 
-
-          // Format date
-          const publishedDate = new Date(video.createdAt).toLocaleDateString("bn-BD", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-
-          return {
-            id: video.id,
-            title: video.Title,
-            category: video.Category,
-            duration: "N/A", // Duration not available from API
-            publishedAt: publishedDate,
-            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-            description: description,
-            videoUrl: video.Videourl,
-          }
+        // Format date
+        const publishedDate = new Date(video.createdAt).toLocaleDateString("bn-BD", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
         })
 
-        setVideos(transformedVideos)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
+        return {
+          id: video.id,
+          title: video.Title,
+          category: video.Category,
+          duration: "N/A", // Duration not available from API
+          publishedAt: publishedDate,
+          thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+          description: description,
+          videoUrl: video.Videourl,
+        }
+      })
 
-    fetchVideos()
-  }, [])
+      setVideos(transformedVideos)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchVideos()
+}, [])
 
   const extractYouTubeId = (url) => {
     const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/

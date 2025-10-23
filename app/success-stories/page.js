@@ -11,56 +11,61 @@ export default function SuccessStoriesPage() {
   const [error, setError] = useState(null)
   const videosPerPage = 6
 
-  useEffect(() => {
-    const fetchSuccessStories = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/success-stories")
+useEffect(() => {
+  const fetchSuccessStories = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch("https://api.pmchl.com/api/success-stories", {
+        cache: "no-store" // always fetch latest
+      })
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch success stories: ${response.status} ${response.statusText}`)
-        }
-
-        const data = await response.json()
-
-        console.log("API Response:", data)
-
-        if (!data|| !Array.isArray(data)) {
-          throw new Error("Invalid API response format")
-        }
-
-        // Transform API data to match component structure
-        const transformedStories = data.map((story) => {
-          // Extract YouTube video ID from URL
-          const videoId = story.Video.includes("youtu.be/")
-            ? story.Video.split("youtu.be/")[1].split("?")[0]
-            : story.Video.includes("youtube.com/watch?v=")
-              ? story.Video.split("v=")[1].split("&")[0]
-              : story.Video
-
-          // Extract description text from rich text array
-         
-
-          return {
-            id: videoId,
-            title: story.Title,
-            description: story.Description,
-            category: story.Category,
-          }
-        })
-
-        console.log("Transformed stories:", transformedStories)
-        setSuccessVideos(transformedStories)
-      } catch (err) {
-        setError(err.message)
-        console.error("Error fetching success stories:", err)
-      } finally {
-        setLoading(false)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch success stories: ${response.status} ${response.statusText}`)
       }
-    }
 
-    fetchSuccessStories()
-  }, [])
+      const data = await response.json()
+      console.log("API Response:", data)
+
+      if (!data || !Array.isArray(data)) {
+        throw new Error("Invalid API response format")
+      }
+
+      // Transform API data
+      const transformedStories = data.map((story) => {
+        // Extract YouTube video ID
+        const videoId = story.Video.includes("youtu.be/")
+          ? story.Video.split("youtu.be/")[1].split("?")[0]
+          : story.Video.includes("youtube.com/watch?v=")
+            ? story.Video.split("v=")[1].split("&")[0]
+            : story.Video
+
+        return {
+          id: videoId,
+          title: story.Title,
+          description: story.Description,
+          category: story.Category,
+        }
+      })
+
+      // ✅ Sort stories by title ascending (or replace with another logic)
+      const sortedStories = transformedStories.sort((a, b) => {
+        // Example: sort alphabetically by title
+        return a.title.localeCompare(b.title)
+      })
+
+      console.log("Sorted stories:", sortedStories)
+      setSuccessVideos(sortedStories)
+    } catch (err) {
+      setError(err.message)
+      console.error("Error fetching success stories:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchSuccessStories()
+}, [])
+
 
   const totalPages = Math.ceil(successVideos.length / videosPerPage)
   const startIndex = (currentPage - 1) * videosPerPage

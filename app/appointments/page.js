@@ -20,35 +20,14 @@ import {
 } from "lucide-react"
 
 export default function AppointmentsPage() {
-  const [selectedDepartment, setSelectedDepartment] = useState("")
-  const [selectedDoctor, setSelectedDoctor] = useState("")
   const [selectedDate, setSelectedDate] = useState("")
   const [selectedTime, setSelectedTime] = useState("")
   const [appointmentType, setAppointmentType] = useState("consultation")
 
   const [state, formAction, isPending] = useActionState(sendAppointmentEmail, { success: false, message: "" })
 
-  const departments = [
-    "Department of Gynaecology",
-    "Department of Cardiology",
-    "Department of Neurology",
-    "Department of Orthopedics",
-    "Department of Pediatrics",
-    "Department of Internal Medicine",
-    "Department of Ophthalmology",
-    "Department of ENT",
-    "Department of Dermatology",
-    "Department of Psychiatry",
-  ]
 
-  const doctors = [
-    "Prof. Dr. Abdul Hannan - Child Specialist",
-    "Prof. Dr. Md. Tazul Islam - Psychiatry",
-    "Prof. Dr. A.S.M. Qamrul Hasan - Neuro Surgery",
-    "Prof. Dr. Md. Abdus Salam - General Surgery",
-    "Prof. Dr. A, B, M, Younus - Blood Disease Specialist",
-    "Prof. Dr. Colonel Mohammad Nizamul Hossain - Cardiology",
-  ]
+
 
   const timeSlots = [
     "09:00 AM",
@@ -215,48 +194,7 @@ export default function AppointmentsPage() {
                     </div>
                   </div>
 
-                  {/* Department and Doctor Selection */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Department *</label>
-                      <div className="relative">
-                        <select
-                          name="department"
-                          value={selectedDepartment}
-                          onChange={(e) => setSelectedDepartment(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 appearance-none"
-                          required
-                        >
-                          <option value="">Select Department</option>
-                          {departments.map((dept, index) => (
-                            <option key={index} value={dept}>
-                              {dept}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Doctor</label>
-                      <div className="relative">
-                        <select
-                          name="doctor"
-                          value={selectedDoctor}
-                          onChange={(e) => setSelectedDoctor(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#017381] focus:border-[#017381] transition-all duration-300 appearance-none"
-                        >
-                          <option value="">Any Available Doctor</option>
-                          {doctors.map((doctor, index) => (
-                            <option key={index} value={doctor}>
-                              {doctor}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
+               
 
                   {/* Date and Time Selection */}
                   <div className="grid md:grid-cols-2 gap-6">

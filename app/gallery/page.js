@@ -9,35 +9,50 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const fetchGalleries = async () => {
-      try {
-        const response = await fetch("https://api.pmchl.com/api/gallery")
-        if (!response.ok) {
-          throw new Error("Failed to fetch galleries")
-        }
-        const data = await response.json()
+ useEffect(() => {
+  const fetchGalleries = async () => {
+    try {
+      const response = await fetch("https://api.pmchl.com/api/gallery", {
+        cache: "no-store", // ✅ Always fetch the latest data
+      })
 
-        // Transform galleries data
-        const transformedGalleries = data.map((gallery) => ({
-          id: gallery.id,
-          title: gallery.Title || "Gallery",
-          coverImage: gallery.FeaturedImage,
-          imageCount: (gallery.GalleryImages?.length || 0) + (gallery.image ? 1 : 0),
-          images: [...(gallery.image ? [gallery.image] : []), ...(gallery.GalleryImages || [])],
-        }))
-
-        setGalleries(transformedGalleries)
-      } catch (err) {
-        console.error("Error fetching galleries:", err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
+      if (!response.ok) {
+        throw new Error("Failed to fetch galleries")
       }
-    }
 
-    fetchGalleries()
-  }, [])
+      const data = await response.json()
+
+      // ✅ Sort galleries by latest first
+      const sortedData = [...data].sort((a, b) => b.id - a.id)
+
+      // ✅ Transform galleries data into clean structure
+      const transformedGalleries = sortedData.map((gallery) => {
+        const allImages = [
+          ...(gallery.FeaturedImage ? [gallery.FeaturedImage] : []),
+          ...(Array.isArray(gallery.GalleryImages) ? gallery.GalleryImages : []),
+        ]
+
+        return {
+          id: gallery.id,
+          title: gallery.Title || "Untitled Gallery",
+          coverImage: gallery.FeaturedImage || allImages[0] || null,
+          imageCount: allImages.length,
+          images: allImages,
+        }
+      })
+
+      setGalleries(transformedGalleries)
+    } catch (err) {
+      console.error("Error fetching galleries:", err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchGalleries()
+}, [])
+
 
   if (loading) {
     return (

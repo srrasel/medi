@@ -26,7 +26,8 @@ export async function GET() {
         id: item.id,
         name: item.Name,
         description: item.description,
-        image: item.image || "/placeholder.svg",
+        image: item.Image || "/placeholder.svg",
+        
         link: `/diseases/${item.id}`,
       }))
 

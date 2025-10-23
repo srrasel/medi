@@ -14,32 +14,36 @@ export default function CorporateClients() {
 
   // Fetch clients data from API
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/clients")
-        if (!response.ok) {
-          throw new Error("Failed to fetch clients")
-        }
-        const data = await response.json()
+  const fetchClients = async () => {
+    try {
+      setLoading(true)
 
-        const transformedClients = data.map((client, index) => ({
+      const res = await fetch("https://api.pmchl.com/api/clients", { cache: "no-store" })
+      if (!res.ok) throw new Error("Failed to fetch clients")
+
+      const data = await res.json()
+
+      // Sort by ID descending (latest first) and transform
+      const clients = data
+        .sort((a, b) => b.id - a.id)
+        .map(client => ({
           src: client.image || `/placeholder.svg?height=60&width=120&query=client+logo`,
           alt: `${client.title} Logo`,
           name: client.title,
         }))
 
-        setClients(transformedClients)
-      } catch (err) {
-        setError(err.message)
-        console.error("Error fetching clients:", err)
-      } finally {
-        setLoading(false)
-      }
+      setClients(clients)
+    } catch (err) {
+      console.error("Error fetching clients:", err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchClients()
-  }, [])
+  fetchClients()
+}, [])
+
 
   const totalSlides = Math.ceil(clients.length / itemsPerSlide)
 
@@ -163,7 +167,7 @@ export default function CorporateClients() {
                                 <img
                                   src={client.src || "/placeholder.svg"}
                                   alt={client.alt}
-                                  className="w-30 h-15 object-contain transition-all duration-300"
+                                  className="w-40 h-22 object-contain transition-all duration-300"
                                 />
                               </div>
                             ))}

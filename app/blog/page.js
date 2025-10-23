@@ -14,31 +14,37 @@ export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [showFilters, setShowFilters] = useState(false)
-  const postsPerPage = 9
+  const postsPerPage = 100
 
   // Fetch blog posts data from API
-  useEffect(() => {
-    const fetchBlogPosts = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const response = await fetch("/api/blogs") // Fetch from your existing API route
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        setBlogPosts(data)
-      } catch (e) {
-        console.error("Failed to fetch blog posts for blog listing page:", e)
-        setError(e.message)
-      } finally {
-        setLoading(false)
+ // Fetch blog posts data from API
+useEffect(() => {
+  const fetchBlogPosts = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch("/api/blogs") // Fetch from your existing API route
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
       }
-    }
+      const data = await response.json()
 
-    fetchBlogPosts()
-  }, []) // Empty dependency array means this runs once on mount
+      // ✅ Sort by ID (latest first)
+      const sortedData = data.sort((a, b) => b.id - a.id)
+
+      setBlogPosts(sortedData)
+    } catch (e) {
+      console.error("Failed to fetch blog posts for blog listing page:", e)
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchBlogPosts()
+}, [])
+
 
   // Intersection Observer for animations
   useEffect(() => {
