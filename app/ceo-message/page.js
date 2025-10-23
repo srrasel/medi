@@ -15,8 +15,8 @@ export default function CEOMessagePage() {
   useEffect(() => {
     const fetchCEOData = async () => {
       try {
-          const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-        const response = await fetch(`${strapiBaseUrl}ceo-messages`);
+     
+        const response = await fetch(`https://api.pmchl.com/api/ceo-messages`);
         const data = await response.json();
         console.log("Fetched CEO data:", data[0]);
         if (data) {
