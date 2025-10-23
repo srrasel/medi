@@ -28,8 +28,9 @@ const Header = () => {
     //   { name: "Message From Board Chairman", href: "/board-chairman-message"},
     // { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
     { name: "CEO Message", href: "/ceo-message"},
-  
+    { name: "Careers", href: "/careers" },
   ]
+
 
   const servicesItems = [
     { name: "All Services", href: "/services", description: "Complete medical services" },
