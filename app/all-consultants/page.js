@@ -208,7 +208,12 @@ export default function DoctorsPage() {
                     <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{doctor.qualifications}</p>
 
                     {/* Specialty */}
-                    
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-gray-800 mb-3">Specialty:</h4>
+                      <span className="px-3 py-1 bg-[#017381]/10 text-[#017381] rounded-full text-[16px] font-medium ">
+                        {doctor.specialty}
+                      </span>
+                    </div>
                     {/* Action Buttons */}
                     <div className="flex gap-3">
                       <Link
