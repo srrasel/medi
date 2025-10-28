@@ -329,11 +329,7 @@ const DoctorsSection = () => {
                       {/* Doctor Info */}
                       <div className="p-6">
                         {/* Specialty Badge */}
-                        <div className="mb-4">
-                          <span className="text-[#017381] text-xs font-bold bg-[#017381]/10 px-3 py-1.5 rounded-full border border-[#017381]/20">
-                            {doctor.specialty}
-                          </span>
-                        </div>
+                       
                         {/* Name and Position */}
                         <h3 className="text-lg font-bold mb-2 text-gray-800 group-hover:text-[#017381] transition-colors leading-tight">
                           {doctor.name}

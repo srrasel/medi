@@ -188,11 +188,7 @@ export default function DoctorsPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 
                     {/* Specialty Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-[#017381]/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold border border-white/20">
-                        {doctor.specialty}
-                      </span>
-                    </div>
+                    
 
                     {/* Icon */}
                     <div className="absolute top-4 right-4 p-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
@@ -212,12 +208,7 @@ export default function DoctorsPage() {
                     <p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{doctor.qualifications}</p>
 
                     {/* Specialty */}
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-gray-800 mb-3">Specialty:</h4>
-                      <span className="px-3 py-1 bg-[#017381]/10 text-[#017381] rounded-full text-xs font-medium">
-                        {doctor.specialty}
-                      </span>
-                    </div>
+                    
                     {/* Action Buttons */}
                     <div className="flex gap-3">
                       <Link
