@@ -28,7 +28,8 @@ const Header = () => {
     //   { name: "Message From Board Chairman", href: "/board-chairman-message"},
     // { name: "Message From EC Chairman", href: "/ec-chairmain-message"},
     { name: "CEO Message", href: "/ceo-message"},
-    { name: "Careers", href: "/careers" },
+    { name:"Clients", href:"/our-corporate-clients"},
+   
   ]
 
 
@@ -188,10 +189,10 @@ const Header = () => {
                 </div>
 
                 <Link
-                  href="/our-corporate-clients"
+                  href="/careers"
                   className="relative px-4 py-2 text-gray-700 hover:text-[#017381] font-semibold transition-all duration-300 group"
                 >
-                  Clients
+                  Careers
                   <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#017381] to-[#025a65] group-hover:w-full transition-all duration-300"></span>
                 </Link>
 
