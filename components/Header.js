@@ -39,10 +39,13 @@ const Header = () => {
   ]
 
   const newsItems = [
-    { name: "News", href: "/blog", description: "Medical news" },
-    { name: "All Videos", href: "/all-videos", description: "Medical education videos" },
-    { name: "Gallery", href: "/gallery", description: "Hospital photo gallery" },
-    { name: "Success Stories", href: "/success-stories", description: "Patient testimonials" },
+    { name: "News", href: "/blog", },
+    { name: "All Videos", href: "/all-videos", },
+    { name: "Training Videos", href: "/all-videos/training" },
+    { name: "Seminar Videos", href: "/all-videos/seminar"},
+    { name: "Gallery", href: "/gallery"},
+    { name: "Success Stories", href: "/success-stories" },
+    { name: "Research Publications", href: "/research" },
   ]
 
   return (
@@ -172,16 +175,33 @@ const Header = () => {
                       
                       <div className="space-y-2">
                         {newsItems.map((item, index) => (
-                          <Link
-                            key={index}
-                            href={item.href}
-                            className="block p-4 rounded-xl hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300 group"
-                          >
-                            <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
-                              {item.name}
-                            </div>
-                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
-                          </Link>
+                          <div key={index} className="relative group">
+                            <Link
+                              href={item.href}
+                              className="block p-4 rounded-xl hover:bg-gradient-to-r hover:from-[#017381]/5 hover:to-[#025a65]/5 transition-all duration-300"
+                            >
+                              <div className="font-semibold text-gray-800 group-hover:text-[#017381] transition-colors">
+                                {item.name}
+                              </div>
+                              {item.description && (
+                                <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                              )}
+                            </Link>
+                            {/* Submenu for items with children */}
+                            {item.children && (
+                              <div className="absolute left-full top-0 mt-0 w-48 bg-white shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-10">
+                                {item.children.map((child, cIdx) => (
+                                  <Link
+                                    key={cIdx}
+                                    href={child.href}
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                  >
+                                    {child.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>

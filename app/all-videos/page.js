@@ -224,6 +224,27 @@ useEffect(() => {
         </div>
       </section>
 
+      {/* Quick Links to Training and Seminar */}
+      <section className="py-12 bg-gradient-to-r from-[#017381]/10 to-[#025a65]/10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Explore Specific Categories</h2>
+          <div className="flex flex-col md:flex-row justify-center gap-4">
+            <Link
+              href="/all-videos/training"
+              className="inline-block px-6 py-3 bg-[#017381] text-white rounded-full hover:bg-[#025a65] transition-colors duration-300"
+            >
+              Training Videos
+            </Link>
+            <Link
+              href="/all-videos/seminar"
+              className="inline-block px-6 py-3 bg-[#025a65] text-white rounded-full hover:bg-[#017381] transition-colors duration-300"
+            >
+              Seminar Videos
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Videos Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

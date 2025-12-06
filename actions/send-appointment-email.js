@@ -72,7 +72,7 @@ export async function sendAppointmentEmail(prevState, formData) {
 
     const { data, error } = await resend.emails.send({
       from: "Appointment System <appointments@pmchl.com>",
-      to: ["proactivehospital.dm@gmail.com"],
+      to: ["info@pmchl.com"],
       subject: `New Appointment Request - ${appointmentData.fullName}`,
       html: emailHtml,
     })

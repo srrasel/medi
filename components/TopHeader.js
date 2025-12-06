@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Phone, MessageCircle, Clock } from "lucide-react"
+import { Phone, MessageCircle, Clock, Mail } from "lucide-react"
 import Link from "next/link"
 
 const TopHeader = ({ isScrolled }) => {
@@ -32,6 +32,7 @@ const TopHeader = ({ isScrolled }) => {
         setHeaderData({
           Emergency: "01902556060",
           Hotline: "09666-997997",
+          Email: "info@pmchl.com",
         })
       } finally {
         setLoading(false)
@@ -44,6 +45,7 @@ const TopHeader = ({ isScrolled }) => {
   const displayData = headerData || {
     Emergency: "01902556060",
     Hotline: "09666-997997",
+    Email: "info@pmchl.com",
   }
 
   return (
@@ -72,6 +74,16 @@ const TopHeader = ({ isScrolled }) => {
 
           {/* Quick Links */}
           <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2 text-sm">
+              <Mail className="w-4 h-4 text-[#b8e6ea]" />
+              <span className="text-slate-200">Email:</span>
+              <Link
+                href={`mailto:info@pmchl.com`}
+                className="font-bold hover:text-[#b8e6ea] transition-colors"
+              >
+               info@pmchl.com
+              </Link>
+            </div>
             <div className="flex items-center space-x-2 text-sm">
               <MessageCircle className="w-4 h-4 text-[#b8e6ea]" />
               <span className="text-slate-200">Hotline:</span>

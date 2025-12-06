@@ -49,7 +49,7 @@ export async function sendCallbackRequest(prevState, formData) {
 
     const { data, error } = await resend.emails.send({
       from: "Callback System <callbacks@pmchl.com>",
-      to: ["proactivehospital.dm@gmail.com"],
+      to: ["info@pmchl.com"],
       subject: `New Callback Request - ${callbackData.name}`,
       html: emailHtml,
     })
