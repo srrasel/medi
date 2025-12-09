@@ -31,7 +31,7 @@ export async function POST(req) {
 const resend = new Resend(process.env.RESEND_API_KEY);
      await resend.emails.send({
        from: 'noreply@pmchl.com',
-     to: 'proactivehospital.dm@gmail.com', // Your target email address
+     to: 'info@pmchl.com', // Your target email address
     subject: emailSubject,
      html: `<p>${emailBody.replace(/\n/g, '<br/>')}</p>`,
      });
