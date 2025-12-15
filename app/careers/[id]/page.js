@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 
 export default function JobDetailsPage({ params }) {
@@ -93,13 +94,13 @@ export default function JobDetailsPage({ params }) {
           {/* Job Image */}
           {job.image && (
             <div className="mb-8 rounded-lg overflow-hidden bg-gray-100 h-96">
-              <img src={job.image || "/placeholder.svg"} alt={job.title} className="w-full h-full object-cover" />
+              <img src={job.Image || "/placeholder.svg"} alt={job.Title} className="w-full h-full object-cover" />
             </div>
           )}
 
           {/* Job Header */}
           <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{job.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{job.Title}</h1>
             
           </div>
             <div className="mt-8  mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -113,10 +114,7 @@ export default function JobDetailsPage({ params }) {
                 })}
               </p>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Salary</h3>
-              <p className="text-lg font-semibold text-[#017381]">{formatSalary(job.salary)}</p>
-            </div>
+           
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">Job ID</h3>
               <p className="text-lg font-semibold text-gray-900">#{job.id}</p>
@@ -126,7 +124,12 @@ export default function JobDetailsPage({ params }) {
           {/* Job Description */}
           <div className="bg-white border border-gray-200 rounded-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{job.description}</p>
+            <Image src={job.Image || "/placeholder.svg"} alt={job.Title} className="w-full h-full object-cover" width={600} height={600} />
+            
+            <div
+                      className="text-gray-600 text-sm leading-relaxed mb-4"
+                      dangerouslySetInnerHTML={{ __html: job.Description }}
+                    />
           </div>
 
           {/* Job Meta Information */}
