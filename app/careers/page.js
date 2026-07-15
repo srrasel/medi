@@ -15,7 +15,8 @@ export default function CareersPage() {
         const response = await fetch("https://api.pmchl.com/api/carrier-jobs")
         if (!response.ok) throw new Error("Failed to fetch jobs")
         const data = await response.json()
-        setJobs(data)
+        const list = Array.isArray(data) ? data : data?.data || data?.value || []
+        setJobs(list)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -28,8 +29,7 @@ export default function CareersPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header Section */}
-      <section className="bg-gradient-to-r from-[#017381] via-[#025a65] to-[#034a52]  text-white py-16 px-4">
+      <section className="bg-gradient-to-r from-[#017381] via-[#025a65] to-[#034a52] text-white py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Join Our Team</h1>
           <p className="text-lg md:text-xl text-blue-100 text-balance">
@@ -38,13 +38,12 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Jobs Section */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#017381]"></div>
                 <p className="mt-4 text-gray-600">Loading job opportunities...</p>
               </div>
             </div>
