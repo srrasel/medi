@@ -13,6 +13,8 @@ export default function VideosPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const getVideoUrl = (video) => video?.VideoUrl || video?.Videourl || video?.videoUrl || ""
+
 useEffect(() => {
   const fetchVideos = async () => {
     try {
@@ -28,8 +30,9 @@ useEffect(() => {
 
       // Transform Strapi data to match component structure
       const transformedVideos = sortedData.map((video) => {
+        const sourceUrl = getVideoUrl(video)
         // Extract YouTube video ID from URL
-        const videoId = extractYouTubeId(video.VideoUrl)
+        const videoId = extractYouTubeId(sourceUrl)
 
         // Extract description text
         const description = video.Description
@@ -49,7 +52,7 @@ useEffect(() => {
           publishedAt: publishedDate,
           thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
           description: description,
-          videoUrl: video.Videourl,
+          videoUrl: sourceUrl,
         }
       })
 

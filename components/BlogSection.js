@@ -3,6 +3,33 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
+import { withTrailingSlash } from "@/lib/utils"
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.pmchl.com"
+
+const getFetchErrorMessage = (status, resourceLabel) => {
+  if (status === 404) {
+    return `${resourceLabel} endpoint not found (404). Check NEXT_PUBLIC_API_BASE_URL or the upstream API route.`
+  }
+
+  return `HTTP error! status: ${status}`
+}
+
+const formatPostDate = (createdAt) => {
+  const parsedDate = createdAt ? new Date(createdAt) : null
+
+  if (!parsedDate || Number.isNaN(parsedDate.getTime())) {
+    return {
+      date: "--",
+      month: "N/A",
+    }
+  }
+
+  return {
+    date: parsedDate.toLocaleDateString("en-US", { day: "2-digit" }),
+    month: parsedDate.toLocaleDateString("en-US", { month: "short" }),
+  }
+}
 
 const BlogSection = () => {
   const [blogPosts, setBlogPosts] = useState([])
@@ -13,13 +40,39 @@ const BlogSection = () => {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch("/api/blogs")
+        setLoading(true)
+        setError(null)
+
+        const response = await fetch(`${API_BASE_URL}/api/news`)
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(getFetchErrorMessage(response.status, "News"))
         }
         const data = await response.json()
 
-        const sortedPosts = data.sort((a, b) => {
+        const transformedPosts = Array.isArray(data)
+          ? data.map((item) => {
+              const { date, month } = formatPostDate(item.createdAt)
+
+              return {
+                id: item.id,
+                image: item.Image || "/placeholder.svg",
+                alt: item.Title || "Blog image",
+                title: item.Title || "Untitled",
+                slug: String(item.slug || item.id),
+                content: item.Description || "",
+                excerpt: (item.Description || "").replace(/<[^>]*>/g, "").slice(0, 180),
+                author: item.Author || "Unknown",
+                category: item.Category || "General",
+                publishedAt: item.createdAt || null,
+                date,
+                month,
+                readTime: "5 min read",
+                link: withTrailingSlash(`/blog/${item.slug || item.id}`),
+              }
+            })
+          : []
+
+        const sortedPosts = transformedPosts.sort((a, b) => {
           const idA = Number.parseInt(a.id) || 0
           const idB = Number.parseInt(b.id) || 0
           return idB - idA

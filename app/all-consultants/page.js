@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Stethoscope, Search } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import { withTrailingSlash } from "@/lib/utils"
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([])
@@ -29,13 +30,26 @@ export default function DoctorsPage() {
       try {
         setLoading(true)
         setError(null)
-        const response = await fetch("/api/doctors") // Fetch from your existing API route
+        const response = await fetch("https://api.pmchl.com/api/doctors")
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        setDoctors(data)
+        const transformedDoctors = Array.isArray(data)
+          ? data
+              .filter((item) => item && item.id)
+              .map((item) => ({
+                id: item.id,
+                name: item.Name || item.name || "Unknown Doctor",
+                specialty: item.Specialty || item.specialty || "General",
+                qualifications: item.Qualifications || item.qualifications || "",
+                position: item.Position ?? item.position,
+                bio: item.Bio || item.bio || "",
+                image: item.image || item.Image || "/placeholder.svg",
+                link: withTrailingSlash(`/doctor/${item.slug || item.id}`),
+              }))
+          : []
+        setDoctors(transformedDoctors)
       } catch (e) {
         console.error("Failed to fetch doctors for all-consultants page:", e)
         setError(e.message)

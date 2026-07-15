@@ -30,13 +30,24 @@ export default function diseasesPage() {
       try {
         setLoading(true)
         setError(null)
-        const response = await fetch("/api/diseases") // Fetch from your existing API route
+        const response = await fetch("https://api.pmchl.com/api/diseases")
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        setDiseases(data)
+        const transformedDiseases = Array.isArray(data)
+          ? data
+              .filter((item) => item && item.id)
+              .map((item) => ({
+                id: item.id,
+                name: item.Name || item.name || "Unknown Disease",
+                description: item.Description || item.description || "",
+                image: item.Image || item.image || "/placeholder.svg",
+                specialty: item.specialty || "General",
+                link: `/diseases/${item.slug || item.id}`,
+              }))
+          : []
+        setDiseases(transformedDiseases)
       } catch (e) {
         console.error("Failed to fetch diseases for all-consultants page:", e)
         setError(e.message)

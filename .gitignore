@@ -85,6 +85,13 @@ web_modules/
 .next
 out
 
+# Accidental large local archives
+out.zip
+out (2).zip
+out (3).zip
+*.zip
+!public/**/*.zip
+
 # Nuxt.js build / generate output
 .nuxt
 dist

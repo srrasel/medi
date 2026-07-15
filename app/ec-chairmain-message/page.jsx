@@ -7,6 +7,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 
 export default function EcChairmanMessagePage() {
+  const NEXT_PUBLIC_STRAPI_API_URL = "https://api.pmchl.com/api/";
   const [chairmanData, setChairmanData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,8 +16,7 @@ export default function EcChairmanMessagePage() {
   useEffect(() => {
     const fetchChairmanData = async () => {
       try {
-            const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337/api"
-        const response = await fetch(`${strapiBaseUrl}/ec-chairman-message?populate=*`);
+        const response = await fetch(`${NEXT_PUBLIC_STRAPI_API_URL}ec-chairman-message?populate=*`);
         const data = await response.json();
         if (data.data) {
           setChairmanData(data.data);

@@ -1,19 +1,12 @@
-"use server"
-
 import { Resend } from "resend"
+import { NextResponse } from "next/server"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const RESEND_API_KEY = process.env.RESEND_API_KEY
+const resend = new Resend(RESEND_API_KEY)
 
-export async function sendAppointmentEmail(prevState, formData) {
+export async function POST(request) {
   try {
-    if (!process.env.RESEND_API_KEY) {
-      return { success: false, error: "Email service is not configured" }
-    }
-
-    // Check if formData exists
-    if (!formData) {
-      return { success: false, error: "No form data received" }
-    }
+    const formData = await request.formData()
 
     const appointmentData = {
       appointmentType: formData.get("appointmentType"),
@@ -33,7 +26,7 @@ export async function sendAppointmentEmail(prevState, formData) {
       !appointmentData.date ||
       !appointmentData.time
     ) {
-      return { success: false, error: "Please fill in all required fields" }
+      return NextResponse.json({ success: false, error: "Please fill in all required fields" }, { status: 400 })
     }
 
     const emailHtml = `
@@ -83,16 +76,16 @@ export async function sendAppointmentEmail(prevState, formData) {
 
     if (error) {
       console.error("Email sending error:", error)
-      return {
+      return NextResponse.json({
         success: false,
         error: `Failed to send email: ${error.message || "Unknown error"}`,
-      }
+      }, { status: 500 })
     }
 
     console.log("Email sent successfully:", data)
-    return { success: true, message: "Appointment request sent successfully!" }
+    return NextResponse.json({ success: true, message: "Appointment request sent successfully!" })
   } catch (error) {
-    console.error("Server action error:", error)
-    return { success: false, error: "Something went wrong. Please try again." }
+    console.error("Server error:", error)
+    return NextResponse.json({ success: false, error: "Something went wrong. Please try again." }, { status: 500 })
   }
 }

@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useActionState } from "react"
-import { sendAppointmentEmail } from "@/actions/send-appointment-email"
 import {
   Calendar,
   Clock,
@@ -23,8 +21,38 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState("")
   const [selectedTime, setSelectedTime] = useState("")
   const [appointmentType, setAppointmentType] = useState("consultation")
+  const [isPending, setIsPending] = useState(false)
+  const [state, setState] = useState({ success: false, message: "", error: "" })
 
-  const [state, formAction, isPending] = useActionState(sendAppointmentEmail, { success: false, message: "" })
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    setIsPending(true)
+    setState({ success: false, message: "", error: "" })
+
+    try {
+      const formData = new FormData(event.currentTarget)
+
+      const response = await fetch("/api/send-appointment", {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setState({ success: true, message: result.message, error: "" })
+        event.currentTarget.reset()
+        setSelectedDate("")
+        setSelectedTime("")
+      } else {
+        setState({ success: false, message: "", error: result.error })
+      }
+    } catch (error) {
+      setState({ success: false, message: "", error: "Something went wrong. Please try again." })
+    } finally {
+      setIsPending(false)
+    }
+  }
 
 
 
@@ -116,7 +144,7 @@ export default function AppointmentsPage() {
 
               {/* Form Content */}
               <div className="p-8">
-                <form action={formAction} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Hidden input for appointment type */}
                   <input type="hidden" name="appointmentType" value={appointmentType} />
 

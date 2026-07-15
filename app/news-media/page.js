@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Clock, ArrowRight, Calendar, User, Tag, Search, Filter, ChevronDown, Eye, Heart } from 'lucide-react'
+import { withTrailingSlash } from "@/lib/utils"
 
 export default function BlogPage() {
   const [visibleCards, setVisibleCards] = useState(new Set())
@@ -324,7 +325,7 @@ export default function BlogPage() {
               {featuredPosts.slice(0, 2).map((post, index) => (
                 <Link
                   key={post.id}
-                  href={`/blog/${post.slug}`}
+                  href={withTrailingSlash(`/blog/${post.slug || post.id}`)}
                   className="group bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border border-gray-100 hover:border-[#017381]/20 medical-card-hover cursor-interactive cursor-magnetic"
                 >
                   <div className="relative h-64 overflow-hidden">
@@ -457,7 +458,7 @@ export default function BlogPage() {
                 }`}
                 style={{ transitionDelay: `${index * 150}ms` }}
               >
-                <Link href={`/blog/${post.slug}`}>
+                <Link href={withTrailingSlash(`/blog/${post.slug || post.id}`)}>
                   <div className="relative overflow-hidden h-64">
                     <Image
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

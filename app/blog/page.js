@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Clock, ArrowRight, Calendar, Search, Filter, ChevronDown, Eye, Heart, ExternalLink, User } from "lucide-react" // Added ExternalLink and User
+import { withTrailingSlash } from "@/lib/utils"
 
 export default function BlogPage() {
   const [blogPosts, setBlogPosts] = useState([])
@@ -23,15 +24,39 @@ useEffect(() => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch("/api/blogs") // Fetch from your existing API route
+      const response = await fetch("https://api.pmchl.com/api/news")
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = await response.json()
 
+      const transformedPosts = Array.isArray(data)
+        ? data.map((item) => ({
+            id: item.id,
+            image: item.Image || "/placeholder.svg",
+            alt: item.Title || "Blog image",
+            title: item.Title || "Untitled",
+            slug: String(item.slug || item.id),
+            content: item.Description || "",
+            excerpt: (item.Description || "").replace(/<[^>]*>/g, "").slice(0, 180),
+            author: item.Author || "Unknown",
+            category: {
+              name: item.Category || "General",
+              slug: String(item.Category || "general").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+              color: "#017381",
+            },
+            publishedAt: new Date(item.createdAt).toLocaleDateString("bn-BD"),
+            readTime: "৫ মিনিট পড়ুন",
+            views: item.views || 0,
+            likes: item.likes || 0,
+            featured: Boolean(item.featured),
+            tags: [],
+            link: withTrailingSlash(`/blog/${item.slug || item.id}`),
+          }))
+        : []
+
       // ✅ Sort by ID (latest first)
-      const sortedData = data.sort((a, b) => b.id - a.id)
+      const sortedData = transformedPosts.sort((a, b) => b.id - a.id)
 
       setBlogPosts(sortedData)
     } catch (e) {

@@ -27,6 +27,17 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { withTrailingSlash } from "@/lib/utils"
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.pmchl.com"
+
+const getFetchErrorMessage = (status, resourceLabel) => {
+  if (status === 404) {
+    return `${resourceLabel} endpoint not found (404). Check NEXT_PUBLIC_API_BASE_URL or the upstream API route.`
+  }
+
+  return `HTTP error! status: ${status}`
+}
 
 // Helper function to map specialty to icon
 const getSpecialtyIcon = (specialty) => {
@@ -103,20 +114,37 @@ const DoctorsSection = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        console.log("Fetching doctors from API...")
-        const response = await fetch("/api/doctors")
+        setLoading(true)
+        setError(null)
+
+        const response = await fetch(`${API_BASE_URL}/api/doctors`)
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(getFetchErrorMessage(response.status, "Doctors"))
         }
 
         const data = await response.json()
-        console.log(`Successfully fetched ${data.length} doctors from API`)
-        const sortedDoctors = data.sort((a, b) => {
+        const transformedDoctors = Array.isArray(data)
+          ? data
+              .filter((item) => item && item.id)
+              .map((item) => ({
+                id: item.id,
+                name: item.Name || item.name || "Unknown Doctor",
+                specialty: item.Specialty || item.specialty || "General",
+                qualifications: item.Qualifications || item.qualifications || "",
+                position: item.Position ?? item.position,
+                bio: item.Bio || item.bio || "",
+                image: item.image || item.Image || "/placeholder.svg",
+                link: withTrailingSlash(`/doctor/${item.slug || item.id}`),
+              }))
+          : []
+
+        const sortedDoctors = transformedDoctors.sort((a, b) => {
           const posA = a.position ?? Number.MAX_SAFE_INTEGER
           const posB = b.position ?? Number.MAX_SAFE_INTEGER
           return posA - posB
         })
+
         setDoctors(sortedDoctors)
       } catch (e) {
         console.error("Error fetching doctors:", e)

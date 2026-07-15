@@ -14,6 +14,7 @@ export default function SeminarVideosPage() {
   const [selectedCategory, setSelectedCategory] = useState("Seminar")
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const getVideoUrl = (video) => video?.VideoUrl || video?.Videourl || video?.videoUrl || ""
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -26,7 +27,8 @@ export default function SeminarVideosPage() {
         const data = await response.json()
         const sortedData = data.sort((a, b) => b.id - a.id)
         const transformedVideos = sortedData.map((video) => {
-          const videoId = extractYouTubeId(video.VideoUrl)
+          const sourceUrl = getVideoUrl(video)
+          const videoId = extractYouTubeId(sourceUrl)
           const description = video.Description
           const publishedDate = new Date(video.createdAt).toLocaleDateString("bn-BD", {
             year: "numeric",
@@ -41,7 +43,7 @@ export default function SeminarVideosPage() {
             publishedAt: publishedDate,
             thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
             description: description,
-            videoUrl: video.Videourl,
+            videoUrl: sourceUrl,
           }
         })
         setVideos(transformedVideos)

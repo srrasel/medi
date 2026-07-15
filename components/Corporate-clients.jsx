@@ -68,21 +68,42 @@ export default function CorporateClients() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault()
-    setFormState({ ...formState, isPending: true })
+    setFormState({ success: false, message: "", error: "", isPending: true })
 
     const formData = new FormData(e.target)
-    const name = formData.get("name")
-    const mobile = formData.get("mobile")
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/send-callback", {
+        method: "POST",
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setFormState({
+          success: true,
+          message: result.message,
+          error: "",
+          isPending: false,
+        })
+        e.target.reset()
+      } else {
+        setFormState({
+          success: false,
+          message: "",
+          error: result.error,
+          isPending: false,
+        })
+      }
+    } catch {
       setFormState({
-        success: true,
-        message: "Thank you! We will contact you soon.",
+        success: false,
+        message: "",
+        error: "Something went wrong. Please try again.",
         isPending: false,
       })
-      e.target.reset()
-    }, 1000)
+    }
   }
 
   if (loading) {
