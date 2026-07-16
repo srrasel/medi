@@ -1,32 +1,42 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
+import { safeText } from "@/lib/sanitize"
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = new Resend(RESEND_API_KEY)
 
 export async function POST(request) {
   try {
+    if (!RESEND_API_KEY) {
+      return NextResponse.json(
+        { success: false, error: "Email service is not configured" },
+        { status: 500 },
+      )
+    }
+
     const formData = await request.formData()
 
     const appointmentData = {
-      appointmentType: formData.get("appointmentType"),
-      fullName: formData.get("fullName"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      age: formData.get("age"),
-      date: formData.get("date"),
-      time: formData.get("time"),
-      additionalInfo: formData.get("additionalInfo"),
+      appointmentType: safeText(formData.get("appointmentType"), 100),
+      fullName: safeText(formData.get("fullName"), 120),
+      phone: safeText(formData.get("phone"), 40),
+      email: safeText(formData.get("email"), 120),
+      age: safeText(formData.get("age"), 10),
+      date: safeText(formData.get("date"), 40),
+      time: safeText(formData.get("time"), 40),
+      additionalInfo: safeText(formData.get("additionalInfo"), 2000),
     }
 
-    // Validate required fields
     if (
       !appointmentData.fullName ||
       !appointmentData.phone ||
       !appointmentData.date ||
       !appointmentData.time
     ) {
-      return NextResponse.json({ success: false, error: "Please fill in all required fields" }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: "Please fill in all required fields" },
+        { status: 400 },
+      )
     }
 
     const emailHtml = `
@@ -76,16 +86,19 @@ export async function POST(request) {
 
     if (error) {
       console.error("Email sending error:", error)
-      return NextResponse.json({
-        success: false,
-        error: `Failed to send email: ${error.message || "Unknown error"}`,
-      }, { status: 500 })
+      return NextResponse.json(
+        { success: false, error: "Failed to send email. Please try again." },
+        { status: 500 },
+      )
     }
 
     console.log("Email sent successfully:", data)
     return NextResponse.json({ success: true, message: "Appointment request sent successfully!" })
   } catch (error) {
     console.error("Server error:", error)
-    return NextResponse.json({ success: false, error: "Something went wrong. Please try again." }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: "Something went wrong. Please try again." },
+      { status: 500 },
+    )
   }
 }

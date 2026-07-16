@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 import { Stethoscope, ArrowLeft, Calendar, Clock, User, Mail, Phone, Send, FileText } from "lucide-react"
 
@@ -167,10 +168,13 @@ export default function DoctorPage() {
 
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="relative w-64 h-64 rounded-2xl overflow-hidden shadow-xl">
-              <img
+              <Image
                 src={doctor.image || "/placeholder.svg"}
                 alt={doctor.name}
-                className="w-full h-full object-cover object-top"
+                fill
+                priority
+                className="object-cover object-top"
+                sizes="256px"
               />
             </div>
 

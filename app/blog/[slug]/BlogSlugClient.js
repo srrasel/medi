@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 import { withTrailingSlash } from "@/lib/utils"
 import {
@@ -232,13 +233,13 @@ export default function SingleBlogPage() {
         </div>
 
         <div className="relative w-full max-w-[700px] h-[400px] mb-10 rounded-xl overflow-hidden mx-auto">
-          <img
+          <Image
             src={blogPost.image || "/placeholder.svg?height=400&width=700"}
             alt={blogPost.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = "/placeholder.svg?height=400&width=700"
-            }}
+            fill
+            priority
+            className="object-cover"
+            sizes="(max-width: 700px) 100vw, 700px"
           />
         </div>
 
@@ -293,13 +294,12 @@ export default function SingleBlogPage() {
                   className="block shadow-lg rounded-xl overflow-hidden"
                 >
                   <div className="relative h-48">
-                    <img
+                    <Image
                       src={post.image || "/placeholder.svg?height=200&width=300"}
                       alt={post.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = "/placeholder.svg?height=200&width=300"
-                      }}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   </div>
                   <div className="p-4">

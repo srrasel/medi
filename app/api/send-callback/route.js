@@ -1,22 +1,32 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
+import { safeText } from "@/lib/sanitize"
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = new Resend(RESEND_API_KEY)
 
 export async function POST(request) {
   try {
+    if (!RESEND_API_KEY) {
+      return NextResponse.json(
+        { success: false, error: "Email service is not configured" },
+        { status: 500 },
+      )
+    }
+
     const formData = await request.formData()
 
     const callbackData = {
-      name: formData.get("name"),
-      mobile: formData.get("mobile"),
+      name: safeText(formData.get("name"), 120),
+      mobile: safeText(formData.get("mobile"), 40),
       submittedAt: new Date().toISOString(),
     }
 
-    // Validate required fields
     if (!callbackData.name || !callbackData.mobile) {
-      return NextResponse.json({ success: false, error: "Please fill in all required fields" }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: "Please fill in all required fields" },
+        { status: 400 },
+      )
     }
 
     const emailHtml = `
@@ -53,16 +63,22 @@ export async function POST(request) {
 
     if (error) {
       console.error("Email sending error:", error)
-      return NextResponse.json({
-        success: false,
-        error: `Failed to send callback request: ${error.message || "Unknown error"}`,
-      }, { status: 500 })
+      return NextResponse.json(
+        { success: false, error: "Failed to send callback request. Please try again." },
+        { status: 500 },
+      )
     }
 
     console.log("Callback request sent successfully:", data)
-    return NextResponse.json({ success: true, message: "Callback request submitted successfully! We will contact you soon." })
+    return NextResponse.json({
+      success: true,
+      message: "Callback request submitted successfully! We will contact you soon.",
+    })
   } catch (error) {
     console.error("Server error:", error)
-    return NextResponse.json({ success: false, error: "Something went wrong. Please try again." }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: "Something went wrong. Please try again." },
+      { status: 500 },
+    )
   }
 }

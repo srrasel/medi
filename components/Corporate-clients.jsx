@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from "lucide-react"
 
 export default function CorporateClients() {
@@ -183,12 +184,14 @@ export default function CorporateClients() {
                             .map((client, index) => (
                               <div
                                 key={index}
-                                className="flex items-center justify-center p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 group"
+                                className="relative flex items-center justify-center p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 group h-28"
                               >
-                                <img
+                                <Image
                                   src={client.src || "/placeholder.svg"}
-                                  alt={client.alt}
-                                  className="w-40 h-22 object-contain transition-all duration-300"
+                                  alt={client.alt || "Corporate client"}
+                                  fill
+                                  className="object-contain p-4"
+                                  sizes="160px"
                                 />
                               </div>
                             ))}

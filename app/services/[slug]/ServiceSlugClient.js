@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 import {
   Heart,
@@ -207,11 +208,14 @@ export default function ServicePage() {
             <div
               className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
             >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                <img
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl group h-96">
+                <Image
                   src={service.image_url || "/placeholder.svg"}
                   alt={service.title}
-                  className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  priority
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent group-hover:from-black/40 transition-all duration-300"></div>
               </div>
@@ -241,11 +245,13 @@ export default function ServicePage() {
             </div>
 
             {/* Service Image */}
-            <div className="text-center">
-              <img
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg">
+              <Image
                 src={service.image_url || "/placeholder.svg"}
                 alt={service.title}
-                className="w-full h-auto rounded-2xl shadow-lg"
+                fill
+                className="object-cover"
+                sizes="(max-width: 896px) 100vw, 896px"
               />
             </div>
           </div>

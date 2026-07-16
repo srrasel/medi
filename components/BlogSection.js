@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
 import { withTrailingSlash } from "@/lib/utils"
 
@@ -177,13 +178,12 @@ const BlogSection = () => {
                   style={{ transitionDelay: `${index * 150}ms` }}
                 >
                   <div className="relative overflow-hidden h-64">
-                    <img
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    <Image
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
                       src={post.image || "/placeholder.svg"}
-                      alt={post.alt}
-                      onError={(e) => {
-                        e.target.src = `/placeholder.svg?height=300&width=500&text=${encodeURIComponent(post.title)}`
-                      }}
+                      alt={post.alt || post.title || "Blog post"}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
 

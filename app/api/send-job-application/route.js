@@ -1,8 +1,16 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
+import { safeText } from "@/lib/sanitize"
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = new Resend(RESEND_API_KEY)
+
+const ALLOWED_CV_TYPES = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+])
+const MAX_CV_BYTES = 5 * 1024 * 1024
 
 export async function POST(request) {
   try {
@@ -16,13 +24,13 @@ export async function POST(request) {
     const formData = await request.formData()
 
     const applicationData = {
-      fullName: formData.get("fullName"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      position: formData.get("position"),
-      jobId: formData.get("jobId"),
-      coverLetter: formData.get("coverLetter"),
-      experience: formData.get("experience"),
+      fullName: safeText(formData.get("fullName"), 120),
+      email: safeText(formData.get("email"), 120),
+      phone: safeText(formData.get("phone"), 40),
+      position: safeText(formData.get("position"), 200),
+      jobId: safeText(formData.get("jobId"), 40),
+      coverLetter: safeText(formData.get("coverLetter"), 4000),
+      experience: safeText(formData.get("experience"), 80),
     }
 
     const cvFile = formData.get("cv")
@@ -80,10 +88,28 @@ export async function POST(request) {
     }
 
     if (cvFile && typeof cvFile === "object" && cvFile.size > 0) {
+      if (cvFile.size > MAX_CV_BYTES) {
+        return NextResponse.json(
+          { success: false, error: "CV file must be 5MB or smaller" },
+          { status: 400 },
+        )
+      }
+
+      if (cvFile.type && !ALLOWED_CV_TYPES.has(cvFile.type)) {
+        return NextResponse.json(
+          { success: false, error: "CV must be a PDF or Word document" },
+          { status: 400 },
+        )
+      }
+
+      const safeName = String(cvFile.name || "cv.pdf")
+        .replace(/[^a-zA-Z0-9._-]/g, "_")
+        .slice(0, 100)
+
       const buffer = Buffer.from(await cvFile.arrayBuffer())
       emailPayload.attachments = [
         {
-          filename: cvFile.name || "cv.pdf",
+          filename: safeName,
           content: buffer,
         },
       ]
@@ -94,10 +120,7 @@ export async function POST(request) {
     if (error) {
       console.error("Email sending error:", error)
       return NextResponse.json(
-        {
-          success: false,
-          error: `Failed to send application: ${error.message || "Unknown error"}`,
-        },
+        { success: false, error: "Failed to send application. Please try again." },
         { status: 500 },
       )
     }

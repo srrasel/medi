@@ -134,20 +134,29 @@ export default function JobDetailsPage({ params }) {
       <section className="py-12 px-4">
         <div className="max-w-4xl mx-auto">
           {image && (
-            <div className="mb-8 rounded-lg overflow-hidden bg-gray-100 h-96 relative">
+            <div className="mb-8 rounded-lg overflow-hidden bg-gray-100 h-64 md:h-96 relative">
               <Image
                 src={image}
                 alt={title}
                 fill
+                priority
                 className="object-cover"
                 sizes="(max-width: 896px) 100vw, 896px"
               />
             </div>
           )}
 
-          <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{title}</h1>
-            {location && <p className="text-lg text-gray-600">{location}</p>}
+          <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{title}</h1>
+              {location && <p className="text-lg text-gray-600">{location}</p>}
+            </div>
+            <a
+              href="#apply-form"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-[#017381] to-[#025a65] hover:from-[#025a65] hover:to-[#034a52] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shrink-0"
+            >
+              Apply Now
+            </a>
           </div>
 
           <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -187,7 +196,7 @@ export default function JobDetailsPage({ params }) {
             )}
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+          <div id="apply-form" className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm scroll-mt-24">
             <div className="bg-gradient-to-r from-[#017381] to-[#025a65] p-6 text-white">
               <h2 className="text-2xl font-bold mb-1">Apply for this Position</h2>
               <p className="text-[#b8e6ea]">Submit your application for: {title}</p>

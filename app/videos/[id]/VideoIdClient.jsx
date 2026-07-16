@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useParams } from "next/navigation"
 import { ArrowLeft, Calendar, Clock, Play, Share2, ThumbsUp, Eye } from "lucide-react"
 
@@ -168,7 +169,13 @@ export default function VideoPage() {
                 <Link key={rv.id} href={`/videos/${rv.id}`}>
                   <article className="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition">
                     <div className="relative h-40">
-                      <img src={rv.thumbnail} alt={rv.title} className="w-full h-full object-cover" />
+                      <Image
+                        src={rv.thumbnail || "/placeholder.svg"}
+                        alt={rv.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                         <Play className="w-10 h-10 text-white" />
                       </div>
