@@ -1,6 +1,6 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
-import { safeText } from "@/lib/sanitize"
+import { escapeHtml } from "@/lib/sanitize"
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const resend = new Resend(RESEND_API_KEY)
@@ -9,8 +9,14 @@ const ALLOWED_CV_TYPES = new Set([
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/octet-stream",
 ])
 const MAX_CV_BYTES = 5 * 1024 * 1024
+
+function cleanText(value, maxLength = 2000) {
+  if (value === null || value === undefined) return ""
+  return String(value).trim().slice(0, maxLength)
+}
 
 export async function POST(request) {
   try {
@@ -23,23 +29,41 @@ export async function POST(request) {
 
     const formData = await request.formData()
 
-    const applicationData = {
-      fullName: safeText(formData.get("fullName"), 120),
-      email: safeText(formData.get("email"), 120),
-      phone: safeText(formData.get("phone"), 40),
-      position: safeText(formData.get("position"), 200),
-      jobId: safeText(formData.get("jobId"), 40),
-      coverLetter: safeText(formData.get("coverLetter"), 4000),
-      experience: safeText(formData.get("experience"), 80),
+    // Keep raw values for email headers; escape only when building HTML
+    const raw = {
+      fullName: cleanText(formData.get("fullName"), 120),
+      email: cleanText(formData.get("email"), 120),
+      phone: cleanText(formData.get("phone"), 40),
+      position: cleanText(formData.get("position"), 200),
+      jobId: cleanText(formData.get("jobId"), 40),
+      coverLetter: cleanText(formData.get("coverLetter"), 4000),
+      experience: cleanText(formData.get("experience"), 80),
     }
 
     const cvFile = formData.get("cv")
 
-    if (!applicationData.fullName || !applicationData.email || !applicationData.phone) {
+    if (!raw.fullName || !raw.email || !raw.phone) {
       return NextResponse.json(
         { success: false, error: "Please fill in all required fields" },
         { status: 400 },
       )
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.email)) {
+      return NextResponse.json(
+        { success: false, error: "Please enter a valid email address" },
+        { status: 400 },
+      )
+    }
+
+    const safe = {
+      fullName: escapeHtml(raw.fullName),
+      email: escapeHtml(raw.email),
+      phone: escapeHtml(raw.phone),
+      position: escapeHtml(raw.position),
+      jobId: escapeHtml(raw.jobId),
+      coverLetter: escapeHtml(raw.coverLetter),
+      experience: escapeHtml(raw.experience),
     }
 
     const emailHtml = `
@@ -50,24 +74,24 @@ export async function POST(request) {
         
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #017381; margin-top: 0;">Applicant Information</h3>
-          <p><strong>Full Name:</strong> ${applicationData.fullName}</p>
-          <p><strong>Email:</strong> ${applicationData.email}</p>
-          <p><strong>Phone:</strong> ${applicationData.phone}</p>
-          <p><strong>Experience:</strong> ${applicationData.experience || "Not provided"}</p>
+          <p><strong>Full Name:</strong> ${safe.fullName}</p>
+          <p><strong>Email:</strong> ${safe.email}</p>
+          <p><strong>Phone:</strong> ${safe.phone}</p>
+          <p><strong>Experience:</strong> ${safe.experience || "Not provided"}</p>
         </div>
 
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #017381; margin-top: 0;">Position Details</h3>
-          <p><strong>Position:</strong> ${applicationData.position || "Not specified"}</p>
-          <p><strong>Job ID:</strong> #${applicationData.jobId || "N/A"}</p>
+          <p><strong>Position:</strong> ${safe.position || "Not specified"}</p>
+          <p><strong>Job ID:</strong> #${safe.jobId || "N/A"}</p>
         </div>
 
         ${
-          applicationData.coverLetter
+          safe.coverLetter
             ? `
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #017381; margin-top: 0;">Cover Letter</h3>
-          <p style="white-space: pre-wrap;">${applicationData.coverLetter}</p>
+          <p style="white-space: pre-wrap;">${safe.coverLetter}</p>
         </div>
         `
             : ""
@@ -79,15 +103,16 @@ export async function POST(request) {
       </div>
     `
 
+    // Use info@ as From (same verified domain sender as other forms). Deliver to HR inbox.
     const emailPayload = {
-      from: "Careers System <careers@pmchl.com>",
-      to: ["hr@pmchl.com", "info@pmchl.com"],
-      replyTo: applicationData.email,
-      subject: `Job Application - ${applicationData.position || "Position"} - ${applicationData.fullName}`,
+      from: "Pro-Active Careers <info@pmchl.com>",
+      to: ["hr@pmchl.com"],
+      replyTo: raw.email,
+      subject: `Job Application - ${raw.position || "Position"} - ${raw.fullName}`,
       html: emailHtml,
     }
 
-    if (cvFile && typeof cvFile === "object" && cvFile.size > 0) {
+    if (cvFile && typeof cvFile === "object" && typeof cvFile.size === "number" && cvFile.size > 0) {
       if (cvFile.size > MAX_CV_BYTES) {
         return NextResponse.json(
           { success: false, error: "CV file must be 5MB or smaller" },
@@ -95,21 +120,24 @@ export async function POST(request) {
         )
       }
 
-      if (cvFile.type && !ALLOWED_CV_TYPES.has(cvFile.type)) {
+      const fileName = String(cvFile.name || "cv.pdf")
+      const lowerName = fileName.toLowerCase()
+      const hasAllowedExt =
+        lowerName.endsWith(".pdf") || lowerName.endsWith(".doc") || lowerName.endsWith(".docx")
+
+      if (cvFile.type && !ALLOWED_CV_TYPES.has(cvFile.type) && !hasAllowedExt) {
         return NextResponse.json(
           { success: false, error: "CV must be a PDF or Word document" },
           { status: 400 },
         )
       }
 
-      const safeName = String(cvFile.name || "cv.pdf")
-        .replace(/[^a-zA-Z0-9._-]/g, "_")
-        .slice(0, 100)
-
+      const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 100)
       const buffer = Buffer.from(await cvFile.arrayBuffer())
+
       emailPayload.attachments = [
         {
-          filename: safeName,
+          filename: safeName || "cv.pdf",
           content: buffer,
         },
       ]
@@ -119,8 +147,12 @@ export async function POST(request) {
 
     if (error) {
       console.error("Email sending error:", error)
+      const detail = error.message || error.name || "Unknown email error"
       return NextResponse.json(
-        { success: false, error: "Failed to send application. Please try again." },
+        {
+          success: false,
+          error: `Failed to send application: ${detail}`,
+        },
         { status: 500 },
       )
     }
@@ -133,7 +165,12 @@ export async function POST(request) {
   } catch (error) {
     console.error("Server error:", error)
     return NextResponse.json(
-      { success: false, error: "Something went wrong. Please try again." },
+      {
+        success: false,
+        error: error?.message
+          ? `Something went wrong: ${error.message}`
+          : "Something went wrong. Please try again.",
+      },
       { status: 500 },
     )
   }
