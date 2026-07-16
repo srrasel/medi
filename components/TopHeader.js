@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Phone, MessageCircle, Clock, Mail } from "lucide-react"
 import Link from "next/link"
+import { apiFetch } from "@/lib/api"
 
 const TopHeader = ({ isScrolled }) => {
   const [headerData, setHeaderData] = useState(null)
@@ -13,7 +14,7 @@ const TopHeader = ({ isScrolled }) => {
     const fetchHeaderData = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/topHeader")
+        const response = await apiFetch("/api/topHeader", { timeout: 8000 })
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)

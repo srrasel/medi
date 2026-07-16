@@ -28,8 +28,10 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { withTrailingSlash } from "@/lib/utils"
+import { apiFetch } from "@/lib/api"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.pmchl.com"
+
 
 const getFetchErrorMessage = (status, resourceLabel) => {
   if (status === 404) {
@@ -117,7 +119,7 @@ const DoctorsSection = () => {
         setLoading(true)
         setError(null)
 
-        const response = await fetch(`${API_BASE_URL}/api/doctors`)
+        const response = await apiFetch(`${API_BASE_URL}/api/doctors`)
 
         if (!response.ok) {
           throw new Error(getFetchErrorMessage(response.status, "Doctors"))

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import JobCard from "@/components/job-card"
+import { apiJsonList } from "@/lib/api"
 
 export default function CareersPage() {
   const [jobs, setJobs] = useState([])
@@ -12,10 +13,7 @@ export default function CareersPage() {
     const fetchJobs = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/carrier-jobs")
-        if (!response.ok) throw new Error("Failed to fetch jobs")
-        const data = await response.json()
-        const list = Array.isArray(data) ? data : data?.data || data?.value || []
+        const list = await apiJsonList("/api/carrier-jobs")
         setJobs(list)
       } catch (err) {
         setError(err.message)

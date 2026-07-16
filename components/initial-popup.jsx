@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { apiJsonList } from "@/lib/api"
 
 export default function DynamicPopup() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,13 +13,10 @@ export default function DynamicPopup() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchPopupData = async () => {
+    // Defer popup fetch so it does not compete with first-screen data
+    const timer = setTimeout(async () => {
       try {
-        const response = await fetch("https://api.pmchl.com/api/popups")
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
+        const data = await apiJsonList("/api/popups", { timeout: 8000 })
         setPopupData(data)
       } catch (err) {
         setError(err.message)
@@ -26,9 +24,9 @@ export default function DynamicPopup() {
       } finally {
         setIsLoading(false)
       }
-    }
+    }, 1500)
 
-    fetchPopupData()
+    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {

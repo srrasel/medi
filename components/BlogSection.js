@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Clock, ArrowRight, User, ExternalLink } from "lucide-react"
 import { withTrailingSlash } from "@/lib/utils"
+import { apiFetch } from "@/lib/api"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.pmchl.com"
 
@@ -44,7 +45,7 @@ const BlogSection = () => {
         setLoading(true)
         setError(null)
 
-        const response = await fetch(`${API_BASE_URL}/api/news`)
+        const response = await apiFetch(`${API_BASE_URL}/api/news`)
         if (!response.ok) {
           throw new Error(getFetchErrorMessage(response.status, "News"))
         }

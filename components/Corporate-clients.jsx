@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, CheckCircle, AlertCircle } from "lucide-react"
+import { apiJsonList } from "@/lib/api"
 
 export default function CorporateClients() {
   const [clients, setClients] = useState([])
@@ -13,16 +14,13 @@ export default function CorporateClients() {
 
   const [formState, setFormState] = useState({ success: false, message: "", isPending: false })
 
-  // Fetch clients data from API
+  // Fetch clients data from API (deferred slightly so first paint is lighter)
   useEffect(() => {
   const fetchClients = async () => {
     try {
       setLoading(true)
 
-      const res = await fetch("https://api.pmchl.com/api/clients", { cache: "no-store" })
-      if (!res.ok) throw new Error("Failed to fetch clients")
-
-      const data = await res.json()
+      const data = await apiJsonList("/api/clients")
 
       // Sort by ID descending (latest first) and transform
       const clients = data

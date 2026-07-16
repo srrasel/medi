@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, CheckCircle, AlertCircle, Upload } from "lucide-react"
+import { apiJsonList } from "@/lib/api"
 
 export default function JobDetailsPage({ params }) {
   const { id } = use(params)
@@ -18,10 +19,7 @@ export default function JobDetailsPage({ params }) {
     const fetchJob = async () => {
       try {
         setLoading(true)
-        const response = await fetch("https://api.pmchl.com/api/carrier-jobs")
-        if (!response.ok) throw new Error("Failed to fetch jobs")
-        const data = await response.json()
-        const jobs = Array.isArray(data) ? data : data?.data || data?.value || []
+        const jobs = await apiJsonList("/api/carrier-jobs")
         const foundJob = jobs.find((j) => String(j.id) === String(id))
         if (!foundJob) throw new Error("Job not found")
         setJob(foundJob)

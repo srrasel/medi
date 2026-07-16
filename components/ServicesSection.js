@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ArrowRight, Heart, Activity, Baby, Users, Droplets, Dumbbell, Search, Scan, CreditCard } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { apiFetch } from "@/lib/api"
 
 const ServicesSection = () => {
   const [visibleCards, setVisibleCards] = useState(new Set())
@@ -14,12 +15,12 @@ const ServicesSection = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("https://api.pmchl.com/api/services")
+        const response = await apiFetch("/api/services")
         if (!response.ok) {
           throw new Error("Failed to fetch services")
         }
         const data = await response.json()
-        setServices(data)
+        setServices(Array.isArray(data) ? data : data?.data || [])
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred")
       } finally {
