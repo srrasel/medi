@@ -72,7 +72,7 @@ export default function CorporateClients() {
     const formData = new FormData(e.target)
 
     try {
-      const response = await fetch("/api/send-callback", {
+      const response = await fetch("/api/send-callback/", {
         method: "POST",
         body: formData,
       })

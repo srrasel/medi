@@ -90,7 +90,7 @@ export default function DoctorPage() {
       formDataToSend.append("time", formData.time)
       formDataToSend.append("additionalInfo", `Doctor: ${doctor?.name || "N/A"}\nSpecialty: ${doctor?.specialty || "N/A"}\nMessage: ${formData.message || "N/A"}`)
 
-      const response = await fetch("/api/send-appointment", {
+      const response = await fetch("/api/send-appointment/", {
         method: "POST",
         body: formDataToSend,
       })

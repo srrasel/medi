@@ -41,10 +41,16 @@ export default function JobDetailsPage({ params }) {
     try {
       const formData = new FormData(event.currentTarget)
 
-      const response = await fetch("/api/send-job-application", {
+      // trailingSlash: true — must include trailing slash or POST FormData breaks on redirect
+      const response = await fetch("/api/send-job-application/", {
         method: "POST",
         body: formData,
       })
+
+      const contentType = response.headers.get("content-type") || ""
+      if (!contentType.includes("application/json")) {
+        throw new Error(`Server returned ${response.status}. Please try again.`)
+      }
 
       const result = await response.json()
 
@@ -52,13 +58,13 @@ export default function JobDetailsPage({ params }) {
         setFormState({ success: true, message: result.message, error: "" })
         event.currentTarget.reset()
       } else {
-        setFormState({ success: false, message: "", error: result.error })
+        setFormState({ success: false, message: "", error: result.error || "Failed to submit application." })
       }
-    } catch {
+    } catch (err) {
       setFormState({
         success: false,
         message: "",
-        error: "Something went wrong. Please try again.",
+        error: err?.message || "Something went wrong. Please try again.",
       })
     } finally {
       setIsPending(false)

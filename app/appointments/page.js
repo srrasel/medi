@@ -32,7 +32,7 @@ export default function AppointmentsPage() {
     try {
       const formData = new FormData(event.currentTarget)
 
-      const response = await fetch("/api/send-appointment", {
+      const response = await fetch("/api/send-appointment/", {
         method: "POST",
         body: formData,
       })
