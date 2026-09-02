@@ -122,17 +122,17 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="bg-white/10 p-3 rounded-lg">
                 <p className="text-white/90 text-sm italic">
-                  {"ঈদ আনন্দ ছড়িয়ে পড়ুক সবার মাঝে আপনার যাত্রা হোক নিরাপদ, উদযাপন হোক স্বস্তিদায়ক"}
+                  {"বিশ্ব মশা দিবস ২০২৬"}
                 </p>
               </div>
               <ul className="text-white/80 text-sm space-y-2">
                 <li className="flex items-start">
                   <Calendar className="w-3 h-3 mt-1 mr-2 text-white/60 flex-shrink-0" />
-                  World Blood Cancer Day 2025
+                  সেবা, আস্থা ও মানবিকতার গৌরবময় ৯ বছর।
                 </li>
                 <li className="flex items-start">
                   <Users className="w-3 h-3 mt-1 mr-2 text-white/60 flex-shrink-0" />
-                  {"We're Hiring at Pro-Active Hospital! A Sister Concern of Pro-Active Medical College"}
+                  {"We're Hiring at Pro-Active Hospital! Join our team and make a difference in healthcare."}
                 </li>
               </ul>
             </div>
